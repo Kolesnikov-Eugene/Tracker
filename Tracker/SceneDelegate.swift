@@ -18,10 +18,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            let navigationController = UINavigationController(rootViewController: HomeViewController())
-            navigationController.interactivePopGestureRecognizer?.isEnabled = false
+            let tabBarController = TabBarController()
             window.backgroundColor = .white
-            window.rootViewController = navigationController
+            window.rootViewController = tabBarController
             self.window = window
             window.makeKeyAndVisible()
         }

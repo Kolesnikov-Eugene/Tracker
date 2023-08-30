@@ -35,3 +35,29 @@ final class HomeView: UIView {
         ])
     }
 }
+
+//use later to refactor
+
+//    private let titleLabel: UILabel = {
+//        let label = UILabel()
+//
+//        label.text = "Трекеры"
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.frame.size.width = 254
+//        label.frame.size.height = 41
+//        label.font = UIFont.systemFont(ofSize: 34, weight: .regular)
+//
+//        return label
+//    }()
+
+//    private func addSubviews() {
+//        view.addSubview(titleLabel)
+//    }
+    
+//    private func applyConstraints() {
+//        NSLayoutConstraint.activate([
+//            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 88),
+//            titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16)
+//        ])
+//    }
+
