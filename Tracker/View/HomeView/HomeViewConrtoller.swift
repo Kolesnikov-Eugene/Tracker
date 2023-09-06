@@ -9,12 +9,58 @@ import UIKit
 
 final class HomeViewController: UIViewController {
     
+    private let reuseIdentifier = "TrackerViewCell"
     private var addBarButtonItem: UIBarButtonItem?
     private var currentDate: Date?
-    private var trackers: [Tracker]?
+    private var categories: [TrackerCategory] = []
+    private var trackers: [Tracker] = [
+        Tracker(
+            date: Date(),
+            category: "Домашний уют",
+            emoji: emojiArray[0],
+            color: colorList[0],
+            description: "Do something when you want",
+            schedule: [.monday]
+        ),
+        Tracker(
+            date: Date(),
+            category: "Домашний уют",
+            emoji: emojiArray[1],
+            color: colorList[0],
+            description: "Do something when you want",
+            schedule: [.monday]
+        ),
+        Tracker(
+            date: Date(),
+            category: "Домашний уют",
+            emoji: emojiArray[2],
+            color: colorList[0],
+            description: "Do something when you want",
+            schedule: [.monday]
+        ),
+        Tracker(
+            date: Date(),
+            category: "Домашний уют",
+            emoji: emojiArray[3],
+            color: colorList[0],
+            description: "Do something when you want",
+            schedule: [.monday]
+        )
+    ]
+//    private var visibleCategories: [TrackerCategory]()
+//    private var completedTrackers: [TrackerRecord]()
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+//        let screenSize = UIScreen.main.bounds.size
+//        let screenWidth = screenSize.width
+//        let screenHeight = screenSize.height
+//        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
+//        layout.itemSize = CGSize(width: screenWidth/3, height: screenWidth/3)
+//        layout.minimumInteritemSpacing = 0
+//        layout.minimumLineSpacing = 0
+//        collectionView.collectionViewLayout = layout
+
         return collectionView
     }()
     private let datePicker: UIDatePicker = {
@@ -55,11 +101,23 @@ final class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavBar()
-        addSubviews()
-        applyConstraints()
         
+        collectionView.register(HomeViewCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView.register(
+            SupplementaryView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "header"
+        )
+        collectionView.register(
+            SupplementaryView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "footer"
+        )
         collectionView.dataSource = self
         collectionView.delegate = self
+        
+        addSubviews()
+        applyConstraints()
     }
         
     
@@ -81,10 +139,12 @@ final class HomeViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            collectionView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-            collectionView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+//            collectionView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+//            collectionView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
             emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             emptyStateView.widthAnchor.constraint(equalToConstant: 80),
@@ -126,17 +186,69 @@ extension HomeViewController: UISearchResultsUpdating, UISearchControllerDelegat
 }
 
 extension HomeViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+//        for tracker in trackers {
+//            categories.append(TrackerCategory(category: tracker.category, trackerArray: [tracker]))
+//        }
+//        return categories.count
+        return 1
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //TODO
-        return 0
+//        return categories[0].trackerArray.count
+        return 4
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return UICollectionViewCell()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? HomeViewCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        
+        cell.prepareForReuse()
+        cell.configureCell(with: trackers[indexPath.row])
+        
+        return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        let headerView = collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "header",
+            for: indexPath
+        ) as! SupplementaryView
+        
+        headerView.configureView(with: trackers[indexPath.row])
+        
+        return headerView
     }
 }
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
-    //TODO
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 167, height: 148)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 16
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 9
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let indexPath = IndexPath(row: 0, section: section)
+        
+        let headerView = self.collectionView(
+            collectionView,
+            viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
+            at: indexPath
+        )
+        
+        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: collectionView.frame.height),
+                                                  withHorizontalFittingPriority: .required,
+                                                  verticalFittingPriority: .fittingSizeLevel)
+    }
 }
 
 extension HomeViewController: UICollectionViewDelegate {

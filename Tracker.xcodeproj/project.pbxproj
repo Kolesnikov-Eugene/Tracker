@@ -14,6 +14,8 @@
 		449AA5252A97E876008D8D8E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449AA5242A97E876008D8D8E /* SceneDelegate.swift */; };
 		449AA52C2A97E877008D8D8E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 449AA52B2A97E877008D8D8E /* Assets.xcassets */; };
 		449AA52F2A97E877008D8D8E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449AA52D2A97E877008D8D8E /* LaunchScreen.storyboard */; };
+		44A2F5CD2AA880C0004B8E3B /* HomeViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A2F5CC2AA880C0004B8E3B /* HomeViewPresenter.swift */; };
+		44A2F5D02AA88118004B8E3B /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A2F5CF2AA88118004B8E3B /* Helpers.swift */; };
 		44BC898E2A9E767200C0E23D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC898D2A9E767200C0E23D /* HomeView.swift */; };
 		44BC89902A9E76A700C0E23D /* HomeViewConrtoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC898F2A9E76A700C0E23D /* HomeViewConrtoller.swift */; };
 		44BC89932A9E77A400C0E23D /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC89922A9E77A400C0E23D /* TabBarController.swift */; };
@@ -33,6 +35,8 @@
 		449AA52B2A97E877008D8D8E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		449AA52E2A97E877008D8D8E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		449AA5302A97E877008D8D8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		44A2F5CC2AA880C0004B8E3B /* HomeViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewPresenter.swift; sourceTree = "<group>"; };
+		44A2F5CF2AA88118004B8E3B /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		44BC898D2A9E767200C0E23D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		44BC898F2A9E76A700C0E23D /* HomeViewConrtoller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewConrtoller.swift; sourceTree = "<group>"; };
 		44BC89922A9E77A400C0E23D /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -60,6 +64,7 @@
 				44BC898F2A9E76A700C0E23D /* HomeViewConrtoller.swift */,
 				441DF7E92A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift */,
 				441DF7EB2A9FD2FA005AC874 /* SupplementaryView.swift */,
+				44A2F5CC2AA880C0004B8E3B /* HomeViewPresenter.swift */,
 			);
 			path = HomeView;
 			sourceTree = "<group>";
@@ -102,6 +107,7 @@
 				44BC89912A9E771400C0E23D /* TabBar */,
 				44BC898C2A9E765100C0E23D /* Model */,
 				44BC898B2A9E764000C0E23D /* View */,
+				44A2F5CE2AA880E1004B8E3B /* Helpers */,
 				449AA5222A97E876008D8D8E /* AppDelegate.swift */,
 				449AA5242A97E876008D8D8E /* SceneDelegate.swift */,
 				449AA52B2A97E877008D8D8E /* Assets.xcassets */,
@@ -109,6 +115,14 @@
 				449AA5302A97E877008D8D8E /* Info.plist */,
 			);
 			path = Tracker;
+			sourceTree = "<group>";
+		};
+		44A2F5CE2AA880E1004B8E3B /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				44A2F5CF2AA88118004B8E3B /* Helpers.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		44BC898B2A9E764000C0E23D /* View */ = {
@@ -210,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44BC898E2A9E767200C0E23D /* HomeView.swift in Sources */,
+				44A2F5D02AA88118004B8E3B /* Helpers.swift in Sources */,
 				44BC89972A9E7F0800C0E23D /* TrackerCategory.swift in Sources */,
 				44BC89902A9E76A700C0E23D /* HomeViewConrtoller.swift in Sources */,
 				441DF7EE2A9FD629005AC874 /* StatisticViewController.swift in Sources */,
@@ -219,6 +234,7 @@
 				44BC89992A9E7F2B00C0E23D /* TrackerRecord.swift in Sources */,
 				449AA5232A97E876008D8D8E /* AppDelegate.swift in Sources */,
 				449AA5252A97E876008D8D8E /* SceneDelegate.swift in Sources */,
+				44A2F5CD2AA880C0004B8E3B /* HomeViewPresenter.swift in Sources */,
 				441DF7EA2A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift in Sources */,
 				44BC89952A9E7EE300C0E23D /* Tracker.swift in Sources */,
 			);
