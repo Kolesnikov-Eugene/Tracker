@@ -11,7 +11,6 @@ final class AddTrackerViewController: UIViewController {
     private lazy var addHabitButton: UIButton = {
         let button = UIButton()
         
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Привычка", for: .normal)
         button.backgroundColor = .black
         button.layer.cornerRadius = 16
@@ -24,7 +23,6 @@ final class AddTrackerViewController: UIViewController {
     private lazy var addIrregularEventButton: UIButton = {
         let button = UIButton()
         
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Нерегулярные события", for: .normal)
         button.backgroundColor = .black
         button.layer.cornerRadius = 16
@@ -33,6 +31,15 @@ final class AddTrackerViewController: UIViewController {
         button.addTarget(self, action: #selector(addIrregularHabit), for: .touchUpInside)
         
         return button
+    }()
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        stackView.distribution = .fillEqually
+        
+        return stackView
     }()
     
     init() {
@@ -56,16 +63,27 @@ final class AddTrackerViewController: UIViewController {
     }
     
     private func addSubviews() {
-        view.addSubview(addHabitButton)
-        view.addSubview(addIrregularEventButton)
+        view.addSubview(stackView)
+        stackView.addArrangedSubview(addHabitButton)
+        stackView.addArrangedSubview(addIrregularEventButton)
     }
     
     private func applyConstraints() {
-        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addHabitButton.translatesAutoresizingMaskIntoConstraints = false
+        addIrregularEventButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            stackView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20),
+            stackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stackView.heightAnchor.constraint(equalToConstant: 136)
+        ])
     }
     
     @objc private func addHabit() {
-        
+        let newHabitViewController = NewHabitViewController()
+        navigationController?.pushViewController(newHabitViewController, animated: true)
+//        present(newHabitViewController, animated: false)
     }
     
     @objc private func addIrregularHabit() {

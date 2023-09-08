@@ -145,10 +145,12 @@ final class HomeViewController: UIViewController {
 //            collectionView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
 //            collectionView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+            
             emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             emptyStateView.widthAnchor.constraint(equalToConstant: 80),
             emptyStateView.heightAnchor.constraint(equalToConstant: 80),
+            
             emptyStateLabel.topAnchor.constraint(equalTo: emptyStateView.bottomAnchor, constant: 8),
             emptyStateLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor)
         ])
@@ -217,7 +219,7 @@ extension HomeViewController: UICollectionViewDataSource {
             for: indexPath
         ) as! SupplementaryView
         
-        headerView.configureView(with: trackers[indexPath.row])
+        headerView.configureView(with: trackers[indexPath.section]) // try if this works
         
         return headerView
     }
