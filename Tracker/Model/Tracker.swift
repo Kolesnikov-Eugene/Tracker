@@ -9,7 +9,7 @@ import UIKit
 
 struct Tracker {
     let id = UUID()
-    let date: Date
+    let date = Date()
     let category: String
     let emoji: String
     let color: UIColor
@@ -18,13 +18,13 @@ struct Tracker {
 }
 
 enum Schedule: Int, CaseIterable {
-    case monday = 1
-    case tuesday = 2
-    case wednesday = 3
-    case thursday = 4
-    case friday = 5
-    case saturday = 6
-    case sunday = 7
+    case monday = 0
+    case tuesday = 1
+    case wednesday = 2
+    case thursday = 3
+    case friday = 4
+    case saturday = 5
+    case sunday = 6
     
     func representFullDayName() -> String {
         switch self {

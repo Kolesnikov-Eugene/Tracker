@@ -13,6 +13,7 @@
 		444B90042AA9C77F0013D8FA /* NewHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90032AA9C77F0013D8FA /* NewHabitViewController.swift */; };
 		444B90062AA9D3280013D8FA /* TextFieldWithPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90052AA9D3280013D8FA /* TextFieldWithPadding.swift */; };
 		444B90082AAA13840013D8FA /* SeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90072AAA13840013D8FA /* SeparatorView.swift */; };
+		447C66102AAF4D95002725ED /* AddScheduleViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447C660F2AAF4D95002725ED /* AddScheduleViewCell.swift */; };
 		449AA5232A97E876008D8D8E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449AA5222A97E876008D8D8E /* AppDelegate.swift */; };
 		449AA5252A97E876008D8D8E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449AA5242A97E876008D8D8E /* SceneDelegate.swift */; };
 		449AA52C2A97E877008D8D8E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 449AA52B2A97E877008D8D8E /* Assets.xcassets */; };
@@ -38,6 +39,7 @@
 		444B90032AA9C77F0013D8FA /* NewHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitViewController.swift; sourceTree = "<group>"; };
 		444B90052AA9D3280013D8FA /* TextFieldWithPadding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithPadding.swift; sourceTree = "<group>"; };
 		444B90072AAA13840013D8FA /* SeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorView.swift; sourceTree = "<group>"; };
+		447C660F2AAF4D95002725ED /* AddScheduleViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddScheduleViewCell.swift; sourceTree = "<group>"; };
 		449AA51F2A97E876008D8D8E /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449AA5222A97E876008D8D8E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		449AA5242A97E876008D8D8E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 			isa = PBXGroup;
 			children = (
 				44D6F1CA2AAB963200567305 /* AddScheduleViewController.swift */,
+				447C660F2AAF4D95002725ED /* AddScheduleViewCell.swift */,
 			);
 			path = AddScheduleView;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				444B90062AA9D3280013D8FA /* TextFieldWithPadding.swift in Sources */,
 				44A2F5D02AA88118004B8E3B /* Helpers.swift in Sources */,
 				449C744D2AAB2EE40088BB4A /* EmojiAndColorsArrayViewCell.swift in Sources */,
+				447C66102AAF4D95002725ED /* AddScheduleViewCell.swift in Sources */,
 				44BC89972A9E7F0800C0E23D /* TrackerCategory.swift in Sources */,
 				444B90082AAA13840013D8FA /* SeparatorView.swift in Sources */,
 				44BC89902A9E76A700C0E23D /* HomeViewConrtoller.swift in Sources */,

@@ -15,7 +15,6 @@ final class HomeViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     private var trackers: [Tracker] = [
         Tracker(
-            date: Date(),
             category: "Домашний уют",
             emoji: emojiArray[0],
             color: colorList[0],
@@ -23,7 +22,6 @@ final class HomeViewController: UIViewController {
             schedule: [.monday]
         ),
         Tracker(
-            date: Date(),
             category: "Домашний уют",
             emoji: emojiArray[1],
             color: colorList[0],
@@ -31,7 +29,6 @@ final class HomeViewController: UIViewController {
             schedule: [.monday]
         ),
         Tracker(
-            date: Date(),
             category: "Домашний уют",
             emoji: emojiArray[2],
             color: colorList[0],
@@ -39,7 +36,6 @@ final class HomeViewController: UIViewController {
             schedule: [.monday]
         ),
         Tracker(
-            date: Date(),
             category: "Домашний уют",
             emoji: emojiArray[3],
             color: colorList[0],

@@ -9,8 +9,17 @@ import UIKit
 
 final class NewHabitViewController: UIViewController {
     
+    private var selectedEmoji: String = ""
+    private var selectedColor: UIColor = UIColor.clear
+    private var schedule: [Schedule] = []
     private let reuseCellIdentifier = "EmojiAndColorCell"
     private let headerID = "header"
+    private lazy var sctackTopConstraintWhenErrorLabelShown: NSLayoutConstraint = {
+        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 24)
+    }()
+    private lazy var sctackTopConstraintWhenErrorLabelIsHidden: NSLayoutConstraint = {
+        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 62)
+    }()
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         view.isScrollEnabled = true
@@ -33,6 +42,7 @@ final class NewHabitViewController: UIViewController {
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.clear.cgColor
         view.placeholder = "Введите название трекера"
+        view.clearButtonMode = .whileEditing
         
         return view
     }()
@@ -43,6 +53,7 @@ final class NewHabitViewController: UIViewController {
         field.font = UIFont.systemFont(ofSize: 17)
         field.text = "Ограничение 38 символов"
         field.isHidden = true
+        field.textAlignment = .center
         
         return field
     }()
@@ -120,7 +131,7 @@ final class NewHabitViewController: UIViewController {
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.isScrollEnabled = false
-        collection.allowsMultipleSelection = true
+        collection.allowsMultipleSelection = true // check if works
         return collection
     }()
     private let bottomButtonsStackView: UIStackView = {
@@ -202,7 +213,7 @@ final class NewHabitViewController: UIViewController {
 
         addSubviews()
         applyConstraints()
-
+        sctackTopConstraintWhenErrorLabelShown.isActive = true
     }
     
     private func addSubviews() {
@@ -212,15 +223,7 @@ final class NewHabitViewController: UIViewController {
         scrollView.addSubview(contentView)
         
         contentView.addSubview(trackerNameTextField)
-        
-        
-        
-//        contentView.addSubview(scheduleButton)
-//        contentView.addSubview(cancelButton)
-//        contentView.addSubview(stringSeparator)
-//        contentView.addSubview(arrayPictureViewForCategoryButton)
-//        contentView.addSubview(arrayPictureViewForScheduleButton)
-        
+        contentView.addSubview(exceedingCharacterLimitErrorField)
         
         categoryStackView.addArrangedSubview(categoryButton)
         categoryStackView.addArrangedSubview(stringSeparator)
@@ -230,8 +233,6 @@ final class NewHabitViewController: UIViewController {
         scheduleButton.addSubview(arrayPictureViewForScheduleButton)
         
         contentView.addSubview(categoryStackView)
-        
-        
         
         bottomButtonsStackView.addArrangedSubview(cancelButton)
         bottomButtonsStackView.addArrangedSubview(createButton)
@@ -253,13 +254,13 @@ final class NewHabitViewController: UIViewController {
         bottomButtonsStackView.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
+        exceedingCharacterLimitErrorField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomButtonsStackView.topAnchor, constant: -16),
-//            scrollView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 3),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 0),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 0),
@@ -273,7 +274,11 @@ final class NewHabitViewController: UIViewController {
             trackerNameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
             
-            categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 24),
+            exceedingCharacterLimitErrorField.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 8),
+            exceedingCharacterLimitErrorField.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor),
+            exceedingCharacterLimitErrorField.trailingAnchor.constraint(equalTo: trackerNameTextField.trailingAnchor),
+            exceedingCharacterLimitErrorField.heightAnchor.constraint(equalToConstant: 22),
+            
             categoryStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             categoryStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             categoryStackView.heightAnchor.constraint(equalToConstant: 150),
@@ -314,8 +319,16 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
-        
+        guard let description = trackerNameTextField.text else { return } //raise error?
+        let tracker = Tracker(
+            category: "Important",
+            emoji: selectedEmoji,
+            color: selectedColor,
+            description: description,
+            schedule: schedule
+        )
     }
+    
     @objc private func dismissKeyboard() {
         
     }
@@ -328,7 +341,21 @@ extension NewHabitViewController: UITextFieldDelegate {
         let newString = currentString.replacingCharacters(in: range, with: string)
         
         exceedingCharacterLimitErrorField.isHidden = newString.count < 38
-        
+        if !exceedingCharacterLimitErrorField.isHidden {
+            sctackTopConstraintWhenErrorLabelShown.isActive = false
+            sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
+            view.layoutIfNeeded()
+            UIView.animate(withDuration: 0.5) {
+                self.view.layoutIfNeeded()
+            }
+
+        } else {
+            sctackTopConstraintWhenErrorLabelShown.isActive = true
+            sctackTopConstraintWhenErrorLabelIsHidden.isActive = false
+            UIView.animate(withDuration: 0.5) {
+                self.view.layoutIfNeeded()
+            }
+        }
         return newString.count <= maxLength
     }
 }
@@ -382,6 +409,7 @@ extension NewHabitViewController: UICollectionViewDataSource {
 }
 
 extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 52, height: 52)
     }
@@ -398,5 +426,29 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
         return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: collectionView.frame.height),
                                                   withHorizontalFittingPriority: .required,
                                                   verticalFittingPriority: .fittingSizeLevel)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorsArrayViewCell else { return }
+        
+        if indexPath.section == 0 {
+            selectedEmoji = emojiArray[indexPath.row]
+            cell.contentView.layer.cornerRadius = 16
+            cell.contentView.backgroundColor = .lightGray
+        } else {
+            selectedColor = colorList[indexPath.row]
+            let borderColor = selectedColor.withAlphaComponent(0.3)
+            cell.contentView.layer.borderWidth = 3
+            cell.contentView.layer.cornerRadius = 8
+            cell.contentView.layer.borderColor = borderColor.cgColor
+        }
+//        cell.configureSelectedCell()
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorsArrayViewCell else { return }
+        
+        cell.backgroundColor = .clear
     }
 }

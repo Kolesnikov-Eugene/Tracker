@@ -11,14 +11,9 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
     private lazy var emojiLabel: UILabel = {
         let label = UILabel()
         
-//        let multiplier: CGFloat = 4 / 5
-//        let fontSize = contentView.frame.width * multiplier
-        
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 32)
-        label.frame.size.width = 52
-        label.frame.size.height = 52
-        
+
         return label
     }()
     private lazy var colorView: UIView = {
@@ -55,13 +50,14 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         colorView.translatesAutoresizingMaskIntoConstraints = false
         
+        
         NSLayoutConstraint.activate([
             emojiLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             emojiLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             emojiLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             emojiLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-//            emojiLabel.heightAnchor.constraint(equalToConstant: 52),
-//            emojiLabel.widthAnchor.constraint(equalToConstant: 52),
+            emojiLabel.widthAnchor.constraint(equalToConstant: 38),
+            emojiLabel.heightAnchor.constraint(equalToConstant: 32),
             
             colorView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
