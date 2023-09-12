@@ -7,10 +7,15 @@
 
 import UIKit
 
+protocol AddScheduleDelegate: AnyObject {
+    func didRecieveSchedule(for selectedDays: [Schedule])
+}
+
 final class NewHabitViewController: UIViewController {
     
+    private var indexes: [IndexPath] = []
     private var selectedEmoji: String = ""
-    private var selectedColor: UIColor = UIColor.clear
+    private var selectedColor: UIColor? = nil
     private var schedule: [Schedule] = []
     private let reuseCellIdentifier = "EmojiAndColorCell"
     private let headerID = "header"
@@ -19,6 +24,9 @@ final class NewHabitViewController: UIViewController {
     }()
     private lazy var sctackTopConstraintWhenErrorLabelIsHidden: NSLayoutConstraint = {
         categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 62)
+    }()
+    private lazy var scheduleButtonLabelNewTopConstraint: NSLayoutConstraint = {
+        scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 15)
     }()
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
@@ -78,12 +86,12 @@ final class NewHabitViewController: UIViewController {
     private lazy var scheduleButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.setTitle("Расписание", for: .normal)
-        button.contentHorizontalAlignment = .left
-        button.contentVerticalAlignment = .center
-        button.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 16.0, bottom: 0.0, right: 0.0)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-        button.tintColor = .black
+//        button.setTitle("Расписание", for: .normal)
+//        button.contentHorizontalAlignment = .left
+//        button.contentVerticalAlignment = .top
+//        button.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 16.0, bottom: 0.0, right: 0.0)
+//        button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+//        button.tintColor = .black
         button.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
         button.addTarget(self, action: #selector(scheduleButtonTapped), for: .touchUpInside)
         button.frame.size.height = 75
@@ -92,6 +100,25 @@ final class NewHabitViewController: UIViewController {
         button.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         
         return button
+    }()
+    private let scheduleButtonLabel: UILabel = {
+        let label = UILabel()
+        
+        label.text = "Расписание"
+        label.font = UIFont.systemFont(ofSize: 17)
+        label.textColor = .black
+        
+        return label
+    }()
+    private let scheduleButtonLabelForSelectedDays: UILabel = {
+        let label = UILabel()
+        
+        label.text = "pip"
+        label.font = UIFont.systemFont(ofSize: 17)
+        label.textColor = UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
+        label.isHidden = true
+        
+        return label
     }()
     private let arrayPictureViewForCategoryButton: UIImageView = {
         let view = UIImageView()
@@ -172,8 +199,7 @@ final class NewHabitViewController: UIViewController {
         button.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-//        button.layer.borderColor = UIColor(red: 0.961, green: 0.42, blue: 0.424, alpha: 1).cgColor
-//        button.layer.borderWidth = 1
+//        button.isEnabled = false //change when all fields are filled
         
         return button
     }()
@@ -231,6 +257,8 @@ final class NewHabitViewController: UIViewController {
         
         categoryButton.addSubview(arrayPictureViewForCategoryButton)
         scheduleButton.addSubview(arrayPictureViewForScheduleButton)
+        scheduleButton.addSubview(scheduleButtonLabel)
+        scheduleButton.addSubview(scheduleButtonLabelForSelectedDays)
         
         contentView.addSubview(categoryStackView)
         
@@ -255,6 +283,8 @@ final class NewHabitViewController: UIViewController {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
         exceedingCharacterLimitErrorField.translatesAutoresizingMaskIntoConstraints = false
+        scheduleButtonLabel.translatesAutoresizingMaskIntoConstraints = false
+        scheduleButtonLabelForSelectedDays.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor),
@@ -289,6 +319,14 @@ final class NewHabitViewController: UIViewController {
             arrayPictureViewForScheduleButton.trailingAnchor.constraint(equalTo: scheduleButton.trailingAnchor, constant: -16),
             arrayPictureViewForScheduleButton.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor),
             
+            scheduleButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+            scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 26),
+            scheduleButtonLabel.heightAnchor.constraint(equalToConstant: 22),
+            
+            scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+            scheduleButtonLabelForSelectedDays.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 39),
+            scheduleButtonLabelForSelectedDays.heightAnchor.constraint(equalToConstant: 22),
+            
             stringSeparator.heightAnchor.constraint(equalToConstant: 0.5),
             stringSeparator.leftAnchor.constraint(equalTo: categoryButton.leftAnchor, constant: 16),
             stringSeparator.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
@@ -306,12 +344,24 @@ final class NewHabitViewController: UIViewController {
         ])
     }
     
+    private func cheackIfAllFieldsFilledOut() -> Bool {
+        createButton.backgroundColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
+        return true
+    }
+    
     @objc private func categoryButtonTapped() {
-        
+        scheduleButtonLabelNewTopConstraint.isActive = false
+        scheduleButtonLabelForSelectedDays.isHidden = true
+        view.layoutIfNeeded()
+        print(schedule)
     }
     
     @objc private func scheduleButtonTapped() {
-        navigationController?.pushViewController(AddScheduleViewController(), animated: true)
+        navigationController?.pushViewController(AddScheduleViewController(delegate: self, selectedDays: schedule), animated: true)
+        print(schedule)
+        
+        scheduleButtonLabelNewTopConstraint.isActive = true
+        scheduleButtonLabelForSelectedDays.isHidden = false
     }
     
     @objc private func cancelButtonTapped() {
@@ -323,7 +373,7 @@ final class NewHabitViewController: UIViewController {
         let tracker = Tracker(
             category: "Important",
             emoji: selectedEmoji,
-            color: selectedColor,
+            color: selectedColor!,
             description: description,
             schedule: schedule
         )
@@ -344,7 +394,7 @@ extension NewHabitViewController: UITextFieldDelegate {
         if !exceedingCharacterLimitErrorField.isHidden {
             sctackTopConstraintWhenErrorLabelShown.isActive = false
             sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
-            view.layoutIfNeeded()
+//            view.layoutIfNeeded()
             UIView.animate(withDuration: 0.5) {
                 self.view.layoutIfNeeded()
             }
@@ -429,26 +479,50 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView.indexPathsForSelectedItems != nil {
+            deselectSelectedItemsInSection(indexPath: indexPath, collectionView: collectionView)
+        }
+        
         guard let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorsArrayViewCell else { return }
         
+        let cellModel: EmojiAndColorCellModel
         if indexPath.section == 0 {
             selectedEmoji = emojiArray[indexPath.row]
-            cell.contentView.layer.cornerRadius = 16
-            cell.contentView.backgroundColor = .lightGray
+            cellModel = EmojiAndColorCellModel(emoji: selectedEmoji, color: nil, type: .emoji)
         } else {
             selectedColor = colorList[indexPath.row]
-            let borderColor = selectedColor.withAlphaComponent(0.3)
-            cell.contentView.layer.borderWidth = 3
-            cell.contentView.layer.cornerRadius = 8
-            cell.contentView.layer.borderColor = borderColor.cgColor
+            cellModel = EmojiAndColorCellModel(emoji: nil, color: selectedColor, type: .color)
         }
-//        cell.configureSelectedCell()
+        cell.configureBackgroundForSelectedCell(with: cellModel)
         
     }
     
+    private func deselectSelectedItemsInSection(indexPath: IndexPath, collectionView: UICollectionView) {
+            collectionView.indexPathsForSelectedItems?.forEach({ selectedIndexPath in
+                if selectedIndexPath.section == indexPath.section,
+                   selectedIndexPath.row != indexPath.row {
+                    collectionView.deselectItem(at: selectedIndexPath, animated: false)
+                    let cell = collectionView.cellForItem(at: selectedIndexPath) as? EmojiAndColorsArrayViewCell
+                    cell?.deselectCell()
+                }
+            })
+        }
+    
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorsArrayViewCell else { return }
-        
-        cell.backgroundColor = .clear
+
+        if indexPath.section == 0 {
+            selectedEmoji = ""
+        } else {
+            selectedColor = nil
+        }
+
+        cell.deselectCell()
+    }
+}
+
+extension NewHabitViewController: AddScheduleDelegate {
+    func didRecieveSchedule(for selectedDays: [Schedule]) {
+        self.schedule = selectedDays
     }
 }

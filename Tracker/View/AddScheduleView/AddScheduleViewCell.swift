@@ -9,6 +9,8 @@ import UIKit
 
 final class AddScheduleViewCell: UITableViewCell {
     
+    var switchState: Bool?
+    var callBackSwitchState: ((Bool) -> (Void))?
     private lazy var dayOfWeekLabel: UILabel = {
         let label = UILabel()
         
@@ -21,6 +23,7 @@ final class AddScheduleViewCell: UITableViewCell {
         let button = UISwitch()
         
         button.onTintColor = UIColor(red: 0.22, green: 0.45, blue: 0.91, alpha: 1)
+        button.addTarget(self, action: #selector(switchDidChangeValue), for: .valueChanged)
         
         return button
     }()
@@ -73,6 +76,10 @@ final class AddScheduleViewCell: UITableViewCell {
         ])
     }
     
+    @objc private func switchDidChangeValue(_ sender: UISwitch) {
+        callBackSwitchState?(sender.isOn)
+    }
+    
     func configureCell(at index: Int, with titleLabel: String) {
         switch index {
         case 0:
@@ -88,5 +95,8 @@ final class AddScheduleViewCell: UITableViewCell {
             stringSeparator.backgroundColor = .lightGray
         }
         dayOfWeekLabel.text = titleLabel
+    }
+    func switchCelladdDayToScheduleSwitch() {
+        addDayToScheduleSwitch.isOn = true
     }
 }

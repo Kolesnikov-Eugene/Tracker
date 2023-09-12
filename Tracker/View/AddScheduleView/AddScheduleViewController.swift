@@ -9,6 +9,8 @@ import UIKit
 
 final class AddScheduleViewController: UIViewController {
     
+    weak var delegate: AddScheduleDelegate?
+    private var selectedDays: [Schedule]
     private let reuseCellIdentifier = "ScheduleCell"
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -35,13 +37,15 @@ final class AddScheduleViewController: UIViewController {
         return button
     }()
     
-    init() {
+    init(delegate: AddScheduleDelegate, selectedDays: [Schedule]) {
+        self.delegate = delegate
+        self.selectedDays = selectedDays
         super.init(nibName: nil, bundle: nil)
         setupView()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("jkdbjddf")
     }
     
     private func setupView() {
@@ -83,6 +87,8 @@ final class AddScheduleViewController: UIViewController {
     }
     
     @objc private func doneButtonTapped() {
+        print(selectedDays)
+        delegate?.didRecieveSchedule(for: selectedDays)
         navigationController?.popViewController(animated: true)
     }
 }
@@ -94,12 +100,28 @@ extension AddScheduleViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: reuseCellIdentifier, for: indexPath) as? AddScheduleViewCell,
-              let label = Schedule(rawValue: indexPath.row)?.representFullDayName()
+              let label = Schedule(rawValue: indexPath.row)
         else {
             return UITableViewCell()
         }
         
-        cell.configureCell(at: indexPath.row, with: label)
+        cell.configureCell(at: indexPath.row, with: label.representFullDayName())
+        
+        selectedDays.forEach { day in
+            if day.rawValue == indexPath.row {
+                cell.switchCelladdDayToScheduleSwitch()
+            }
+        }
+        
+        cell.callBackSwitchState = { [weak self] isOn in
+            guard let self = self else { return }
+            let day = Schedule(rawValue: indexPath.row)
+            if isOn {
+                selectedDays.append(day!)
+            } else {
+                selectedDays.removeAll(where: { $0 == day })
+            }
+        }
         
         return cell
     }
@@ -110,5 +132,5 @@ extension AddScheduleViewController: UITableViewDataSource {
 }
 
 extension AddScheduleViewController: UITableViewDelegate {
-    
+
 }

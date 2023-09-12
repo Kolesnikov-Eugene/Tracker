@@ -68,8 +68,18 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
         ])
     }
     
-    private func configureColorCell(with model: Tracker) {
-        
+    func configureBackgroundForSelectedCell(with selectedCell: EmojiAndColorCellModel) {
+        switch selectedCell.type {
+        case .emoji:
+            contentView.layer.cornerRadius = 16
+            contentView.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 1)
+        case .color:
+            let borderColor = selectedCell.color!.withAlphaComponent(0.3)
+            
+            contentView.layer.borderWidth = 3
+            contentView.layer.cornerRadius = 8
+            contentView.layer.borderColor = borderColor.cgColor
+        }
     }
     
     func configure(with model: EmojiAndColorCellModel) {
@@ -83,5 +93,10 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
             colorView.isHidden = false
             colorView.backgroundColor = model.color
         }
+    }
+    
+    func deselectCell() {
+        contentView.backgroundColor = .clear
+        contentView.layer.borderWidth = 0
     }
 }
