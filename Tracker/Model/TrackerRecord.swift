@@ -8,6 +8,10 @@
 import Foundation
 
 struct TrackerRecord {
-    let id: UUID
     let date: Date
+    let idOfCompletedTrackers: [UUID]
+    
+    func addCompletedTrackerToDate(with tracker: [UUID]) -> TrackerRecord {
+        return TrackerRecord(date: date, idOfCompletedTrackers: idOfCompletedTrackers + tracker)
+    }
 }

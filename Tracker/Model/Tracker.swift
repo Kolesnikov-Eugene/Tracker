@@ -8,13 +8,76 @@
 import UIKit
 
 struct Tracker {
-    let id = UUID()
+    let id: UUID?
     let date = Date()
+    let counter: UInt?
     let category: String
     let emoji: String
     let color: UIColor
     let description: String
     let schedule: [Schedule]
+    let trackerIsDoneAt: [String]
+    
+    func increaseCounter() -> Tracker {
+        let currentCounter = counter ?? 0
+        return Tracker(
+            id: id,
+            counter: currentCounter + 1,
+            category: category,
+            emoji: emoji,
+            color: color,
+            description: description,
+            schedule: schedule,
+            trackerIsDoneAt: trackerIsDoneAt
+        )
+    }
+    
+    func decreaseCounter() -> Tracker {
+        let currentCounter = counter!
+        return Tracker(
+            id: id,
+            counter: currentCounter - 1,
+            category: category,
+            emoji: emoji,
+            color: color,
+            description: description,
+            schedule: schedule,
+            trackerIsDoneAt: trackerIsDoneAt
+        )
+    }
+    
+    func addCompletedDate(_ dateOfComplete: Date) -> Tracker? {
+        guard dateOfComplete <= Date() else { return nil }
+        return Tracker(
+            id: id,
+            counter: counter,
+            category: category,
+            emoji: emoji,
+            color: color,
+            description: description,
+            schedule: schedule,
+            trackerIsDoneAt: trackerIsDoneAt + [dateOfComplete.onlyDate]
+        )
+    }
+    
+    func removeCompletedDate(_ dateOfCompletion: String) -> Tracker {
+        var newDates: [String] = []
+        trackerIsDoneAt.forEach { date in
+            if date != dateOfCompletion {
+                newDates.append(date)
+            }
+        }
+        return Tracker(
+            id: id,
+            counter: counter,
+            category: category,
+            emoji: emoji,
+            color: color,
+            description: description,
+            schedule: schedule,
+            trackerIsDoneAt: newDates
+        )
+    }
 }
 
 enum Schedule: Int, CaseIterable {
@@ -62,5 +125,30 @@ enum Schedule: Int, CaseIterable {
         case .sunday:
             return "Вс"
         }
+    }
+    
+    func representCountOfWeekDays() -> Int {
+        switch self {
+        case .sunday:
+            return 1
+        case .monday:
+            return 2
+        case .tuesday:
+            return 3
+        case .wednesday:
+            return 4
+        case .thursday:
+            return 5
+        case .friday:
+            return 6
+        case .saturday:
+            return 7
+        }
+    }
+}
+
+extension Schedule: Comparable {
+    static func < (lhs: Schedule, rhs: Schedule) -> Bool {
+        lhs.rawValue < rhs.rawValue
     }
 }

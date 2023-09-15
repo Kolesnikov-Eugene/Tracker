@@ -29,10 +29,10 @@ final class SupplementaryView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView(with trackerModel: Tracker) {
+    func configureView(with trackerCategory: TrackerCategory) {
         titleLabel.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
         titleLabel.font = UIFont.boldSystemFont(ofSize: 19)
-        titleLabel.text = trackerModel.category
+        titleLabel.text = trackerCategory.category
     }
     
     func configureHeaderForHabitView(with titleType: TrackerCellType) {

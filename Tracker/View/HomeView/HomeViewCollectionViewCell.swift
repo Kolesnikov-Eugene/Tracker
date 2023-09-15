@@ -8,7 +8,7 @@
 import UIKit
 
 final class HomeViewCollectionViewCell: UICollectionViewCell {
-    //TODO crete 2 stackViews and recollect items in these views
+    
     private let trackerInfoView: UIView = {
         let view = UIView()
         
@@ -25,7 +25,6 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     private let emojiView: UILabel = {
         let view = UILabel()
         
-//        view.backgroundColor = UIColor.black
         view.frame.size.width = 24
         view.frame.size.height = 24
         view.layer.masksToBounds = false
@@ -44,10 +43,8 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         label.frame = CGRect(x: 0, y: 0, width: 143, height: 34)
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-//        var paragraphStyle = NSMutableParagraphStyle()
-//        paragraphStyle.lineHeightMultiple = 1.26
-//        label.attributedText = NSMutableAttributedString(string: "Поливать растения когда захочется", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
         label.numberOfLines = 0
+        
         return label
     }()
     private let bottomCellView: UIView = {
@@ -66,15 +63,15 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     private let scheduleLabel: UILabel = {
         let label = UILabel()
         
-//        label.frame.size.width
+        //        label.frame.size.width
         label.frame.size.height = 34
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
         
         return label
     }()
-    private let doneButton: UIButton = {
-        let button = UIButton()
+    private lazy var doneButton: UIButton = {
+        let button = UIButton(type: .custom)
         
         button.frame.size.width = 34
         button.frame.size.height = 34
@@ -83,14 +80,8 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.clear.cgColor
         button.layer.cornerRadius = button.frame.width / 2
-//        let image = UIImage(named: "done_tracker_button")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-////        button.setBackgroundImage(image, for: .normal)
-//        button.setImage(image, for: .normal)
-        button.backgroundColor = .white
-        
-        //TODO change button style to manage the button background color
-//        let button = UIButton(type: .system) //
-//        button.setImage(UIImage(named: "done_tracker_button")?.withRenderingMode(.alwaysTemplate), for: .normal)
+//        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(addToDoneButtonTapped), for: .touchUpInside)
         
         return button
     }()
@@ -98,15 +89,32 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         let stackView = UIStackView()
         stackView.axis = NSLayoutConstraint.Axis.vertical
         stackView.spacing = 8
+        stackView.backgroundColor = .white
         
         return stackView
     }()
+    private let buttonView: UIView = {
+        let view = UIView()
+        
+        view.frame.size.width = 34
+        view.frame.size.height = 34
+        view.layer.masksToBounds = false
+        view.clipsToBounds = true
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.clear.cgColor
+        view.layer.cornerRadius = view.frame.width / 2
+        view.backgroundColor = .clear
+        
+        return view
+    }()
+    weak var delegate: HomeViewCellDelegate?
+    var buttonChecked = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         addSubviews()
         applyConstraints()
+        contentView.backgroundColor = .white
         
     }
     
@@ -114,34 +122,20 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(with trackerModel: Tracker) {
-        self.titleLabel.text = trackerModel.description
-        trackerInfoView.backgroundColor = trackerModel.color
-//        self.contentView.layer.cornerRadius = 16
-//        self.contentView.layer.borderWidth = 1.0
-//        self.contentView.layer.borderColor = UIColor.clear.cgColor
-//        self.contentView.layer.masksToBounds = true
-        
-        emojiView.text = trackerModel.emoji
-        scheduleLabel.text = "1 day"
-        let image = UIImage(named: "done_tracker_button")?.withTintColor(trackerModel.color, renderingMode: .alwaysOriginal)
-//        button.setBackgroundImage(image, for: .normal)
-        doneButton.setImage(image, for: .normal)
-//        doneButton.tintColor = trackerModel.color
+    @objc private func addToDoneButtonTapped() {
+//        buttonChecked = !buttonChecked
+        delegate?.didTapDoneStatus(self)
     }
     
     private func addSubviews() {
         trackerInfoView.addSubview(emojiView)
         trackerInfoView.addSubview(titleLabel)
         bottomCellView.addSubview(scheduleLabel)
-        bottomCellView.addSubview(doneButton)
+        bottomCellView.addSubview(buttonView) //change
+        buttonView.addSubview(doneButton) //change
         mainStackView.addArrangedSubview(trackerInfoView)
         mainStackView.addArrangedSubview(bottomCellView)
         contentView.addSubview(mainStackView)
-//        contentView.addSubview(titleLabel)
-//        contentView.addSubview(emojiView)
-//        contentView.addSubview(scheduleLabel)
-//        contentView.addSubview(doneButton)
     }
     
     private func applyConstraints() {
@@ -152,46 +146,70 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         scheduleLabel.translatesAutoresizingMaskIntoConstraints = false
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             emojiView.leadingAnchor.constraint(equalTo: trackerInfoView.leadingAnchor, constant: 12),
             emojiView.topAnchor.constraint(equalTo: trackerInfoView.topAnchor, constant: 12),
             emojiView.heightAnchor.constraint(equalToConstant: 24),
             emojiView.widthAnchor.constraint(equalToConstant: 24),
+            
             titleLabel.topAnchor.constraint(equalTo: emojiView.bottomAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: emojiView.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: trackerInfoView.trailingAnchor, constant: -12),
             titleLabel.heightAnchor.constraint(equalToConstant: 34),
             titleLabel.centerYAnchor.constraint(equalTo: trackerInfoView.centerYAnchor, constant: 16),
+            
             mainStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             mainStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
             trackerInfoView.widthAnchor.constraint(equalToConstant: 167),
             trackerInfoView.heightAnchor.constraint(equalToConstant: 90),
+            
             scheduleLabel.topAnchor.constraint(equalTo: bottomCellView.topAnchor),
             scheduleLabel.leadingAnchor.constraint(equalTo: bottomCellView.leadingAnchor, constant: 12),
             scheduleLabel.bottomAnchor.constraint(equalTo: bottomCellView.bottomAnchor, constant: -16),
+            
+            buttonView.widthAnchor.constraint(equalToConstant: 34),
+            buttonView.heightAnchor.constraint(equalToConstant: 34),
+            buttonView.trailingAnchor.constraint(equalTo: bottomCellView.trailingAnchor, constant: -12),
+            buttonView.topAnchor.constraint(equalTo: bottomCellView.topAnchor),
+            
             doneButton.widthAnchor.constraint(equalToConstant: 34),
             doneButton.heightAnchor.constraint(equalToConstant: 34),
             doneButton.trailingAnchor.constraint(equalTo: bottomCellView.trailingAnchor, constant: -12),
             doneButton.topAnchor.constraint(equalTo: bottomCellView.topAnchor)
         ])
+    }
+    
+    func configureCell(with trackerModel: Tracker) {
+        self.titleLabel.text = trackerModel.description
+        trackerInfoView.backgroundColor = trackerModel.color
+        emojiView.text = trackerModel.emoji
         
-//        NSLayoutConstraint.activate([
-//            emojiView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-//            emojiView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-//            emojiView.heightAnchor.constraint(equalToConstant: 24),
-//            emojiView.widthAnchor.constraint(equalToConstant: 24),
-//            titleLabel.topAnchor.constraint(equalTo: emojiView.bottomAnchor, constant: 8),
-//            titleLabel.leadingAnchor.constraint(equalTo: emojiView.leadingAnchor),
-//            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-//            titleLabel.heightAnchor.constraint(equalToConstant: 34),
-//            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 16),
-//            doneButton.topAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-//            doneButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-//            doneButton.heightAnchor.constraint(equalToConstant: 34),
-//            doneButton.widthAnchor.constraint(equalToConstant: 34)
-//        ])
+        let dayText = trackerModel.schedule.count > 1 ? "days" : "day"
+        scheduleLabel.text = String("\(trackerModel.schedule.count) \(dayText)")
+        
+        buttonView.backgroundColor = .white
+        
+        let image = !buttonChecked ? UIImage(named: "tracker_unchecked")?.withRenderingMode(.alwaysTemplate) :
+        UIImage(named: "checkmark")?.withTintColor(.white, renderingMode: .alwaysTemplate)
+        doneButton.setImage(image, for: .normal)
+        
+        if buttonChecked {
+            buttonView.backgroundColor = trackerModel.color.withAlphaComponent(0.3)
+            doneButton.tintColor = .white
+        } else {
+            doneButton.tintColor = trackerModel.color
+        }
+    }
+    
+    func reconfigureCell(with color: UIColor) {
+        let image = UIImage(named: "tracker_checked")?.withRenderingMode(.alwaysTemplate)
+        doneButton.imageView?.tintColor = color
+        doneButton.setImage(image, for: .highlighted)
     }
 }
+

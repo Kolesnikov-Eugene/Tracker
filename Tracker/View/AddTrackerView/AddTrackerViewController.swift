@@ -42,7 +42,10 @@ final class AddTrackerViewController: UIViewController {
         return stackView
     }()
     
-    init() {
+    weak var delegate: NewHabitDelegate?
+    
+    init(delegate: NewHabitDelegate) {
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -83,7 +86,6 @@ final class AddTrackerViewController: UIViewController {
     @objc private func addHabit() {
         let newHabitViewController = NewHabitViewController()
         navigationController?.pushViewController(newHabitViewController, animated: true)
-//        present(newHabitViewController, animated: false)
     }
     
     @objc private func addIrregularHabit() {

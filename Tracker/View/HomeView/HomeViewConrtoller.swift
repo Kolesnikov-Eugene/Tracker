@@ -7,70 +7,50 @@
 
 import UIKit
 
+protocol NewHabitDelegate: AnyObject {
+    func didCreateNewTracker(_ tracker: Tracker)
+}
+
+protocol HomeViewCellDelegate: AnyObject {
+    func didTapDoneStatus(_ cell: HomeViewCollectionViewCell)
+}
+
 final class HomeViewController: UIViewController {
     
     private let reuseIdentifier = "TrackerViewCell"
     private var addBarButtonItem: UIBarButtonItem?
-    private var currentDate: Date?
+    private var currentDate = Date()
     private var categories: [TrackerCategory] = []
-    private var trackers: [Tracker] = [
-        Tracker(
-            category: "Домашний уют",
-            emoji: emojiArray[0],
-            color: colorList[0],
-            description: "Do something when you want",
-            schedule: [.monday]
-        ),
-        Tracker(
-            category: "Домашний уют",
-            emoji: emojiArray[1],
-            color: colorList[0],
-            description: "Do something when you want",
-            schedule: [.monday]
-        ),
-        Tracker(
-            category: "Домашний уют",
-            emoji: emojiArray[2],
-            color: colorList[0],
-            description: "Do something when you want",
-            schedule: [.monday]
-        ),
-        Tracker(
-            category: "Домашний уют",
-            emoji: emojiArray[3],
-            color: colorList[0],
-            description: "Do something when you want",
-            schedule: [.monday]
-        )
-    ]
-//    private var visibleCategories: [TrackerCategory]()
-//    private var completedTrackers: [TrackerRecord]()
+    private var trackers: [Tracker] = []
+    private var visibleCategories: [TrackerCategory] = []
+    private var completedTrackers: TrackerRecord? = nil
     private let collectionView: UICollectionView = {
+        
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        let screenSize = UIScreen.main.bounds.size
-//        let screenWidth = screenSize.width
-//        let screenHeight = screenSize.height
-//        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
-//        layout.itemSize = CGSize(width: screenWidth/3, height: screenWidth/3)
-//        layout.minimumInteritemSpacing = 0
-//        layout.minimumLineSpacing = 0
-//        collectionView.collectionViewLayout = layout
+        collectionView.alwaysBounceVertical = true
 
         return collectionView
     }()
-    private let datePicker: UIDatePicker = {
+    private lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
+        
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
+        picker.calendar.firstWeekday = 2
+        picker.locale = Locale(identifier: "ru_RU")
+        picker.addTarget(self, action: #selector(datePickerDidChangeDate), for: .valueChanged)
+        
         return picker
     }()
     private lazy var searchController: UISearchController = {
         let sc = UISearchController(searchResultsController: nil)
+        
         sc.searchResultsUpdater = self
         sc.delegate = self
         sc.obscuresBackgroundDuringPresentation = true
         sc.searchBar.placeholder = "поиск"
+        
         return sc
     }()
     private let emptyStateView: UIImageView = {
@@ -114,6 +94,26 @@ final class HomeViewController: UIViewController {
         
         addSubviews()
         applyConstraints()
+        
+        
+//        completedTrackers = TrackerRecord(date: currentDate,
+//                                          idOfCompletedTrackers: <#T##[UUID]#>)
+        
+//        let curdate = DayOfWeekExtractor(date: Date())
+//        let day = curdate.numberOfWeekDay
+//        let myday = Schedule(rawValue: 3)
+//        print("------------------------------------------------------")
+//        print("------------------------------------------------------")
+//        print(day)
+//        print(curdate.dayOfWeekRussian)
+//        print(curdate.dayOfWeek)
+//        print(myday?.representCountOfWeekDays())
+//        print(myday?.representFullDayName())
+//        print(myday?.representShortDayName())
+//        print(day == myday?.representCountOfWeekDays())
+//        print("------------------------------------------------------")
+//        print("------------------------------------------------------")
+        
     }
         
     
@@ -133,6 +133,7 @@ final class HomeViewController: UIViewController {
     
     private func applyConstraints() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -141,6 +142,8 @@ final class HomeViewController: UIViewController {
 //            collectionView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
 //            collectionView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+            
+            datePicker.widthAnchor.constraint(equalToConstant: 100),
             
             emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -167,11 +170,44 @@ final class HomeViewController: UIViewController {
             navigationItem.rightBarButtonItem = datePickerItem
             
             navigationItem.searchController = searchController
+            navigationItem.hidesSearchBarWhenScrolling = false
         }
     }
     
+    private func filterTrackers() -> [TrackerCategory] {
+        //        let filteredCategories = [TrackerCategory]()
+//        let date = DayOfWeekExtractor(date: currentDate)
+        //        let filterdTrackers = [Tracker]()
+        let date = DayOfWeekExtractor(date: currentDate)
+        let filteredCategories = categories.compactMap { category -> TrackerCategory? in
+            let filteredTrackers = category.trackerArray.filter { tracker in
+                let condition = tracker.schedule.map { $0.representCountOfWeekDays() }.contains(date.numberOfWeekDay)
+                return condition
+            }
+            if !filteredTrackers.isEmpty {
+                return TrackerCategory(category: category.category,
+                                       trackerArray: filteredTrackers)
+            } else {
+                return nil
+            }
+        }
+        emptyStateView.isHidden = !filteredCategories.isEmpty
+        emptyStateLabel.isHidden = !filteredCategories.isEmpty
+        
+        return filteredCategories
+    }
+    
+    @objc private func datePickerDidChangeDate(_ sender: UIDatePicker) {
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "dd MMMM yyyy"
+//        let selectedDate = dateFormatter.string(from: sender.date)
+        currentDate = sender.date
+        
+        collectionView.reloadData()
+    }
+    
     @objc func addTracker() {
-        let addTracker = AddTrackerViewController()
+        let addTracker = AddTrackerViewController(delegate: self)
         let addTrackerNavigationCOntroller = UINavigationController(rootViewController: addTracker)
         
         present(addTrackerNavigationCOntroller, animated: true)
@@ -185,25 +221,40 @@ extension HomeViewController: UISearchResultsUpdating, UISearchControllerDelegat
 
 extension HomeViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-//        for tracker in trackers {
-//            categories.append(TrackerCategory(category: tracker.category, trackerArray: [tracker]))
-//        }
+        visibleCategories = filterTrackers()
+        
+        return visibleCategories.count
+        
 //        return categories.count
-        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        //TODO
-//        return categories[0].trackerArray.count
-        return 4
+        visibleCategories = filterTrackers()
+        return visibleCategories[section].trackerArray.count
+//        return categories[section].trackerArray.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? HomeViewCollectionViewCell else {
             return UICollectionViewCell()
         }
-        
+//        let currentD = currentDate
         cell.prepareForReuse()
-        cell.configureCell(with: trackers[indexPath.row])
+        cell.delegate = self
+        
+        let currentTracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
+        cell.buttonChecked = currentTracker.trackerIsDoneAt.contains(currentDate.onlyDate)
+        
+        print("------------------------------------------")
+        print("------------------------------------------")
+        print(currentTracker.trackerIsDoneAt)
+        print(currentDate.onlyDate)
+        print(cell.buttonChecked)
+        print(currentTracker.trackerIsDoneAt.contains(currentDate.onlyDate))
+//        print(currentDate.onlyDate == currentTracker.trackerIsDoneAt)
+        print("------------------------------------------")
+        print("------------------------------------------")
+        
+        cell.configureCell(with: currentTracker)
         
         return cell
     }
@@ -215,7 +266,7 @@ extension HomeViewController: UICollectionViewDataSource {
             for: indexPath
         ) as! SupplementaryView
         
-        headerView.configureView(with: trackers[indexPath.section]) // try if this works
+        headerView.configureView(with: categories[indexPath.section]) // try if this works
         
         return headerView
     }
@@ -249,7 +300,100 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension HomeViewController: UICollectionViewDelegate {
-    //TODO
+extension HomeViewController: NewHabitDelegate {
+    func didCreateNewTracker(_ tracker: Tracker) {
+        var oldTrackers = [Tracker]()
+        categories.forEach { category in
+            if category.category == tracker.category {
+                oldTrackers = category.trackerArray
+                categories.removeAll { $0.category == tracker.category }
+//                oldTrackers = category.trackerArray
+            }
+        }
+        oldTrackers.append(tracker)
+        let newCategory = TrackerCategory(category: tracker.category, trackerArray: oldTrackers)
+        categories.append(newCategory)
+        collectionView.reloadData()
+    }
 }
 
+extension HomeViewController: HomeViewCellDelegate {
+    func didTapDoneStatus(_ cell: HomeViewCollectionViewCell) {
+        guard let indexPath = collectionView.indexPath(for: cell) else {
+            assertionFailure("Something went wrong")
+            return
+        }
+        var oldTrackers = [Tracker]()
+        var newTracker: Tracker? = nil
+        var trackerIndex: Int = 0
+        var categoryInd: Int = 0
+        
+        let tracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
+        
+        if tracker.trackerIsDoneAt.isEmpty || !tracker.trackerIsDoneAt.contains(currentDate.onlyDate) {
+            if let new = tracker.addCompletedDate(currentDate) {
+                newTracker = new
+            } else {
+                newTracker = tracker
+                
+                print("ERROR FUTURE DATE-------------------------")
+                print("ERROR FUTURE DATE-------------------------")
+                print("ERROR FUTURE DATE-------------------------")
+                print("ERROR FUTURE DATE-------------------------")
+                print("ERROR FUTURE DATE-------------------------")
+                print("ERROR FUTURE DATE-------------------------")
+            }
+        } else if tracker.trackerIsDoneAt.contains(currentDate.onlyDate) {
+            print("Aaaaaaaaaaaaa_---------------------------------------")
+            newTracker = tracker.removeCompletedDate(currentDate.onlyDate)
+        }
+        
+        for (categoryIndex, category) in categories.enumerated() {
+            if let index = category.trackerArray.firstIndex(where: { $0.id == tracker.id }) {
+                oldTrackers = category.trackerArray
+                trackerIndex = index
+                categoryInd = categoryIndex
+                categories.removeAll { $0.category == tracker.category }
+            }
+        }
+        oldTrackers.remove(at: trackerIndex)
+        oldTrackers.insert(newTracker!, at: trackerIndex)
+        
+        let newCategory = TrackerCategory(category: tracker.category, trackerArray: oldTrackers)
+        categories.insert(newCategory, at: categoryInd)
+        
+        collectionView.reloadData()
+//        cell.configureCell(with: newTracker)
+    }
+}
+
+//private var trackers: [Tracker] = [
+//    Tracker(
+//        category: "Домашний уют",
+//        emoji: emojiArray[0],
+//        color: colorList[0],
+//        description: "Do something when you want",
+//        schedule: [.monday]
+//    ),
+//    Tracker(
+//        category: "Домашний уют",
+//        emoji: emojiArray[1],
+//        color: colorList[0],
+//        description: "Do something when you want",
+//        schedule: [.monday]
+//    ),
+//    Tracker(
+//        category: "Домашний уют",
+//        emoji: emojiArray[2],
+//        color: colorList[0],
+//        description: "Do something when you want",
+//        schedule: [.monday]
+//    ),
+//    Tracker(
+//        category: "Домашний уют",
+//        emoji: emojiArray[3],
+//        color: colorList[0],
+//        description: "Do something when you want",
+//        schedule: [.monday]
+//    )
+//]
