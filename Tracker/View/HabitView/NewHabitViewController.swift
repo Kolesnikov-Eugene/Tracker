@@ -13,7 +13,8 @@ protocol AddScheduleDelegate: AnyObject {
 
 final class NewHabitViewController: UIViewController {
     
-    private let categories = ["Срочно", "Скучно", "Уборка", "Прогулка", "Важное", "Учеба"]
+    private let typeTracker: TypeTracker
+    private let categories = ["Срочно", "Скучно", "Уборка", "Прогулка", "Важное", "Учеба"] //FOR Testing delete later
     private var tracker: Tracker? = nil
     private var selectedEmoji: String? = nil
     private var selectedColor: UIColor? = nil
@@ -77,10 +78,6 @@ final class NewHabitViewController: UIViewController {
         button.tintColor = .black
         button.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
         button.addTarget(self, action: #selector(categoryButtonTapped), for: .touchUpInside)
-        button.frame.size.height = 75
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = 16
-        button.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
         return button
     }()
@@ -89,10 +86,6 @@ final class NewHabitViewController: UIViewController {
 
         button.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
         button.addTarget(self, action: #selector(scheduleButtonTapped), for: .touchUpInside)
-        button.frame.size.height = 75
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = 16
-        button.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         
         return button
     }()
@@ -133,6 +126,8 @@ final class NewHabitViewController: UIViewController {
 
         stackView.axis = .vertical
         stackView.spacing = 0
+        stackView.layer.masksToBounds = true
+        stackView.layer.cornerRadius = 16
 
         return stackView
     }()
@@ -198,7 +193,8 @@ final class NewHabitViewController: UIViewController {
         return button
     }()
     
-    init() {
+    init(typeTracker: TypeTracker) {
+        self.typeTracker = typeTracker
         super.init(nibName: nil, bundle: nil)
         setupView()
     }
@@ -245,9 +241,18 @@ final class NewHabitViewController: UIViewController {
         contentView.addSubview(trackerNameTextField)
         contentView.addSubview(exceedingCharacterLimitErrorField)
         
-        categoryStackView.addArrangedSubview(categoryButton)
-        categoryStackView.addArrangedSubview(stringSeparator)
-        categoryStackView.addArrangedSubview(scheduleButton)
+        switch typeTracker {
+        case .habit:
+            categoryStackView.addArrangedSubview(categoryButton)
+            categoryStackView.addArrangedSubview(stringSeparator)
+            categoryStackView.addArrangedSubview(scheduleButton)
+        case .irregularIvent:
+            categoryStackView.addArrangedSubview(categoryButton)
+        }
+        
+//        categoryStackView.addArrangedSubview(categoryButton)
+//        categoryStackView.addArrangedSubview(stringSeparator)
+//        categoryStackView.addArrangedSubview(scheduleButton)
         
         categoryButton.addSubview(arrayPictureViewForCategoryButton)
         scheduleButton.addSubview(arrayPictureViewForScheduleButton)
@@ -291,7 +296,7 @@ final class NewHabitViewController: UIViewController {
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: 0),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 0),
             contentView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
-            contentView.heightAnchor.constraint(equalToConstant: 720),
+            contentView.heightAnchor.constraint(equalToConstant: typeTracker == .habit ? 740 : 670),
             
             trackerNameTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             trackerNameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -305,26 +310,26 @@ final class NewHabitViewController: UIViewController {
             
             categoryStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             categoryStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            categoryStackView.heightAnchor.constraint(equalToConstant: 150),
+            categoryStackView.heightAnchor.constraint(equalToConstant: typeTracker == .habit ? 150 : 75),
             
-            arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
-            arrayPictureViewForCategoryButton.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
+//            arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
+//            arrayPictureViewForCategoryButton.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
             
-            arrayPictureViewForScheduleButton.trailingAnchor.constraint(equalTo: scheduleButton.trailingAnchor, constant: -16),
-            arrayPictureViewForScheduleButton.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor),
+//            arrayPictureViewForScheduleButton.trailingAnchor.constraint(equalTo: scheduleButton.trailingAnchor, constant: -16),
+//            arrayPictureViewForScheduleButton.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor),
             
-            scheduleButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
-            scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 26),
-            scheduleButtonLabel.heightAnchor.constraint(equalToConstant: 22),
+//            scheduleButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+//            scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 26),
+//            scheduleButtonLabel.heightAnchor.constraint(equalToConstant: 22),
             
-            scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
-            scheduleButtonLabelForSelectedDays.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 39),
-            scheduleButtonLabelForSelectedDays.heightAnchor.constraint(equalToConstant: 22),
+//            scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+//            scheduleButtonLabelForSelectedDays.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 39),
+//            scheduleButtonLabelForSelectedDays.heightAnchor.constraint(equalToConstant: 22),
             
-            stringSeparator.heightAnchor.constraint(equalToConstant: 0.5),
-            stringSeparator.leftAnchor.constraint(equalTo: categoryButton.leftAnchor, constant: 16),
-            stringSeparator.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
-            stringSeparator.centerYAnchor.constraint(equalTo: categoryStackView.centerYAnchor),
+//            stringSeparator.heightAnchor.constraint(equalToConstant: 0.5),
+//            stringSeparator.leftAnchor.constraint(equalTo: categoryButton.leftAnchor, constant: 16),
+//            stringSeparator.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
+//            stringSeparator.centerYAnchor.constraint(equalTo: categoryStackView.centerYAnchor),
             
             collectionView.topAnchor.constraint(equalTo: categoryStackView.bottomAnchor, constant: 16),
             collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -336,6 +341,35 @@ final class NewHabitViewController: UIViewController {
             bottomButtonsStackView.leadingAnchor.constraint(equalTo: categoryStackView.leadingAnchor),
             bottomButtonsStackView.heightAnchor.constraint(equalToConstant: 60)
         ])
+        
+        switch typeTracker {
+        case .habit:
+            NSLayoutConstraint.activate([
+                scheduleButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+                scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 26),
+                scheduleButtonLabel.heightAnchor.constraint(equalToConstant: 22),
+                
+                scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+                scheduleButtonLabelForSelectedDays.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 39),
+                scheduleButtonLabelForSelectedDays.heightAnchor.constraint(equalToConstant: 22),
+                
+                stringSeparator.heightAnchor.constraint(equalToConstant: 0.5),
+                stringSeparator.leftAnchor.constraint(equalTo: categoryButton.leftAnchor, constant: 16),
+                stringSeparator.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
+                stringSeparator.centerYAnchor.constraint(equalTo: categoryStackView.centerYAnchor),
+                
+                arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
+                arrayPictureViewForCategoryButton.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
+                
+                arrayPictureViewForScheduleButton.trailingAnchor.constraint(equalTo: scheduleButton.trailingAnchor, constant: -16),
+                arrayPictureViewForScheduleButton.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor),
+            ])
+        case .irregularIvent:
+            NSLayoutConstraint.activate([
+                arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
+                arrayPictureViewForCategoryButton.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
+            ])
+        }
     }
     
     private func switchCreateButton() {
@@ -346,17 +380,21 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func checkIfAllFieldsFilledOut() -> Bool {
+        let scheduleFull = typeTracker == .habit ? schedule : [.monday] // Заглушка
+        
         guard let selectedEmoji = selectedEmoji,
               let selectedColor = selectedColor,
               let text = trackerNameTextField.text,
               let category = categories.randomElement(),
               text.count > 0 ,
-              !schedule.isEmpty
+              !scheduleFull.isEmpty
         else {
             return false
         }
         tracker = Tracker(
             id: UUID(),
+            date: Date(),
+            type: typeTracker,
             counter: 0,
             category: category,
             emoji: selectedEmoji,
@@ -486,7 +524,12 @@ extension NewHabitViewController: UICollectionViewDataSource {
 extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 52, height: 52)
+        let geometricParams = GeometricParams(cellCount: 6, leftInset: 16, rightInset: 16, cellSpacing: 5)
+        
+        let availableWidth = collectionView.frame.width - geometricParams.paddingWidth
+        let cellWidth =  availableWidth / CGFloat(geometricParams.cellCount)
+        
+        return CGSize(width: cellWidth, height: cellWidth)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

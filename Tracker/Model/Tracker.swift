@@ -9,7 +9,8 @@ import UIKit
 
 struct Tracker {
     let id: UUID?
-    let date = Date()
+    let date: Date?
+    let type: TypeTracker
     let counter: UInt?
     let category: String
     let emoji: String
@@ -18,39 +19,28 @@ struct Tracker {
     let schedule: [Schedule]
     let trackerIsDoneAt: [String]
     
-    func increaseCounter() -> Tracker {
-        let currentCounter = counter ?? 0
-        return Tracker(
-            id: id,
-            counter: currentCounter + 1,
-            category: category,
-            emoji: emoji,
-            color: color,
-            description: description,
-            schedule: schedule,
-            trackerIsDoneAt: trackerIsDoneAt
-        )
-    }
-    
-    func decreaseCounter() -> Tracker {
-        let currentCounter = counter!
-        return Tracker(
-            id: id,
-            counter: currentCounter - 1,
-            category: category,
-            emoji: emoji,
-            color: color,
-            description: description,
-            schedule: schedule,
-            trackerIsDoneAt: trackerIsDoneAt
-        )
+    var counterLabel: String {
+        switch self.counter! {
+        case 0, 5...7:
+            return "дней"
+        case 1:
+            return "день"
+        case 2...4:
+            return "дня"
+        default:
+            return "дня"
+        }
     }
     
     func addCompletedDate(_ dateOfComplete: Date) -> Tracker? {
-        guard dateOfComplete <= Date() else { return nil }
+        // if the dateOfCompletion is graeter than current date, you can't mark tracker as done.
+        guard let currentCounter = self.counter,
+              dateOfComplete <= Date() else { return nil }
         return Tracker(
             id: id,
-            counter: counter,
+            date: date,
+            type: type,
+            counter: currentCounter + 1,
             category: category,
             emoji: emoji,
             color: color,
@@ -61,6 +51,7 @@ struct Tracker {
     }
     
     func removeCompletedDate(_ dateOfCompletion: String) -> Tracker {
+        let currentCounter = self.counter!
         var newDates: [String] = []
         trackerIsDoneAt.forEach { date in
             if date != dateOfCompletion {
@@ -69,7 +60,9 @@ struct Tracker {
         }
         return Tracker(
             id: id,
-            counter: counter,
+            date: date,
+            type: type,
+            counter: currentCounter - 1,
             category: category,
             emoji: emoji,
             color: color,

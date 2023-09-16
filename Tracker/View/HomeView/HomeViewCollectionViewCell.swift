@@ -63,7 +63,6 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     private let scheduleLabel: UILabel = {
         let label = UILabel()
         
-        //        label.frame.size.width
         label.frame.size.height = 34
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
@@ -80,7 +79,6 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.clear.cgColor
         button.layer.cornerRadius = button.frame.width / 2
-//        button.backgroundColor = .clear
         button.addTarget(self, action: #selector(addToDoneButtonTapped), for: .touchUpInside)
         
         return button
@@ -123,7 +121,6 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func addToDoneButtonTapped() {
-//        buttonChecked = !buttonChecked
         delegate?.didTapDoneStatus(self)
     }
     
@@ -188,9 +185,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         self.titleLabel.text = trackerModel.description
         trackerInfoView.backgroundColor = trackerModel.color
         emojiView.text = trackerModel.emoji
-        
-        let dayText = trackerModel.schedule.count > 1 ? "days" : "day"
-        scheduleLabel.text = String("\(trackerModel.schedule.count) \(dayText)")
+        scheduleLabel.text = String("\(trackerModel.counter!) \(trackerModel.counterLabel)")
         
         buttonView.backgroundColor = .white
         

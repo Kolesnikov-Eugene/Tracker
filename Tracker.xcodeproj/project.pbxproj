@@ -29,7 +29,9 @@
 		44BC89972A9E7F0800C0E23D /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC89962A9E7F0800C0E23D /* TrackerCategory.swift */; };
 		44BC89992A9E7F2B00C0E23D /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC89982A9E7F2B00C0E23D /* TrackerRecord.swift */; };
 		44BC899B2A9EA52F00C0E23D /* AddTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC899A2A9EA52F00C0E23D /* AddTrackerViewController.swift */; };
+		44D3D2D22AB5C0CE006F33FE /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D3D2D12AB5C0CE006F33FE /* GeometricParams.swift */; };
 		44D6F1CB2AAB963200567305 /* AddScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D6F1CA2AAB963200567305 /* AddScheduleViewController.swift */; };
+		44E86F3A2AB5B07100612763 /* TypeTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E86F392AB5B07100612763 /* TypeTracker.swift */; };
 		44FD01512AB388A0002EFC8F /* DayOfWeekExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FD01502AB388A0002EFC8F /* DayOfWeekExtractor.swift */; };
 		44FD01532AB4F6BC002EFC8F /* ExtensionDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FD01522AB4F6BC002EFC8F /* ExtensionDate.swift */; };
 /* End PBXBuildFile section */
@@ -59,7 +61,9 @@
 		44BC89962A9E7F0800C0E23D /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		44BC89982A9E7F2B00C0E23D /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		44BC899A2A9EA52F00C0E23D /* AddTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTrackerViewController.swift; sourceTree = "<group>"; };
+		44D3D2D12AB5C0CE006F33FE /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		44D6F1CA2AAB963200567305 /* AddScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddScheduleViewController.swift; sourceTree = "<group>"; };
+		44E86F392AB5B07100612763 /* TypeTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeTracker.swift; sourceTree = "<group>"; };
 		44FD01502AB388A0002EFC8F /* DayOfWeekExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOfWeekExtractor.swift; sourceTree = "<group>"; };
 		44FD01522AB4F6BC002EFC8F /* ExtensionDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -152,6 +156,7 @@
 				444B90072AAA13840013D8FA /* SeparatorView.swift */,
 				44FD01502AB388A0002EFC8F /* DayOfWeekExtractor.swift */,
 				44FD01522AB4F6BC002EFC8F /* ExtensionDate.swift */,
+				44D3D2D12AB5C0CE006F33FE /* GeometricParams.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -175,6 +180,7 @@
 				44BC89962A9E7F0800C0E23D /* TrackerCategory.swift */,
 				44BC89982A9E7F2B00C0E23D /* TrackerRecord.swift */,
 				449C744E2AAB39820088BB4A /* EmojiAndColorCellModel.swift */,
+				44E86F392AB5B07100612763 /* TypeTracker.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -276,12 +282,14 @@
 				444B90082AAA13840013D8FA /* SeparatorView.swift in Sources */,
 				44BC89902A9E76A700C0E23D /* HomeViewConrtoller.swift in Sources */,
 				44D6F1CB2AAB963200567305 /* AddScheduleViewController.swift in Sources */,
+				44E86F3A2AB5B07100612763 /* TypeTracker.swift in Sources */,
 				441DF7EE2A9FD629005AC874 /* StatisticViewController.swift in Sources */,
 				44BC899B2A9EA52F00C0E23D /* AddTrackerViewController.swift in Sources */,
 				44BC89932A9E77A400C0E23D /* TabBarController.swift in Sources */,
 				44FD01532AB4F6BC002EFC8F /* ExtensionDate.swift in Sources */,
 				441DF7EC2A9FD2FA005AC874 /* SupplementaryView.swift in Sources */,
 				44BC89992A9E7F2B00C0E23D /* TrackerRecord.swift in Sources */,
+				44D3D2D22AB5C0CE006F33FE /* GeometricParams.swift in Sources */,
 				449AA5232A97E876008D8D8E /* AppDelegate.swift in Sources */,
 				449C744F2AAB39820088BB4A /* EmojiAndColorCellModel.swift in Sources */,
 				449AA5252A97E876008D8D8E /* SceneDelegate.swift in Sources */,

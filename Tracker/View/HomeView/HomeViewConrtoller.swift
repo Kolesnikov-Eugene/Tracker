@@ -17,6 +17,10 @@ protocol HomeViewCellDelegate: AnyObject {
 
 final class HomeViewController: UIViewController {
     
+    var searchTerms = ""
+    var searchWasCancelled = false
+    var previousSearchTerm = ""
+    
     private let reuseIdentifier = "TrackerViewCell"
     private var addBarButtonItem: UIBarButtonItem?
     private var currentDate = Date()
@@ -44,14 +48,16 @@ final class HomeViewController: UIViewController {
         return picker
     }()
     private lazy var searchController: UISearchController = {
-        let sc = UISearchController(searchResultsController: nil)
+        let searchController = UISearchController(searchResultsController: nil)
         
-        sc.searchResultsUpdater = self
-        sc.delegate = self
-        sc.obscuresBackgroundDuringPresentation = true
-        sc.searchBar.placeholder = "поиск"
+        searchController.searchResultsUpdater = self
+        searchController.delegate = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "поиск"
+        searchController.searchBar.setValue("Отменить", forKey: "cancelButtonText")
+        searchController.searchBar.delegate = self
         
-        return sc
+        return searchController
     }()
     private let emptyStateView: UIImageView = {
         let view = UIImageView()
@@ -94,26 +100,6 @@ final class HomeViewController: UIViewController {
         
         addSubviews()
         applyConstraints()
-        
-        
-//        completedTrackers = TrackerRecord(date: currentDate,
-//                                          idOfCompletedTrackers: <#T##[UUID]#>)
-        
-//        let curdate = DayOfWeekExtractor(date: Date())
-//        let day = curdate.numberOfWeekDay
-//        let myday = Schedule(rawValue: 3)
-//        print("------------------------------------------------------")
-//        print("------------------------------------------------------")
-//        print(day)
-//        print(curdate.dayOfWeekRussian)
-//        print(curdate.dayOfWeek)
-//        print(myday?.representCountOfWeekDays())
-//        print(myday?.representFullDayName())
-//        print(myday?.representShortDayName())
-//        print(day == myday?.representCountOfWeekDays())
-//        print("------------------------------------------------------")
-//        print("------------------------------------------------------")
-        
     }
         
     
@@ -161,9 +147,11 @@ final class HomeViewController: UIViewController {
             navigationItem.title = "Трекеры"
             
             addBarButtonItem = UIBarButtonItem(
-                barButtonSystemItem: .add,
+                image: UIImage(named: "add_tracker")?.withRenderingMode(.alwaysOriginal),
+                style: .plain,
                 target: self,
-                action: #selector(addTracker))
+                action: #selector(addTracker)
+            )
             navBar.topItem?.setLeftBarButton(addBarButtonItem, animated: false)
             
             let datePickerItem = UIBarButtonItem(customView: datePicker)
@@ -174,15 +162,26 @@ final class HomeViewController: UIViewController {
         }
     }
     
-    private func filterTrackers() -> [TrackerCategory] {
-        //        let filteredCategories = [TrackerCategory]()
-//        let date = DayOfWeekExtractor(date: currentDate)
-        //        let filterdTrackers = [Tracker]()
-        let date = DayOfWeekExtractor(date: currentDate)
-        let filteredCategories = categories.compactMap { category -> TrackerCategory? in
+    private func filterTrackersByDate() {
+        let curDate = DayOfWeekExtractor(date: currentDate)
+        
+        visibleCategories = categories.compactMap { category -> TrackerCategory? in
             let filteredTrackers = category.trackerArray.filter { tracker in
-                let condition = tracker.schedule.map { $0.representCountOfWeekDays() }.contains(date.numberOfWeekDay)
-                return condition
+                let trackerDate = DayOfWeekExtractor(date: tracker.date!)
+                // if date of creation is later than current picked date from date picker or tracker is not planned for this day
+                // tracker is not displayed
+                switch tracker.type {
+                case .habit:
+                    let condition = tracker.schedule.map { $0.representCountOfWeekDays() }.contains(curDate.numberOfWeekDay) &&
+                    trackerDate.date <= curDate.date
+                    
+                    return condition
+                case .irregularIvent:
+                    let condition = trackerDate.date <= curDate.date
+                    
+                    return condition
+                }
+                
             }
             if !filteredTrackers.isEmpty {
                 return TrackerCategory(category: category.category,
@@ -191,18 +190,29 @@ final class HomeViewController: UIViewController {
                 return nil
             }
         }
-        emptyStateView.isHidden = !filteredCategories.isEmpty
-        emptyStateLabel.isHidden = !filteredCategories.isEmpty
+        emptyStateView.isHidden = !visibleCategories.isEmpty
+        emptyStateLabel.isHidden = !visibleCategories.isEmpty
         
-        return filteredCategories
+    }
+    
+    private func applySearchQueryFilter(text: String) { // TODO refactor names
+        var newCat = [TrackerCategory]()
+        for category in visibleCategories {
+            let new = category.trackerArray.filter { $0.description.lowercased().contains(text.lowercased()) }
+            if !new.isEmpty {
+                let newCategory = TrackerCategory(category: category.category, trackerArray: new)
+                newCat.append(newCategory)
+            }
+        }
+        visibleCategories = newCat
+        emptyStateView.isHidden = !visibleCategories.isEmpty
+        emptyStateLabel.isHidden = !visibleCategories.isEmpty
     }
     
     @objc private func datePickerDidChangeDate(_ sender: UIDatePicker) {
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "dd MMMM yyyy"
-//        let selectedDate = dateFormatter.string(from: sender.date)
         currentDate = sender.date
-        
+
+        filterTrackersByDate()
         collectionView.reloadData()
     }
     
@@ -214,24 +224,60 @@ final class HomeViewController: UIViewController {
     }
 }
 
-extension HomeViewController: UISearchResultsUpdating, UISearchControllerDelegate {
+extension HomeViewController: UISearchResultsUpdating, UISearchControllerDelegate, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
+//        applySearchQueryFilter()
     }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let searchQuery = searchBar.text else { return }
+        applySearchQueryFilter(text: searchQuery)
+        print("This is search text \(searchQuery)")
+        collectionView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        filterTrackersByDate()
+        collectionView.reloadData()
+        //TODO
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        // chech if textField is empty
+        guard let searchQuery = searchBar.text else { return }
+        filterTrackersByDate()
+        applySearchQueryFilter(text: searchQuery)
+        collectionView.reloadData()
+    }
+    
+
+//    func didDismissSearchController(_ searchController: UISearchController) {
+//        applySearchQueryFilter()
+//    }
+
+//    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+//        previousSearchTerm = searchBar.text ?? ""
+//    }
+    
+
+//    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+//        DispatchQueue.main.async {
+//            searchBar.text = self.previousSearchTerm
+//            self.searchTerms = self.searchController.searchBar.text ?? "dont work"
+//            print("-----------------------------------------")
+//            print("-----------------------------------------")
+//            print(self.searchTerms)
+//        }
+//    }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        visibleCategories = filterTrackers()
-        
         return visibleCategories.count
-        
-//        return categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        visibleCategories = filterTrackers()
         return visibleCategories[section].trackerArray.count
-//        return categories[section].trackerArray.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? HomeViewCollectionViewCell else {
@@ -250,7 +296,7 @@ extension HomeViewController: UICollectionViewDataSource {
         print(currentDate.onlyDate)
         print(cell.buttonChecked)
         print(currentTracker.trackerIsDoneAt.contains(currentDate.onlyDate))
-//        print(currentDate.onlyDate == currentTracker.trackerIsDoneAt)
+//        print(currentDate >= currentTracker.date)
         print("------------------------------------------")
         print("------------------------------------------")
         
@@ -307,12 +353,14 @@ extension HomeViewController: NewHabitDelegate {
             if category.category == tracker.category {
                 oldTrackers = category.trackerArray
                 categories.removeAll { $0.category == tracker.category }
-//                oldTrackers = category.trackerArray
             }
         }
         oldTrackers.append(tracker)
+        
         let newCategory = TrackerCategory(category: tracker.category, trackerArray: oldTrackers)
         categories.append(newCategory)
+        
+        filterTrackersByDate()
         collectionView.reloadData()
     }
 }
@@ -344,7 +392,6 @@ extension HomeViewController: HomeViewCellDelegate {
                 print("ERROR FUTURE DATE-------------------------")
             }
         } else if tracker.trackerIsDoneAt.contains(currentDate.onlyDate) {
-            print("Aaaaaaaaaaaaa_---------------------------------------")
             newTracker = tracker.removeCompletedDate(currentDate.onlyDate)
         }
         
@@ -356,14 +403,14 @@ extension HomeViewController: HomeViewCellDelegate {
                 categories.removeAll { $0.category == tracker.category }
             }
         }
+        
         oldTrackers.remove(at: trackerIndex)
         oldTrackers.insert(newTracker!, at: trackerIndex)
         
         let newCategory = TrackerCategory(category: tracker.category, trackerArray: oldTrackers)
         categories.insert(newCategory, at: categoryInd)
-        
+        filterTrackersByDate()
         collectionView.reloadData()
-//        cell.configureCell(with: newTracker)
     }
 }
 

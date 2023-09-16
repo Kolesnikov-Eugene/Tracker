@@ -84,11 +84,12 @@ final class AddTrackerViewController: UIViewController {
     }
     
     @objc private func addHabit() {
-        let newHabitViewController = NewHabitViewController()
+        let newHabitViewController = NewHabitViewController(typeTracker: .habit)
         navigationController?.pushViewController(newHabitViewController, animated: true)
     }
     
     @objc private func addIrregularHabit() {
-        
+        let newHabitViewController = NewHabitViewController(typeTracker: .irregularIvent)
+        navigationController?.pushViewController(newHabitViewController, animated: true)
     }
 }
