@@ -9,7 +9,6 @@ import UIKit
 
 final class AddScheduleViewController: UIViewController {
     
-    weak var delegate: AddScheduleDelegate?
     private var selectedDays: [Schedule]
     private let reuseCellIdentifier = "ScheduleCell"
     private lazy var tableView: UITableView = {
@@ -36,6 +35,7 @@ final class AddScheduleViewController: UIViewController {
         
         return button
     }()
+    weak var delegate: AddScheduleDelegate?
     
     init(delegate: AddScheduleDelegate, selectedDays: [Schedule]) {
         self.delegate = delegate
@@ -45,7 +45,7 @@ final class AddScheduleViewController: UIViewController {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("jkdbjddf")
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupView() {
@@ -87,7 +87,6 @@ final class AddScheduleViewController: UIViewController {
     }
     
     @objc private func doneButtonTapped() {
-        print(selectedDays)
         delegate?.didRecieveSchedule(for: selectedDays)
         navigationController?.popViewController(animated: true)
     }
@@ -114,10 +113,14 @@ extension AddScheduleViewController: UITableViewDataSource {
         }
         
         cell.callBackSwitchState = { [weak self] isOn in
-            guard let self = self else { return }
-            let day = Schedule(rawValue: indexPath.row)
+            guard let self = self,
+                  let day = Schedule(rawValue: indexPath.row)
+            else {
+                return
+            }
+            
             if isOn {
-                selectedDays.append(day!)
+                selectedDays.append(day)
             } else {
                 selectedDays.removeAll(where: { $0 == day })
             }

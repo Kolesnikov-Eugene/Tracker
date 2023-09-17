@@ -20,11 +20,12 @@ struct Tracker {
     let trackerIsDoneAt: [String]
     
     var counterLabel: String {
-        switch self.counter! {
-        case 0, 5...7:
+        guard let counter = self.counter else { return "дней"}
+        switch counter % 10 {
+        case 0, 5...9:
             return "дней"
         case 1:
-            return "день"
+            return 11...19 ~= counter ? "дней" : "день"
         case 2...4:
             return "дня"
         default:

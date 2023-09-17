@@ -8,6 +8,7 @@
 import UIKit
 
 final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
+    
     private lazy var emojiLabel: UILabel = {
         let label = UILabel()
         
@@ -61,8 +62,6 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
             
             colorView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-//            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
-//            colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             colorView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 4 / 5),
             colorView.heightAnchor.constraint(equalTo: colorView.widthAnchor)
         ])
@@ -85,11 +84,9 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
     func configure(with model: EmojiAndColorCellModel) {
         switch model.type {
         case .emoji:
-//            contentView.addSubview(emojiLabel)
             emojiLabel.isHidden = false
             emojiLabel.text = model.emoji
         case .color:
-//            contentView.addSubview(colorView)
             colorView.isHidden = false
             colorView.backgroundColor = model.color
         }

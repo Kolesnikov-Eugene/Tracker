@@ -9,8 +9,6 @@ import UIKit
 
 final class AddScheduleViewCell: UITableViewCell {
     
-    var switchState: Bool?
-    var callBackSwitchState: ((Bool) -> (Void))?
     private lazy var dayOfWeekLabel: UILabel = {
         let label = UILabel()
         
@@ -34,6 +32,8 @@ final class AddScheduleViewCell: UITableViewCell {
 
         return view
     }()
+    var callBackSwitchState: ((Bool) -> (Void))?
+//    var switchState: Bool?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -96,6 +96,7 @@ final class AddScheduleViewCell: UITableViewCell {
         }
         dayOfWeekLabel.text = titleLabel
     }
+    
     func switchCelladdDayToScheduleSwitch() {
         addDayToScheduleSwitch.isOn = true
     }

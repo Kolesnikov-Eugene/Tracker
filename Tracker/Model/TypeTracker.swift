@@ -16,7 +16,7 @@ enum TypeTracker {
         case .habit:
             return "Новая привычка"
         case .irregularIvent:
-            return "Новое негерулярное событие"
+            return "Новое нерегулярное событие"
         }
     }
 }

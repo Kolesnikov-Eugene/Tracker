@@ -17,10 +17,6 @@ protocol HomeViewCellDelegate: AnyObject {
 
 final class HomeViewController: UIViewController {
     
-    var searchTerms = ""
-    var searchWasCancelled = false
-    var previousSearchTerm = ""
-    
     private let reuseIdentifier = "TrackerViewCell"
     private var addBarButtonItem: UIBarButtonItem?
     private var currentDate = Date()
@@ -50,8 +46,6 @@ final class HomeViewController: UIViewController {
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         
-        searchController.searchResultsUpdater = self
-        searchController.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "поиск"
         searchController.searchBar.setValue("Отменить", forKey: "cancelButtonText")
@@ -82,6 +76,7 @@ final class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureNavBar()
         
         collectionView.register(HomeViewCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
@@ -125,8 +120,6 @@ final class HomeViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             collectionView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-//            collectionView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-//            collectionView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
             
             datePicker.widthAnchor.constraint(equalToConstant: 100),
@@ -195,23 +188,22 @@ final class HomeViewController: UIViewController {
         
     }
     
-    private func applySearchQueryFilter(text: String) { // TODO refactor names
-        var newCat = [TrackerCategory]()
+    private func applySearchQueryFilter(text: String) {
+        var filteredCategories = [TrackerCategory]()
         for category in visibleCategories {
             let new = category.trackerArray.filter { $0.description.lowercased().contains(text.lowercased()) }
             if !new.isEmpty {
                 let newCategory = TrackerCategory(category: category.category, trackerArray: new)
-                newCat.append(newCategory)
+                filteredCategories.append(newCategory)
             }
         }
-        visibleCategories = newCat
+        visibleCategories = filteredCategories
         emptyStateView.isHidden = !visibleCategories.isEmpty
         emptyStateLabel.isHidden = !visibleCategories.isEmpty
     }
     
     @objc private func datePickerDidChangeDate(_ sender: UIDatePicker) {
         currentDate = sender.date
-
         filterTrackersByDate()
         collectionView.reloadData()
     }
@@ -224,51 +216,28 @@ final class HomeViewController: UIViewController {
     }
 }
 
-extension HomeViewController: UISearchResultsUpdating, UISearchControllerDelegate, UISearchBarDelegate {
-    func updateSearchResults(for searchController: UISearchController) {
-//        applySearchQueryFilter()
-    }
+extension HomeViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let searchQuery = searchBar.text else { return }
         applySearchQueryFilter(text: searchQuery)
-        print("This is search text \(searchQuery)")
         collectionView.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         filterTrackersByDate()
         collectionView.reloadData()
-        //TODO
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        // chech if textField is empty
         guard let searchQuery = searchBar.text else { return }
         filterTrackersByDate()
-        applySearchQueryFilter(text: searchQuery)
+        
+        if !searchText.isEmpty {
+            applySearchQueryFilter(text: searchQuery)
+        }
         collectionView.reloadData()
     }
-    
-
-//    func didDismissSearchController(_ searchController: UISearchController) {
-//        applySearchQueryFilter()
-//    }
-
-//    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-//        previousSearchTerm = searchBar.text ?? ""
-//    }
-    
-
-//    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-//        DispatchQueue.main.async {
-//            searchBar.text = self.previousSearchTerm
-//            self.searchTerms = self.searchController.searchBar.text ?? "dont work"
-//            print("-----------------------------------------")
-//            print("-----------------------------------------")
-//            print(self.searchTerms)
-//        }
-//    }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
@@ -279,31 +248,21 @@ extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return visibleCategories[section].trackerArray.count
     }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? HomeViewCollectionViewCell else {
             return UICollectionViewCell()
         }
-//        let currentD = currentDate
         cell.prepareForReuse()
         cell.delegate = self
         
         let currentTracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
         cell.buttonChecked = currentTracker.trackerIsDoneAt.contains(currentDate.onlyDate)
-        
-        print("------------------------------------------")
-        print("------------------------------------------")
-        print(currentTracker.trackerIsDoneAt)
-        print(currentDate.onlyDate)
-        print(cell.buttonChecked)
-        print(currentTracker.trackerIsDoneAt.contains(currentDate.onlyDate))
-//        print(currentDate >= currentTracker.date)
-        print("------------------------------------------")
-        print("------------------------------------------")
-        
         cell.configureCell(with: currentTracker)
         
         return cell
     }
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         let headerView = collectionView.dequeueReusableSupplementaryView(
@@ -312,7 +271,7 @@ extension HomeViewController: UICollectionViewDataSource {
             for: indexPath
         ) as! SupplementaryView
         
-        headerView.configureView(with: categories[indexPath.section]) // try if this works
+        headerView.configureView(with: visibleCategories[indexPath.section])
         
         return headerView
     }
@@ -384,12 +343,8 @@ extension HomeViewController: HomeViewCellDelegate {
             } else {
                 newTracker = tracker
                 
-                print("ERROR FUTURE DATE-------------------------")
-                print("ERROR FUTURE DATE-------------------------")
-                print("ERROR FUTURE DATE-------------------------")
-                print("ERROR FUTURE DATE-------------------------")
-                print("ERROR FUTURE DATE-------------------------")
-                print("ERROR FUTURE DATE-------------------------")
+                print("Future date error!!!!")
+                //TODO present alert of future date
             }
         } else if tracker.trackerIsDoneAt.contains(currentDate.onlyDate) {
             newTracker = tracker.removeCompletedDate(currentDate.onlyDate)
@@ -409,38 +364,11 @@ extension HomeViewController: HomeViewCellDelegate {
         
         let newCategory = TrackerCategory(category: tracker.category, trackerArray: oldTrackers)
         categories.insert(newCategory, at: categoryInd)
+        
         filterTrackersByDate()
+        
         collectionView.reloadData()
     }
 }
 
-//private var trackers: [Tracker] = [
-//    Tracker(
-//        category: "Домашний уют",
-//        emoji: emojiArray[0],
-//        color: colorList[0],
-//        description: "Do something when you want",
-//        schedule: [.monday]
-//    ),
-//    Tracker(
-//        category: "Домашний уют",
-//        emoji: emojiArray[1],
-//        color: colorList[0],
-//        description: "Do something when you want",
-//        schedule: [.monday]
-//    ),
-//    Tracker(
-//        category: "Домашний уют",
-//        emoji: emojiArray[2],
-//        color: colorList[0],
-//        description: "Do something when you want",
-//        schedule: [.monday]
-//    ),
-//    Tracker(
-//        category: "Домашний уют",
-//        emoji: emojiArray[3],
-//        color: colorList[0],
-//        description: "Do something when you want",
-//        schedule: [.monday]
-//    )
-//]
+

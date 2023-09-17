@@ -128,8 +128,8 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         trackerInfoView.addSubview(emojiView)
         trackerInfoView.addSubview(titleLabel)
         bottomCellView.addSubview(scheduleLabel)
-        bottomCellView.addSubview(buttonView) //change
-        buttonView.addSubview(doneButton) //change
+        bottomCellView.addSubview(buttonView) 
+        buttonView.addSubview(doneButton)
         mainStackView.addArrangedSubview(trackerInfoView)
         mainStackView.addArrangedSubview(bottomCellView)
         contentView.addSubview(mainStackView)
@@ -199,12 +199,6 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         } else {
             doneButton.tintColor = trackerModel.color
         }
-    }
-    
-    func reconfigureCell(with color: UIColor) {
-        let image = UIImage(named: "tracker_checked")?.withRenderingMode(.alwaysTemplate)
-        doneButton.imageView?.tintColor = color
-        doneButton.setImage(image, for: .highlighted)
     }
 }
 

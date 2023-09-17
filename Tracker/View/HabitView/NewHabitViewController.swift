@@ -13,8 +13,8 @@ protocol AddScheduleDelegate: AnyObject {
 
 final class NewHabitViewController: UIViewController {
     
-    private let typeTracker: TypeTracker
     private let categories = ["Срочно", "Скучно", "Уборка", "Прогулка", "Важное", "Учеба"] //FOR Testing delete later
+    private let typeTracker: TypeTracker
     private var tracker: Tracker? = nil
     private var selectedEmoji: String? = nil
     private var selectedColor: UIColor? = nil
@@ -32,6 +32,7 @@ final class NewHabitViewController: UIViewController {
     }()
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
+        
         view.isScrollEnabled = true
         
         return view
@@ -148,6 +149,7 @@ final class NewHabitViewController: UIViewController {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.isScrollEnabled = false
         collection.allowsMultipleSelection = true
+        
         return collection
     }()
     private let bottomButtonsStackView: UIStackView = {
@@ -188,7 +190,7 @@ final class NewHabitViewController: UIViewController {
         button.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-        button.isEnabled = false
+        button.isEnabled = true //todo
         
         return button
     }()
@@ -204,7 +206,7 @@ final class NewHabitViewController: UIViewController {
     }
 
     private func setupView() {
-        navigationItem.title = "Новая привычка"
+        navigationItem.title = typeTracker.typeTrackerName
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
         navigationItem.setHidesBackButton(true, animated: false)
         view.backgroundColor = .white
@@ -249,10 +251,6 @@ final class NewHabitViewController: UIViewController {
         case .irregularIvent:
             categoryStackView.addArrangedSubview(categoryButton)
         }
-        
-//        categoryStackView.addArrangedSubview(categoryButton)
-//        categoryStackView.addArrangedSubview(stringSeparator)
-//        categoryStackView.addArrangedSubview(scheduleButton)
         
         categoryButton.addSubview(arrayPictureViewForCategoryButton)
         scheduleButton.addSubview(arrayPictureViewForScheduleButton)
@@ -312,25 +310,6 @@ final class NewHabitViewController: UIViewController {
             categoryStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             categoryStackView.heightAnchor.constraint(equalToConstant: typeTracker == .habit ? 150 : 75),
             
-//            arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
-//            arrayPictureViewForCategoryButton.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
-            
-//            arrayPictureViewForScheduleButton.trailingAnchor.constraint(equalTo: scheduleButton.trailingAnchor, constant: -16),
-//            arrayPictureViewForScheduleButton.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor),
-            
-//            scheduleButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
-//            scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 26),
-//            scheduleButtonLabel.heightAnchor.constraint(equalToConstant: 22),
-            
-//            scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
-//            scheduleButtonLabelForSelectedDays.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 39),
-//            scheduleButtonLabelForSelectedDays.heightAnchor.constraint(equalToConstant: 22),
-            
-//            stringSeparator.heightAnchor.constraint(equalToConstant: 0.5),
-//            stringSeparator.leftAnchor.constraint(equalTo: categoryButton.leftAnchor, constant: 16),
-//            stringSeparator.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
-//            stringSeparator.centerYAnchor.constraint(equalTo: categoryStackView.centerYAnchor),
-            
             collectionView.topAnchor.constraint(equalTo: categoryStackView.bottomAnchor, constant: 16),
             collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: categoryStackView.leadingAnchor),
@@ -375,12 +354,10 @@ final class NewHabitViewController: UIViewController {
     private func switchCreateButton() {
         createButton.backgroundColor = checkIfAllFieldsFilledOut() ?
         UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1) : UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
-        
-        createButton.isEnabled = checkIfAllFieldsFilledOut()
     }
     
     private func checkIfAllFieldsFilledOut() -> Bool {
-        let scheduleFull = typeTracker == .habit ? schedule : [.monday] // Заглушка
+        let scheduleFull = typeTracker == .habit ? schedule : [.monday] // Заглушка для проверки нерегулярного события
         
         guard let selectedEmoji = selectedEmoji,
               let selectedColor = selectedColor,
@@ -419,15 +396,16 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
-        dismiss(animated: true) { [weak self] in
-            guard let self = self,
-                  let tracker = tracker,
-                  let parent = navigationController?.viewControllers.first as? AddTrackerViewController
-            else {
-                return
+        if checkIfAllFieldsFilledOut() {
+            dismiss(animated: true) { [weak self] in
+                guard let self = self,
+                      let tracker = tracker,
+                      let parent = navigationController?.viewControllers.first as? AddTrackerViewController
+                else {
+                    return
+                }
+                parent.delegate?.didCreateNewTracker(tracker)
             }
-            parent.delegate?.didCreateNewTracker(tracker)
-            print("||||||||||||||COMPLETIONISOVER|||||||||||||||||||")
         }
     }
     

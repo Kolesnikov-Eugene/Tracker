@@ -20,9 +20,7 @@
 		449AA52F2A97E877008D8D8E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449AA52D2A97E877008D8D8E /* LaunchScreen.storyboard */; };
 		449C744D2AAB2EE40088BB4A /* EmojiAndColorsArrayViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449C744C2AAB2EE40088BB4A /* EmojiAndColorsArrayViewCell.swift */; };
 		449C744F2AAB39820088BB4A /* EmojiAndColorCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449C744E2AAB39820088BB4A /* EmojiAndColorCellModel.swift */; };
-		44A2F5CD2AA880C0004B8E3B /* HomeViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A2F5CC2AA880C0004B8E3B /* HomeViewPresenter.swift */; };
 		44A2F5D02AA88118004B8E3B /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A2F5CF2AA88118004B8E3B /* Helpers.swift */; };
-		44BC898E2A9E767200C0E23D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC898D2A9E767200C0E23D /* HomeView.swift */; };
 		44BC89902A9E76A700C0E23D /* HomeViewConrtoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC898F2A9E76A700C0E23D /* HomeViewConrtoller.swift */; };
 		44BC89932A9E77A400C0E23D /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC89922A9E77A400C0E23D /* TabBarController.swift */; };
 		44BC89952A9E7EE300C0E23D /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC89942A9E7EE300C0E23D /* Tracker.swift */; };
@@ -52,9 +50,7 @@
 		449AA5302A97E877008D8D8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		449C744C2AAB2EE40088BB4A /* EmojiAndColorsArrayViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAndColorsArrayViewCell.swift; sourceTree = "<group>"; };
 		449C744E2AAB39820088BB4A /* EmojiAndColorCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAndColorCellModel.swift; sourceTree = "<group>"; };
-		44A2F5CC2AA880C0004B8E3B /* HomeViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewPresenter.swift; sourceTree = "<group>"; };
 		44A2F5CF2AA88118004B8E3B /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
-		44BC898D2A9E767200C0E23D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		44BC898F2A9E76A700C0E23D /* HomeViewConrtoller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewConrtoller.swift; sourceTree = "<group>"; };
 		44BC89922A9E77A400C0E23D /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		44BC89942A9E7EE300C0E23D /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
@@ -82,11 +78,9 @@
 		441DF7E72A9FC79A005AC874 /* HomeView */ = {
 			isa = PBXGroup;
 			children = (
-				44BC898D2A9E767200C0E23D /* HomeView.swift */,
 				44BC898F2A9E76A700C0E23D /* HomeViewConrtoller.swift */,
 				441DF7E92A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift */,
 				441DF7EB2A9FD2FA005AC874 /* SupplementaryView.swift */,
-				44A2F5CC2AA880C0004B8E3B /* HomeViewPresenter.swift */,
 			);
 			path = HomeView;
 			sourceTree = "<group>";
@@ -272,7 +266,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44BC898E2A9E767200C0E23D /* HomeView.swift in Sources */,
 				444B90062AA9D3280013D8FA /* TextFieldWithPadding.swift in Sources */,
 				44A2F5D02AA88118004B8E3B /* Helpers.swift in Sources */,
 				449C744D2AAB2EE40088BB4A /* EmojiAndColorsArrayViewCell.swift in Sources */,
@@ -293,7 +286,6 @@
 				449AA5232A97E876008D8D8E /* AppDelegate.swift in Sources */,
 				449C744F2AAB39820088BB4A /* EmojiAndColorCellModel.swift in Sources */,
 				449AA5252A97E876008D8D8E /* SceneDelegate.swift in Sources */,
-				44A2F5CD2AA880C0004B8E3B /* HomeViewPresenter.swift in Sources */,
 				441DF7EA2A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift in Sources */,
 				44BC89952A9E7EE300C0E23D /* Tracker.swift in Sources */,
 				444B90042AA9C77F0013D8FA /* NewHabitViewController.swift in Sources */,

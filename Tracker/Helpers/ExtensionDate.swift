@@ -11,10 +11,6 @@ extension Date {
 
     var onlyDate: String {
         get {
-//            let calender = Calendar.current
-//            var dateComponents = calender.dateComponents([.year, .month, .day], from: self)
-//            dateComponents.timeZone = .current
-//            return calender.date(from: dateComponents)!
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "dd MMMM yyyy"
             return dateFormatter.string(from: self)
