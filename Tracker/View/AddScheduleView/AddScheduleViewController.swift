@@ -26,7 +26,7 @@ final class AddScheduleViewController: UIViewController {
         button.tintColor = .white
         button.contentHorizontalAlignment = .center
         button.contentVerticalAlignment = .center
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.setTitle("Готово", for: .normal)
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         button.layer.masksToBounds = true
@@ -51,13 +51,13 @@ final class AddScheduleViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .white
         navigationItem.title = "Расписание"
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         navigationItem.setHidesBackButton(true, animated: false)
         view.backgroundColor = .white
         
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(AddScheduleViewCell.self, forCellReuseIdentifier: reuseCellIdentifier) 
+        tableView.register(AddScheduleViewCell.self, forCellReuseIdentifier: reuseCellIdentifier)
         
         addSubviews()
         applyConstraints()
@@ -118,22 +118,16 @@ extension AddScheduleViewController: UITableViewDataSource {
             else {
                 return
             }
-            
-            if isOn {
-                selectedDays.append(day)
-            } else {
-                selectedDays.removeAll(where: { $0 == day })
-            }
+            isOn ? selectedDays.append(day) : selectedDays.removeAll(where: { $0 == day })
         }
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-            return 75
-        }
+        return 75
+    }
 }
 
 extension AddScheduleViewController: UITableViewDelegate {
-
 }

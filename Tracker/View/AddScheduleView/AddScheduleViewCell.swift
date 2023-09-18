@@ -12,7 +12,7 @@ final class AddScheduleViewCell: UITableViewCell {
     private lazy var dayOfWeekLabel: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 17)
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
         
         return label
@@ -27,13 +27,12 @@ final class AddScheduleViewCell: UITableViewCell {
     }()
     private let stringSeparator: UIView = {
         let view = UIView()
-
+        
         view.backgroundColor = .lightGray
-
+        
         return view
     }()
     var callBackSwitchState: ((Bool) -> (Void))?
-//    var switchState: Bool?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -42,12 +41,12 @@ final class AddScheduleViewCell: UITableViewCell {
         applyConstraints()
         contentView.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
     }
-
-
+    
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-        
+    
     private func addSubviews() {
         contentView.addSubview(dayOfWeekLabel)
         contentView.addSubview(addDayToScheduleSwitch)

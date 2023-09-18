@@ -8,7 +8,7 @@
 import Foundation
 
 extension Date {
-
+    
     var onlyDate: String {
         get {
             let dateFormatter = DateFormatter()
@@ -16,5 +16,4 @@ extension Date {
             return dateFormatter.string(from: self)
         }
     }
-
 }

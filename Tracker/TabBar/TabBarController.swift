@@ -44,7 +44,3 @@ final class TabBarController: UITabBarController {
         self.viewControllers = [homeViewNavigationController, statisticViewController]
     }
 }
-
-
-
-

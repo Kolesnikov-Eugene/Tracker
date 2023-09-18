@@ -15,7 +15,7 @@ final class AddTrackerViewController: UIViewController {
         button.backgroundColor = .black
         button.layer.cornerRadius = 16
         button.tintColor = .white
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(addHabit), for: .touchUpInside)
         
         return button
@@ -27,7 +27,7 @@ final class AddTrackerViewController: UIViewController {
         button.backgroundColor = .black
         button.layer.cornerRadius = 16
         button.tintColor = .white
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(addIrregularHabit), for: .touchUpInside)
         
         return button
@@ -57,7 +57,7 @@ final class AddTrackerViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.title = "Создание трекера"
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
         view.backgroundColor = .white
         

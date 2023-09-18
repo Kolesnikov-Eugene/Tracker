@@ -41,7 +41,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         
         label.frame = CGRect(x: 0, y: 0, width: 143, height: 34)
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         label.numberOfLines = 0
         
@@ -64,7 +64,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         
         label.frame.size.height = 34
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
         
         return label
@@ -181,11 +181,11 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    func configureCell(with trackerModel: Tracker) {
+    func configureCell(with trackerModel: Tracker, counter: Int) {
         self.titleLabel.text = trackerModel.description
         trackerInfoView.backgroundColor = trackerModel.color
         emojiView.text = trackerModel.emoji
-        scheduleLabel.text = String("\(trackerModel.counter!) \(trackerModel.counterLabel)")
+        scheduleLabel.text = String("\(counter) \(counter.counterRepresentation)")
         
         buttonView.backgroundColor = .white
         
@@ -201,4 +201,3 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         }
     }
 }
-

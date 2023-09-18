@@ -23,13 +23,13 @@ final class HomeViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     private var trackers: [Tracker] = []
     private var visibleCategories: [TrackerCategory] = []
-    private var completedTrackers: TrackerRecord? = nil
+    private var completedTrackers: [TrackerRecord] = []
+    
     private let collectionView: UICollectionView = {
-        
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.alwaysBounceVertical = true
-
+        
         return collectionView
     }()
     private lazy var datePicker: UIDatePicker = {
@@ -47,7 +47,7 @@ final class HomeViewController: UIViewController {
         let searchController = UISearchController(searchResultsController: nil)
         
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "поиск"
+        searchController.searchBar.placeholder = "Поиск"
         searchController.searchBar.setValue("Отменить", forKey: "cancelButtonText")
         searchController.searchBar.delegate = self
         
@@ -68,7 +68,7 @@ final class HomeViewController: UIViewController {
         
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Что будем отслеживать?"
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         
         return label
@@ -96,7 +96,7 @@ final class HomeViewController: UIViewController {
         addSubviews()
         applyConstraints()
     }
-        
+    
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -138,43 +138,37 @@ final class HomeViewController: UIViewController {
         if let navBar = navigationController?.navigationBar {
             navBar.prefersLargeTitles = true
             navigationItem.title = "Трекеры"
+            navBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 34, weight: .bold)]
             
             addBarButtonItem = UIBarButtonItem(
                 image: UIImage(named: "add_tracker")?.withRenderingMode(.alwaysOriginal),
                 style: .plain,
                 target: self,
-                action: #selector(addTracker)
+                action: #selector(addTrackerButtonTapped)
             )
             navBar.topItem?.setLeftBarButton(addBarButtonItem, animated: false)
             
             let datePickerItem = UIBarButtonItem(customView: datePicker)
             navigationItem.rightBarButtonItem = datePickerItem
-            
             navigationItem.searchController = searchController
             navigationItem.hidesSearchBarWhenScrolling = false
         }
     }
     
     private func filterTrackersByDate() {
+        switchToEmptyState()
+        
         let curDate = DayOfWeekExtractor(date: currentDate)
         
         visibleCategories = categories.compactMap { category -> TrackerCategory? in
             let filteredTrackers = category.trackerArray.filter { tracker in
-                let trackerDate = DayOfWeekExtractor(date: tracker.date!)
-                // if date of creation is later than current picked date from date picker or tracker is not planned for this day
-                // tracker is not displayed
                 switch tracker.type {
                 case .habit:
-                    let condition = tracker.schedule.map { $0.representCountOfWeekDays() }.contains(curDate.numberOfWeekDay) &&
-                    trackerDate.date <= curDate.date
-                    
+                    let condition = tracker.schedule.map { $0.representCountOfWeekDays() }.contains(curDate.numberOfWeekDay)
                     return condition
                 case .irregularIvent:
-                    let condition = trackerDate.date <= curDate.date
-                    
-                    return condition
+                    return true
                 }
-                
             }
             if !filteredTrackers.isEmpty {
                 return TrackerCategory(category: category.category,
@@ -185,10 +179,11 @@ final class HomeViewController: UIViewController {
         }
         emptyStateView.isHidden = !visibleCategories.isEmpty
         emptyStateLabel.isHidden = !visibleCategories.isEmpty
-        
     }
     
     private func applySearchQueryFilter(text: String) {
+        switchToEmptySearchResult()
+        
         var filteredCategories = [TrackerCategory]()
         for category in visibleCategories {
             let new = category.trackerArray.filter { $0.description.lowercased().contains(text.lowercased()) }
@@ -202,13 +197,27 @@ final class HomeViewController: UIViewController {
         emptyStateLabel.isHidden = !visibleCategories.isEmpty
     }
     
+    private func switchToEmptyState() {
+        emptyStateView.image = UIImage(named: "empty_home_view")
+        emptyStateLabel.text = "Что будем отслеживать?"
+    }
+    
+    private func switchToEmptySearchResult() {
+        emptyStateView.image = UIImage(named: "empty_search_result")
+        emptyStateLabel.text = "Ничего не найдено"
+    }
+    
+    private func getTrackerCompletionCounter(for tracker: Tracker) -> Int {
+        completedTrackers.filter { $0.id == tracker.id }.count
+    }
+    
     @objc private func datePickerDidChangeDate(_ sender: UIDatePicker) {
         currentDate = sender.date
         filterTrackersByDate()
         collectionView.reloadData()
     }
     
-    @objc func addTracker() {
+    @objc func addTrackerButtonTapped() {
         let addTracker = AddTrackerViewController(delegate: self)
         let addTrackerNavigationCOntroller = UINavigationController(rootViewController: addTracker)
         
@@ -257,8 +266,10 @@ extension HomeViewController: UICollectionViewDataSource {
         cell.delegate = self
         
         let currentTracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
-        cell.buttonChecked = currentTracker.trackerIsDoneAt.contains(currentDate.onlyDate)
-        cell.configureCell(with: currentTracker)
+        let counter = getTrackerCompletionCounter(for: currentTracker)
+        
+        cell.buttonChecked = completedTrackers.contains(where: { $0.id == currentTracker.id && $0.date.onlyDate == currentDate.onlyDate })
+        cell.configureCell(with: currentTracker, counter: counter)
         
         return cell
     }
@@ -327,48 +338,27 @@ extension HomeViewController: NewHabitDelegate {
 extension HomeViewController: HomeViewCellDelegate {
     func didTapDoneStatus(_ cell: HomeViewCollectionViewCell) {
         guard let indexPath = collectionView.indexPath(for: cell) else {
-            assertionFailure("Something went wrong")
             return
         }
-        var oldTrackers = [Tracker]()
-        var newTracker: Tracker? = nil
-        var trackerIndex: Int = 0
-        var categoryInd: Int = 0
         
-        let tracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
+        let selectedTracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
+        let completedTracker = TrackerRecord(id: selectedTracker.id, date: currentDate)
         
-        if tracker.trackerIsDoneAt.isEmpty || !tracker.trackerIsDoneAt.contains(currentDate.onlyDate) {
-            if let new = tracker.addCompletedDate(currentDate) {
-                newTracker = new
+        if completedTrackers.isEmpty {
+            addTrackerToCompleted(completedTracker)
+        } else {
+            if completedTrackers.contains(where: { $0.id == completedTracker.id && $0.date.onlyDate == completedTracker.date.onlyDate }) {
+                completedTrackers.removeAll { $0.id == completedTracker.id && $0.date.onlyDate == completedTracker.date.onlyDate }
             } else {
-                newTracker = tracker
-                
-                print("Future date error!!!!")
-                //TODO present alert of future date
-            }
-        } else if tracker.trackerIsDoneAt.contains(currentDate.onlyDate) {
-            newTracker = tracker.removeCompletedDate(currentDate.onlyDate)
-        }
-        
-        for (categoryIndex, category) in categories.enumerated() {
-            if let index = category.trackerArray.firstIndex(where: { $0.id == tracker.id }) {
-                oldTrackers = category.trackerArray
-                trackerIndex = index
-                categoryInd = categoryIndex
-                categories.removeAll { $0.category == tracker.category }
+                addTrackerToCompleted(completedTracker)
             }
         }
-        
-        oldTrackers.remove(at: trackerIndex)
-        oldTrackers.insert(newTracker!, at: trackerIndex)
-        
-        let newCategory = TrackerCategory(category: tracker.category, trackerArray: oldTrackers)
-        categories.insert(newCategory, at: categoryInd)
-        
         filterTrackersByDate()
-        
         collectionView.reloadData()
     }
+    
+    private func addTrackerToCompleted(_ tracker: TrackerRecord) {
+        guard currentDate <= Date() else { return }
+        completedTrackers.append(tracker)
+    }
 }
-
-

@@ -39,7 +39,7 @@ final class NewHabitViewController: UIViewController {
     }()
     private lazy var contentView: UIView = {
         let view = UIView()
-
+        
         return view
     }()
     private let trackerNameTextField: TextFieldWithPadding = {
@@ -54,6 +54,7 @@ final class NewHabitViewController: UIViewController {
         view.layer.borderColor = UIColor.clear.cgColor
         view.placeholder = "Введите название трекера"
         view.clearButtonMode = .whileEditing
+        view.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         
         return view
     }()
@@ -61,7 +62,7 @@ final class NewHabitViewController: UIViewController {
         let field = UILabel()
         
         field.textColor = UIColor(red: 0.961, green: 0.42, blue: 0.424, alpha: 1)
-        field.font = UIFont.systemFont(ofSize: 17)
+        field.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         field.text = "Ограничение 38 символов"
         field.isHidden = true
         field.textAlignment = .center
@@ -75,7 +76,7 @@ final class NewHabitViewController: UIViewController {
         button.contentHorizontalAlignment = .left
         button.contentVerticalAlignment = .center
         button.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 16.0, bottom: 0.0, right: 0.0)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         button.tintColor = .black
         button.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
         button.addTarget(self, action: #selector(categoryButtonTapped), for: .touchUpInside)
@@ -84,7 +85,7 @@ final class NewHabitViewController: UIViewController {
     }()
     private lazy var scheduleButton: UIButton = {
         let button = UIButton(type: .system)
-
+        
         button.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
         button.addTarget(self, action: #selector(scheduleButtonTapped), for: .touchUpInside)
         
@@ -94,7 +95,7 @@ final class NewHabitViewController: UIViewController {
         let label = UILabel()
         
         label.text = "Расписание"
-        label.font = UIFont.systemFont(ofSize: 17)
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.textColor = .black
         
         return label
@@ -102,7 +103,7 @@ final class NewHabitViewController: UIViewController {
     private let scheduleButtonLabelForSelectedDays: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 17)
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.textColor = UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
         label.isHidden = true
         
@@ -124,19 +125,19 @@ final class NewHabitViewController: UIViewController {
     }()
     private let categoryStackView: UIStackView = {
         let stackView = UIStackView()
-
+        
         stackView.axis = .vertical
         stackView.spacing = 0
         stackView.layer.masksToBounds = true
         stackView.layer.cornerRadius = 16
-
+        
         return stackView
     }()
     private let stringSeparator: UIView = {
         let view = UIView()
-
+        
         view.backgroundColor = .lightGray
-
+        
         return view
     }()
     private let collectionView: UICollectionView = {
@@ -167,7 +168,7 @@ final class NewHabitViewController: UIViewController {
         button.setTitle("Отменить", for: .normal)
         button.contentHorizontalAlignment = .center
         button.contentVerticalAlignment = .center
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.tintColor = UIColor(red: 0.961, green: 0.42, blue: 0.424, alpha: 1)
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
@@ -184,13 +185,13 @@ final class NewHabitViewController: UIViewController {
         button.setTitle("Создать", for: .normal)
         button.contentHorizontalAlignment = .center
         button.contentVerticalAlignment = .center
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.tintColor = .white
         button.backgroundColor = UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
         button.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-        button.isEnabled = true //todo
+        button.isEnabled = true
         
         return button
     }()
@@ -204,21 +205,21 @@ final class NewHabitViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func setupView() {
         navigationItem.title = typeTracker.typeTrackerName
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         navigationItem.setHidesBackButton(true, animated: false)
         view.backgroundColor = .white
-
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         scrollView.addGestureRecognizer(tapGesture)
-
+        
         trackerNameTextField.delegate = self
         collectionView.dataSource = self
         collectionView.delegate = self
-
+        
         collectionView.register(
             EmojiAndColorsArrayViewCell.self,
             forCellWithReuseIdentifier: reuseCellIdentifier
@@ -228,7 +229,7 @@ final class NewHabitViewController: UIViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: headerID
         )
-
+        
         addSubviews()
         applyConstraints()
         sctackTopConstraintWhenErrorLabelShown.isActive = true
@@ -370,15 +371,12 @@ final class NewHabitViewController: UIViewController {
         }
         tracker = Tracker(
             id: UUID(),
-            date: Date(),
             type: typeTracker,
-            counter: 0,
             category: category,
             emoji: selectedEmoji,
             color: selectedColor,
             description: text,
-            schedule: schedule,
-            trackerIsDoneAt: []
+            schedule: schedule
         )
         return true
     }
@@ -426,11 +424,11 @@ extension NewHabitViewController: UITextFieldDelegate {
         if !exceedingCharacterLimitErrorField.isHidden {
             sctackTopConstraintWhenErrorLabelShown.isActive = false
             sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
-
+            
             UIView.animate(withDuration: 0.5) {
                 self.view.layoutIfNeeded()
             }
-
+            
         } else {
             sctackTopConstraintWhenErrorLabelShown.isActive = true
             sctackTopConstraintWhenErrorLabelIsHidden.isActive = false
@@ -491,10 +489,9 @@ extension NewHabitViewController: UICollectionViewDataSource {
             for: indexPath
         ) as! SupplementaryView
         
-        let titleType = TrackerCellType(rawValue: indexPath.section)
-        
-        headerView.configureHeaderForHabitView(with: titleType!)
-        
+        if let titleType = TrackerCellType(rawValue: indexPath.section) {
+            headerView.configureHeaderForHabitView(with: titleType)
+        }
         return headerView
     }
 }
@@ -544,25 +541,25 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
     }
     
     private func deselectSelectedItemsInSection(indexPath: IndexPath, collectionView: UICollectionView) {
-            collectionView.indexPathsForSelectedItems?.forEach({ selectedIndexPath in
-                if selectedIndexPath.section == indexPath.section,
-                   selectedIndexPath.row != indexPath.row {
-                    collectionView.deselectItem(at: selectedIndexPath, animated: false)
-                    let cell = collectionView.cellForItem(at: selectedIndexPath) as? EmojiAndColorsArrayViewCell
-                    cell?.deselectCell()
-                }
-            })
-        }
+        collectionView.indexPathsForSelectedItems?.forEach({ selectedIndexPath in
+            if selectedIndexPath.section == indexPath.section,
+               selectedIndexPath.row != indexPath.row {
+                collectionView.deselectItem(at: selectedIndexPath, animated: false)
+                let cell = collectionView.cellForItem(at: selectedIndexPath) as? EmojiAndColorsArrayViewCell
+                cell?.deselectCell()
+            }
+        })
+    }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorsArrayViewCell else { return }
-
+        
         if indexPath.section == 0 {
             selectedEmoji = nil
         } else {
             selectedColor = nil
         }
-
+        
         cell.deselectCell()
         switchCreateButton()
     }
@@ -572,7 +569,11 @@ extension NewHabitViewController: AddScheduleDelegate {
     func didRecieveSchedule(for selectedDays: [Schedule]) {
         self.schedule = selectedDays.sorted()
         
-        scheduleButtonLabelForSelectedDays.text = schedule.map({ $0.representShortDayName() }).joined(separator: ", ")
+        if schedule.count == 7 {
+            scheduleButtonLabelForSelectedDays.text = "Ежедневно"
+        } else {
+            scheduleButtonLabelForSelectedDays.text = schedule.map({ $0.representShortDayName() }).joined(separator: ", ")
+        }
         scheduleButtonLabelNewTopConstraint.isActive = !selectedDays.isEmpty
         scheduleButtonLabelForSelectedDays.isHidden = selectedDays.isEmpty
         

@@ -13,8 +13,8 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
         let label = UILabel()
         
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 32)
-
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        
         return label
     }()
     private lazy var colorView: UIView = {
@@ -35,7 +35,6 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
         
         addSubviews()
         applyConstraints()
-        
     }
     
     required init?(coder: NSCoder) {
