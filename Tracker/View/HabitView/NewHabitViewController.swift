@@ -358,21 +358,20 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func checkIfAllFieldsFilledOut() -> Bool {
-        let scheduleFull = typeTracker == .habit ? schedule : [.monday] // Заглушка для проверки нерегулярного события
-        
+        if typeTracker == .irregularIvent {
+            schedule = Schedule.allCases.map({ $0 })
+        }
         guard let selectedEmoji = selectedEmoji,
               let selectedColor = selectedColor,
               let text = trackerNameTextField.text,
-              let category = categories.randomElement(),
+              let _ = categories.randomElement(), // TODO add category in AddCategoryView (next sprint)
               text.count > 0 ,
-              !scheduleFull.isEmpty
+              !schedule.isEmpty
         else {
             return false
         }
         tracker = Tracker(
             id: UUID(),
-            type: typeTracker,
-            category: category,
             emoji: selectedEmoji,
             color: selectedColor,
             description: text,
@@ -398,11 +397,12 @@ final class NewHabitViewController: UIViewController {
             dismiss(animated: true) { [weak self] in
                 guard let self = self,
                       let tracker = tracker,
+                      let category = categories.randomElement(),
                       let parent = navigationController?.viewControllers.first as? AddTrackerViewController
                 else {
                     return
                 }
-                parent.delegate?.didCreateNewTracker(tracker)
+                parent.delegate?.didCreateNewTracker(tracker, for: category)
             }
         }
     }

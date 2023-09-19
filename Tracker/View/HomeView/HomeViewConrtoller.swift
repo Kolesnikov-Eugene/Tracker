@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NewHabitDelegate: AnyObject {
-    func didCreateNewTracker(_ tracker: Tracker)
+    func didCreateNewTracker(_ tracker: Tracker, for category: String)
 }
 
 protocol HomeViewCellDelegate: AnyObject {
@@ -97,7 +97,6 @@ final class HomeViewController: UIViewController {
         applyConstraints()
     }
     
-    
     init() {
         super.init(nibName: nil, bundle: nil)
     }
@@ -162,13 +161,8 @@ final class HomeViewController: UIViewController {
         
         visibleCategories = categories.compactMap { category -> TrackerCategory? in
             let filteredTrackers = category.trackerArray.filter { tracker in
-                switch tracker.type {
-                case .habit:
-                    let condition = tracker.schedule.map { $0.representCountOfWeekDays() }.contains(curDate.numberOfWeekDay)
-                    return condition
-                case .irregularIvent:
-                    return true
-                }
+                let condition = tracker.schedule.map { $0.representCountOfWeekDays() }.contains(curDate.numberOfWeekDay)
+                return condition
             }
             if !filteredTrackers.isEmpty {
                 return TrackerCategory(category: category.category,
@@ -177,8 +171,7 @@ final class HomeViewController: UIViewController {
                 return nil
             }
         }
-        emptyStateView.isHidden = !visibleCategories.isEmpty
-        emptyStateLabel.isHidden = !visibleCategories.isEmpty
+        switchEmptyStateView()
     }
     
     private func applySearchQueryFilter(text: String) {
@@ -193,6 +186,10 @@ final class HomeViewController: UIViewController {
             }
         }
         visibleCategories = filteredCategories
+        switchEmptyStateView()
+    }
+    
+    private func switchEmptyStateView() {
         emptyStateView.isHidden = !visibleCategories.isEmpty
         emptyStateLabel.isHidden = !visibleCategories.isEmpty
     }
@@ -317,17 +314,17 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension HomeViewController: NewHabitDelegate {
-    func didCreateNewTracker(_ tracker: Tracker) {
+    func didCreateNewTracker(_ tracker: Tracker, for category: String) {
         var oldTrackers = [Tracker]()
-        categories.forEach { category in
-            if category.category == tracker.category {
-                oldTrackers = category.trackerArray
-                categories.removeAll { $0.category == tracker.category }
+        categories.forEach { currentCutegory in
+            if currentCutegory.category == category {
+                oldTrackers = currentCutegory.trackerArray
+                categories.removeAll { $0.category == category }
             }
         }
         oldTrackers.append(tracker)
         
-        let newCategory = TrackerCategory(category: tracker.category, trackerArray: oldTrackers)
+        let newCategory = TrackerCategory(category: category, trackerArray: oldTrackers)
         categories.append(newCategory)
         
         filterTrackersByDate()
