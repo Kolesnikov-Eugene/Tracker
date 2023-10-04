@@ -7,7 +7,12 @@
 
 import Foundation
 
-struct TrackerRecord {
+protocol TrackerRecordProtocol {
+    var id: UUID { get }
+    var date: Date { get }
+}
+
+struct TrackerRecord: TrackerRecordProtocol {
     let id: UUID
     let date: Date
 }

@@ -181,7 +181,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    func configureCell(with trackerModel: Tracker, counter: Int) {
+    func configureCell(with trackerModel: TrackerProtocol, counter: Int) {
         self.titleLabel.text = trackerModel.description
         trackerInfoView.backgroundColor = trackerModel.color
         emojiView.text = trackerModel.emoji
