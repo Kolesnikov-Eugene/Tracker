@@ -10,16 +10,14 @@ import CoreData
 
 protocol DataStoreProtocol {
     var managedObjectContext: NSManagedObjectContext? { get }
-//    func addCategory(_ category: TrackerCategoryProtocol) throws
     func deleteCategory(_ category: NSManagedObject) throws
     func addTracker(_ tarcker: TrackerProtocol, for category: String) throws
     func deleteTracker(_ tracker: NSManagedObject) throws
     func addTrackerRecord(_ record: TrackerRecordProtocol) throws
-    func fetchAllCategories() throws -> [TrackerCategoryProtocol]?
+    func fetchAllCategories() throws -> [TrackerCategoryProtocol]
     func fetchRecordsCounter(for trackerID: UUID) throws -> Int
-    func checkIfTrackerIsCompleted(_ tracker: TrackerProtocol, for currentDate: Date) throws -> Bool
-    func showCategory() throws
-    func showTracker() throws
+    func trackerIsCompleted(_ trackerID: UUID, for currentDate: Date) throws -> Bool
+    func deleteTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws
 }
 
 final class DataStore: DataStoreProtocol {
@@ -42,7 +40,7 @@ extension DataStore: TrackerStore {
         let categoryID = try? fetchCategoryID(for: category, and: tracker.id)
         
         let trackerCoreData = TrackerCoreData(context: context)
-
+        
         trackerCoreData.id = tracker.id
         trackerCoreData.categoryID = categoryID
         trackerCoreData.colorHex = tracker.color.hexString()
@@ -50,12 +48,14 @@ extension DataStore: TrackerStore {
         trackerCoreData.descriptionText = tracker.description
         trackerCoreData.schedule = tracker.schedule.map { String($0.rawValue) }.joined(separator: ",")
         
-        let trackerCategory = TrackerCategoryCoreData(context: context)
+        let trackerCategory: TrackerCategoryCoreData?
+        let categoryExixts = try! categoryExists(category)
+        if !categoryExixts {
+            trackerCategory = TrackerCategoryCoreData(context: context)
+            trackerCategory!.id = categoryID
+            trackerCategory!.category = category
+        }
         
-        trackerCategory.id = categoryID
-        trackerCategory.category = category
-        trackerCategory.trackerID = tracker.id
-
         try context.save()
     }
     
@@ -67,7 +67,7 @@ extension DataStore: TrackerStore {
         
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.categoryID), categoryID as NSUUID)
         
-        let trackersData = try! context.fetch(request)
+        let trackersData = try context.fetch(request)
         var trackers = [TrackerProtocol]()
         trackersData.forEach { tracker in
             let id = tracker.id!
@@ -76,62 +76,16 @@ extension DataStore: TrackerStore {
             let description = tracker.descriptionText!
             let schedule: [Schedule] = tracker.schedule!.components(separatedBy: ",").map { Schedule(rawValue: Int($0)!)! }
             let newTracker = Tracker(id: id, emoji: emoji, color: color!, description: description, schedule: schedule)
-            
             trackers.append(newTracker)
         }
-        
         return trackers
-    }
-    
-    func showTracker() {
-        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-
-        let trackers = try! context.fetch(request)
-
-
-        print("-------------------------------------------------------------------")
-        print("-------------------------------------------------------------------")
-        print("HERE WE ARE PRINTING ALL THE TRACKERS EXISTING")
-        print(trackers)
-//        let id = trackers[0].id!
-//        let emoji = trackers[0].emoji!
-//        let color = trackers[0].colorHex?.colorFromHex()
-//        let description = trackers[0].descriptionText!
-//        let scheduleData = trackers[0].schedule
-//        let newTracker = Tracker(id: id, emoji: emoji, color: color!, description: description, schedule: [.friday])
-        print("-------------------------------------------------------------------")
-        print("-------------------------------------------------------------------")
-        print("-------------------------------------------------------------------")
-        print("-------------------------------------------------------------------")
-    }
-
-    func showCategory() {
-        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
-
-        let categories = try! context.fetch(request)
-
-        print("-------------------------------------------------------------------")
-        print("-------------------------------------------------------------------")
-        print("HERE WE ARE PRINTING ALL THE CATEGORIES EXISTING")
-        print(categories)
-        print("-------------------------------------------------------------------")
-        print("-------------------------------------------------------------------")
     }
 }
 
 //MARK: - TrackerCategoryStore protocol
 extension DataStore: TrackerCategoryStore {
-    func addCategory(_ categoryName: String, categoryID: UUID, with trackerID: UUID) throws {
-        let trackerCategory = TrackerCategoryCoreData(context: context)
-        
-        trackerCategory.id = categoryID
-        trackerCategory.category = categoryName
-        trackerCategory.trackerID = trackerID
-        
-        try context.save()
-    }
-    
     func deleteCategory(_ category: NSManagedObject) throws {
+        //TODO later?
     }
     
     func fetchCategoryID(for categoryName: String, and trackerID: UUID) throws -> UUID? {
@@ -143,27 +97,31 @@ extension DataStore: TrackerCategoryStore {
         
         if !categoryID.isEmpty {
             let id = categoryID[0].id ?? UUID()
-            
-//            try? addCategory(categoryName, categoryID: id, with: trackerID)
-            
             return id // the same categoryName has the same ID. There will no be two categoies with the same name and different ID
         } else {
             let id = UUID()
-            
-//            try? addCategory(categoryName, categoryID: id, with: trackerID)
-            
             return id
         }
     }
     
-    func fetchAllCategories() throws -> [TrackerCategoryProtocol]? {
+    func categoryExists(_ categoryName: String) throws -> Bool {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         
-        let categoriesData = try! context.fetch(request)
+        request.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCategoryCoreData.category), categoryName)
         
-        let categories: [TrackerCategoryProtocol] = categoriesData.map { TrackerCategory(
-            category: $0.category!,
-            trackerArray: try! fetchTrackers(for: $0.id!)) }
+        let category = try context.fetch(request)
+        
+        return !category.isEmpty
+    }
+    
+    func fetchAllCategories() throws -> [TrackerCategoryProtocol] {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        
+        let categoriesData = try context.fetch(request)
+        
+        let categories: [TrackerCategoryProtocol] = try categoriesData.map { TrackerCategory(
+            category: $0.category ?? "",
+            trackerArray: try fetchTrackers(for: $0.id!)) }
         
         return categories
     }
@@ -172,12 +130,18 @@ extension DataStore: TrackerCategoryStore {
 //MARK: - TrackerRecordStore protocol
 extension DataStore: TrackerRecordStore {
     func addTrackerRecord(_ record: TrackerRecordProtocol) throws {
-        let trackerRecord = TrackerRecordCoreData(context: context)
-        
-        trackerRecord.trackerID = record.id
-        trackerRecord.date = record.date
-        
-        try context.save()
+        if try trackerIsCompleted(record.id, for: record.date) {
+            try deleteTrackerRecord(record)
+        } else {
+            guard record.date <= Date() else { return }
+            
+            let trackerRecord = TrackerRecordCoreData(context: context)
+            
+            trackerRecord.trackerID = record.id
+            trackerRecord.date = record.date.onlyDate
+            
+            try context.save()
+        }
     }
     
     func fetchRecordsCounter(for trackerID: UUID) throws -> Int {
@@ -185,21 +149,38 @@ extension DataStore: TrackerRecordStore {
         
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.trackerID), trackerID as NSUUID)
         
-        let records = try! context.fetch(request)
+        let records = try context.fetch(request)
         
         return records.count
     }
     
-    func checkIfTrackerIsCompleted(_ tracker: TrackerProtocol, for currentDate: Date) throws -> Bool {
+    //this method is used to check if the tracker is completed to represent "done" status on the screen
+    func trackerIsCompleted(_ trackerID: UUID, for currentDate: Date) throws -> Bool {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
         
-        let subPredicate1 = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.trackerID), tracker.id as NSUUID)
-        let subPredicate2 = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.date), currentDate as NSDate)
+        let subPredicate1 = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.trackerID), trackerID as NSUUID)
+        let subPredicate2 = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerRecordCoreData.date), currentDate.onlyDate)
         
         let andPredicate = NSCompoundPredicate(type: .and, subpredicates: [subPredicate1, subPredicate2])
+        request.predicate = andPredicate
         
-        let result = try! context.fetch(request)
+        let result = try context.fetch(request)
         
-        return result.isEmpty
+        return !result.isEmpty
+    }
+    
+    func deleteTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        
+        let subPredicate1 = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.trackerID), trackerRecord.id as NSUUID)
+        let subPredicate2 = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerRecordCoreData.date), trackerRecord.date.onlyDate)
+        
+        let andPredicate = NSCompoundPredicate(type: .and, subpredicates: [subPredicate1, subPredicate2])
+        request.predicate = andPredicate
+        
+        let result = try context.fetch(request)
+        
+        context.delete(result[0]) // there always will be one record matching
+        try context.save()
     }
 }

@@ -23,7 +23,7 @@ struct Tracker: TrackerProtocol {
     let description: String
     let schedule: [Schedule]
 }
-//create a new table with number of days in CoreData
+
 extension Tracker {
     func fetchNumberOfWeekDaysArray() -> String {
         schedule.map { $0.representFullDayName() }.joined(separator: ", ")
