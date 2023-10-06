@@ -28,7 +28,7 @@ final class SupplementaryView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView(with trackerCategory: TrackerCategory) {
+    func configureView(with trackerCategory: TrackerCategoryProtocol) {
         titleLabel.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
         titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         titleLabel.text = trackerCategory.category

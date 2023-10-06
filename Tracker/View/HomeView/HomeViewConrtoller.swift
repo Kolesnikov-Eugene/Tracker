@@ -20,11 +20,11 @@ final class HomeViewController: UIViewController {
     private let reuseIdentifier = "TrackerViewCell"
     private var addBarButtonItem: UIBarButtonItem?
     private var currentDate = Date()
-    private var categories: [TrackerCategory] = []
-    private var trackers: [Tracker] = []
-    private var visibleCategories: [TrackerCategory] = []
-    private var completedTrackers: [TrackerRecord] = []
-    
+    private var categories: [TrackerCategoryProtocol] = []
+    private var visibleCategories: [TrackerCategoryProtocol] = []
+    private lazy var dataManager: DataManagerProtocol? = {
+        configureDataManager()
+    }()
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -95,6 +95,9 @@ final class HomeViewController: UIViewController {
         
         addSubviews()
         applyConstraints()
+        
+        categories = fetchAllCategories()
+        filterTrackersByDate()
     }
     
     init() {
@@ -154,6 +157,17 @@ final class HomeViewController: UIViewController {
         }
     }
     
+    private func configureDataManager() -> DataManagerProtocol? {
+        let dataStore = DataStore()
+        do {
+            try dataManager = DataManager(dataStore, delegate: self)
+            return dataManager
+        } catch {
+            print("error")
+            return nil
+        }
+    }
+    
     private func filterTrackersByDate() {
         switchToEmptyState()
         
@@ -204,8 +218,14 @@ final class HomeViewController: UIViewController {
         emptyStateLabel.text = "Ничего не найдено"
     }
     
-    private func getTrackerCompletionCounter(for tracker: Tracker) -> Int {
-        completedTrackers.filter { $0.id == tracker.id }.count
+    private func getTrackerCompletionCounter(for tracker: TrackerProtocol) -> Int { //THIS method was changed
+        guard let counter = try? dataManager?.fetchRecordsCounter(for: tracker.id) else { return 0 }
+        return counter
+    }
+    
+    private func trackerIsCompleted(_ trackerID: UUID, for currentDate: Date) -> Bool {
+        guard let completion = try? dataManager?.checkIfTrackerIsCompleted(trackerID, for: currentDate) else { return false }
+        return completion
     }
     
     @objc private func datePickerDidChangeDate(_ sender: UIDatePicker) {
@@ -248,10 +268,12 @@ extension HomeViewController: UISearchBarDelegate {
 
 extension HomeViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
+        let _ = dataManager?.numberOfSections
         return visibleCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        let _ = dataManager?.numberOfRowsInSection(section)
         return visibleCategories[section].trackerArray.count
     }
     
@@ -265,7 +287,8 @@ extension HomeViewController: UICollectionViewDataSource {
         let currentTracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
         let counter = getTrackerCompletionCounter(for: currentTracker)
         
-        cell.buttonChecked = completedTrackers.contains(where: { $0.id == currentTracker.id && $0.date.onlyDate == currentDate.onlyDate })
+        cell.buttonChecked = trackerIsCompleted(currentTracker.id, for: currentDate)
+        
         cell.configureCell(with: currentTracker, counter: counter)
         
         return cell
@@ -315,20 +338,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 
 extension HomeViewController: NewHabitDelegate {
     func didCreateNewTracker(_ tracker: Tracker, for category: String) {
-        var oldTrackers = [Tracker]()
-        categories.forEach { currentCutegory in
-            if currentCutegory.category == category {
-                oldTrackers = currentCutegory.trackerArray
-                categories.removeAll { $0.category == category }
-            }
-        }
-        oldTrackers.append(tracker)
-        
-        let newCategory = TrackerCategory(category: category, trackerArray: oldTrackers)
-        categories.append(newCategory)
-        
-        filterTrackersByDate()
-        collectionView.reloadData()
+        try? dataManager?.addTracker(tracker, for: category)
     }
 }
 
@@ -341,21 +351,24 @@ extension HomeViewController: HomeViewCellDelegate {
         let selectedTracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
         let completedTracker = TrackerRecord(id: selectedTracker.id, date: currentDate)
         
-        if completedTrackers.isEmpty {
-            addTrackerToCompleted(completedTracker)
-        } else {
-            if completedTrackers.contains(where: { $0.id == completedTracker.id && $0.date.onlyDate == completedTracker.date.onlyDate }) {
-                completedTrackers.removeAll { $0.id == completedTracker.id && $0.date.onlyDate == completedTracker.date.onlyDate }
-            } else {
-                addTrackerToCompleted(completedTracker)
-            }
-        }
+        try? dataManager?.addTrackerRecord(completedTracker)
+        
+        filterTrackersByDate()
+        collectionView.reloadData()
+    }
+}
+
+extension HomeViewController: DataManagerDelegate {
+    func didUpdate() {
+        categories.removeAll()
+        categories = fetchAllCategories()
+        
         filterTrackersByDate()
         collectionView.reloadData()
     }
     
-    private func addTrackerToCompleted(_ tracker: TrackerRecord) {
-        guard currentDate <= Date() else { return }
-        completedTrackers.append(tracker)
+    private func fetchAllCategories() -> [TrackerCategoryProtocol] {
+        guard let categories = try? dataManager?.fetchAllCategories() else { return [] }
+        return categories
     }
 }

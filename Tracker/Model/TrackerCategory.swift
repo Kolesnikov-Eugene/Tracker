@@ -7,7 +7,12 @@
 
 import Foundation
 
-struct TrackerCategory {
+protocol TrackerCategoryProtocol {
+    var category: String { get }
+    var trackerArray: [TrackerProtocol] { get }
+}
+
+struct TrackerCategory: TrackerCategoryProtocol {
     let category: String
-    let trackerArray: [Tracker]
+    let trackerArray: [TrackerProtocol]
 }

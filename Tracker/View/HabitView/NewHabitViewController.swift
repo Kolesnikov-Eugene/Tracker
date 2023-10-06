@@ -353,13 +353,13 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func switchCreateButton() {
-        createButton.backgroundColor = checkIfAllFieldsFilledOut() ?
+        createButton.backgroundColor = allFieldsFilledOut() ?
         UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1) : UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
     }
     
-    private func checkIfAllFieldsFilledOut() -> Bool {
+    private func allFieldsFilledOut() -> Bool {
         if typeTracker == .irregularIvent {
-            schedule = Schedule.allCases.map({ $0 })
+            schedule = Schedule.allCases.map { $0 }
         }
         guard let selectedEmoji = selectedEmoji,
               let selectedColor = selectedColor,
@@ -381,7 +381,7 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func categoryButtonTapped() {
-        //TODO present categoryView
+        //TODO present categoryView Sprint 16
     }
     
     @objc private func scheduleButtonTapped() {
@@ -393,7 +393,7 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
-        if checkIfAllFieldsFilledOut() {
+        if allFieldsFilledOut() {
             dismiss(animated: true) { [weak self] in
                 guard let self = self,
                       let tracker = tracker,
