@@ -48,12 +48,12 @@ extension DataStore: TrackerStore {
         trackerCoreData.descriptionText = tracker.description
         trackerCoreData.schedule = tracker.schedule.map { String($0.rawValue) }.joined(separator: ",")
         
-        let trackerCategory: TrackerCategoryCoreData?
-        let categoryExixts = try! categoryExists(category)
+        var trackerCategory: TrackerCategoryCoreData
+        let categoryExixts = try categoryExists(category)
         if !categoryExixts {
             trackerCategory = TrackerCategoryCoreData(context: context)
-            trackerCategory!.id = categoryID
-            trackerCategory!.category = category
+            trackerCategory.id = categoryID
+            trackerCategory.category = category
         }
         
         try context.save()
@@ -70,13 +70,22 @@ extension DataStore: TrackerStore {
         let trackersData = try context.fetch(request)
         var trackers = [TrackerProtocol]()
         trackersData.forEach { tracker in
-            let id = tracker.id!
-            let emoji = tracker.emoji!
-            let color = tracker.colorHex?.colorFromHex()
-            let description = tracker.descriptionText!
-            let schedule: [Schedule] = tracker.schedule!.components(separatedBy: ",").map { Schedule(rawValue: Int($0)!)! }
-            let newTracker = Tracker(id: id, emoji: emoji, color: color!, description: description, schedule: schedule)
-            trackers.append(newTracker)
+            if let id = tracker.id,
+               let emoji = tracker.emoji,
+               let color = tracker.colorHex?.colorFromHex(),
+               let description = tracker.descriptionText,
+               let scheduleString = tracker.schedule {
+                let schedule: [Schedule] = scheduleString.components(separatedBy: ",").map { dayValue in
+                    guard let dayInteger = Int(dayValue),
+                          let scheduleDay = Schedule(rawValue: dayInteger) else {
+                        assertionFailure("something went wrong during the initialazation a Schedule value")
+                        return Schedule(rawValue: 0)!
+                    }
+                    return scheduleDay
+                }
+                let newTracker = Tracker(id: id, emoji: emoji, color: color, description: description, schedule: schedule)
+                trackers.append(newTracker)
+            }
         }
         return trackers
     }
