@@ -42,12 +42,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         })
         return container
     }()
-    
-//    lazy var trackerCategoryDataStore = {
-//        do {
-//            return try DataStore()
-//        } catch {
-//            return NullStore()
-//        }
-//    }()
 }

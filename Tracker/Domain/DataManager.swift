@@ -26,7 +26,6 @@ protocol DataManagerProtocol {
     func fetchAllCategories() throws -> [TrackerCategoryProtocol]
     func fetchRecordsCounter(for trackerID: UUID) throws -> Int
     func checkIfTrackerIsCompleted(_ trackerID: UUID, for currentDate: Date) throws -> Bool
-    func deleteTrackerRecord(_ trackerID: UUID, for date: Date) throws
 }
 
 // MARK: - DataManager
@@ -104,10 +103,6 @@ extension DataManager: DataManagerProtocol {
     func checkIfTrackerIsCompleted(_ trackerID: UUID, for currentDate: Date) throws -> Bool {
         try dataStore.trackerIsCompleted(trackerID, for: currentDate)
     }
-    
-    func deleteTrackerRecord(_ trackerID: UUID, for date: Date) throws {
-        //TODO
-    }
 }
 
 extension DataManager: NSFetchedResultsControllerDelegate {
@@ -122,12 +117,14 @@ extension DataManager: NSFetchedResultsControllerDelegate {
         deletedIndexes = nil
     }
     
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any, at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
         switch type {
-        case .delete:
-            delegate?.didUpdate()
-        case .insert:
+        case .delete, .insert:
             delegate?.didUpdate()
         default:
             break

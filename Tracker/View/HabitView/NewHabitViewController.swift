@@ -359,7 +359,7 @@ final class NewHabitViewController: UIViewController {
     
     private func allFieldsFilledOut() -> Bool {
         if typeTracker == .irregularIvent {
-            schedule = Schedule.allCases.map({ $0 })
+            schedule = Schedule.allCases.map { $0 }
         }
         guard let selectedEmoji = selectedEmoji,
               let selectedColor = selectedColor,
@@ -381,7 +381,7 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func categoryButtonTapped() {
-        //TODO present categoryView
+        //TODO present categoryView Sprint 16
     }
     
     @objc private func scheduleButtonTapped() {

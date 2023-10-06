@@ -11,5 +11,4 @@ import CoreData
 protocol TrackerRecordStore {
     var managedObjectContext: NSManagedObjectContext? { get }
     func addTrackerRecord(_ record: TrackerRecordProtocol) throws
-    func deleteTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws
 }

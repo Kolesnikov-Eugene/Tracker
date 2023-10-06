@@ -29,7 +29,6 @@
 		44BC89992A9E7F2B00C0E23D /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC89982A9E7F2B00C0E23D /* TrackerRecord.swift */; };
 		44BC899B2A9EA52F00C0E23D /* AddTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC899A2A9EA52F00C0E23D /* AddTrackerViewController.swift */; };
 		44BDB22B2AB8961E000FD8DC /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BDB22A2AB8961E000FD8DC /* Int+Extension.swift */; };
-		44C30CBF2ABC54C50034FFC0 /* NullStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C30CBE2ABC54C50034FFC0 /* NullStore.swift */; };
 		44D3D2D22AB5C0CE006F33FE /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D3D2D12AB5C0CE006F33FE /* GeometricParams.swift */; };
 		44D6F1CB2AAB963200567305 /* AddScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D6F1CA2AAB963200567305 /* AddScheduleViewController.swift */; };
 		44D91E412ABAECDD00BAB467 /* TrackerCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 44D91E3F2ABAECDD00BAB467 /* TrackerCoreDataModel.xcdatamodeld */; };
@@ -70,7 +69,6 @@
 		44BC89982A9E7F2B00C0E23D /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		44BC899A2A9EA52F00C0E23D /* AddTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTrackerViewController.swift; sourceTree = "<group>"; };
 		44BDB22A2AB8961E000FD8DC /* Int+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
-		44C30CBE2ABC54C50034FFC0 /* NullStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullStore.swift; sourceTree = "<group>"; };
 		44D3D2D12AB5C0CE006F33FE /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		44D6F1CA2AAB963200567305 /* AddScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddScheduleViewController.swift; sourceTree = "<group>"; };
 		44D91E402ABAECDD00BAB467 /* TrackerCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackerCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
@@ -248,7 +246,6 @@
 				44D91E462ABAF4EA00BAB467 /* TrackerCategoryStore.swift */,
 				44D91E482ABAF4F900BAB467 /* TrackerRecordStore.swift */,
 				44D91E4F2ABC3C5600BAB467 /* DataStore.swift */,
-				44C30CBE2ABC54C50034FFC0 /* NullStore.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -345,7 +342,6 @@
 				44BDB22B2AB8961E000FD8DC /* Int+Extension.swift in Sources */,
 				44DB60822AB8BCEE00E2B40B /* Schedule.swift in Sources */,
 				44BC89932A9E77A400C0E23D /* TabBarController.swift in Sources */,
-				44C30CBF2ABC54C50034FFC0 /* NullStore.swift in Sources */,
 				44FD01532AB4F6BC002EFC8F /* Date+Extension.swift in Sources */,
 				441DF7EC2A9FD2FA005AC874 /* SupplementaryView.swift in Sources */,
 				44BC89992A9E7F2B00C0E23D /* TrackerRecord.swift in Sources */,

@@ -35,8 +35,6 @@ final class DataStore: DataStoreProtocol {
 // MARK: - TrackerStore protocol
 extension DataStore: TrackerStore {
     func addTracker(_ tracker: TrackerProtocol, for category: String) throws {
-        // check if category exists in CoreData.
-        // if so, save tracker to DB at existing category
         let categoryID = try? fetchCategoryID(for: category, and: tracker.id)
         
         let trackerCoreData = TrackerCoreData(context: context)
@@ -60,6 +58,8 @@ extension DataStore: TrackerStore {
     }
     
     func deleteTracker(_ tracker: NSManagedObject) throws {
+        //TODO
+        //Implement logic of deleting a tracker from DB when user taps to delete it from the MainScreen
     }
     
     func fetchTrackers(for categoryID: UUID) throws -> [TrackerProtocol] {
@@ -68,24 +68,28 @@ extension DataStore: TrackerStore {
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.categoryID), categoryID as NSUUID)
         
         let trackersData = try context.fetch(request)
+        
         var trackers = [TrackerProtocol]()
+        
         trackersData.forEach { tracker in
-            if let id = tracker.id,
-               let emoji = tracker.emoji,
-               let color = tracker.colorHex?.colorFromHex(),
-               let description = tracker.descriptionText,
-               let scheduleString = tracker.schedule {
-                let schedule: [Schedule] = scheduleString.components(separatedBy: ",").map { dayValue in
-                    guard let dayInteger = Int(dayValue),
-                          let scheduleDay = Schedule(rawValue: dayInteger) else {
-                        assertionFailure("something went wrong during the initialazation a Schedule value")
-                        return Schedule(rawValue: 0)!
-                    }
-                    return scheduleDay
-                }
-                let newTracker = Tracker(id: id, emoji: emoji, color: color, description: description, schedule: schedule)
-                trackers.append(newTracker)
+            guard let id = tracker.id,
+                  let emoji = tracker.emoji,
+                  let color = tracker.colorHex?.colorFromHex(),
+                  let description = tracker.descriptionText,
+                  let scheduleString = tracker.schedule else {
+                return
             }
+            
+            let scheduleArray: [String] = scheduleString.components(separatedBy: ",").map { $0 }
+            
+            let schedule: [Schedule] = scheduleArray.map { dayValue in
+                let dayInteger = Int(dayValue) ?? 0
+                let scheduleDay = Schedule(rawValue: dayInteger)
+                return scheduleDay ?? Schedule(rawValue: 0)!
+            }
+            
+            let newTracker = Tracker(id: id, emoji: emoji, color: color, description: description, schedule: schedule)
+            trackers.append(newTracker)
         }
         return trackers
     }
@@ -94,7 +98,11 @@ extension DataStore: TrackerStore {
 //MARK: - TrackerCategoryStore protocol
 extension DataStore: TrackerCategoryStore {
     func deleteCategory(_ category: NSManagedObject) throws {
-        //TODO later?
+        /*
+        TODO
+        Implement logic of deleting category from the DB after deleting a tracker,
+        if there are no matching trackers left for category
+        */
     }
     
     func fetchCategoryID(for categoryName: String, and trackerID: UUID) throws -> UUID? {
@@ -130,7 +138,7 @@ extension DataStore: TrackerCategoryStore {
         
         let categories: [TrackerCategoryProtocol] = try categoriesData.map { TrackerCategory(
             category: $0.category ?? "",
-            trackerArray: try fetchTrackers(for: $0.id!)) }
+            trackerArray: try fetchTrackers(for: $0.id ?? UUID())) }
         
         return categories
     }

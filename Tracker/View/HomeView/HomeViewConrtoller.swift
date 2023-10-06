@@ -23,14 +23,7 @@ final class HomeViewController: UIViewController {
     private var categories: [TrackerCategoryProtocol] = []
     private var visibleCategories: [TrackerCategoryProtocol] = []
     private lazy var dataManager: DataManagerProtocol? = {
-        let dataStore = DataStore()
-        do {
-            try dataManager = DataManager(dataStore, delegate: self)
-            return dataManager
-        } catch {
-            print("error")
-            return nil
-        }
+        configureDataManager()
     }()
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -103,7 +96,7 @@ final class HomeViewController: UIViewController {
         addSubviews()
         applyConstraints()
         
-        categories = try! dataManager?.fetchAllCategories() ?? []
+        categories = fetchAllCategories()
         filterTrackersByDate()
     }
     
@@ -161,6 +154,17 @@ final class HomeViewController: UIViewController {
             navigationItem.rightBarButtonItem = datePickerItem
             navigationItem.searchController = searchController
             navigationItem.hidesSearchBarWhenScrolling = false
+        }
+    }
+    
+    private func configureDataManager() -> DataManagerProtocol? {
+        let dataStore = DataStore()
+        do {
+            try dataManager = DataManager(dataStore, delegate: self)
+            return dataManager
+        } catch {
+            print("error")
+            return nil
         }
     }
     
@@ -357,9 +361,14 @@ extension HomeViewController: HomeViewCellDelegate {
 extension HomeViewController: DataManagerDelegate {
     func didUpdate() {
         categories.removeAll()
-        categories = try! dataManager?.fetchAllCategories() ?? []
+        categories = fetchAllCategories()
         
         filterTrackersByDate()
         collectionView.reloadData()
+    }
+    
+    private func fetchAllCategories() -> [TrackerCategoryProtocol] {
+        guard let categories = try? dataManager?.fetchAllCategories() else { return [] }
+        return categories
     }
 }
