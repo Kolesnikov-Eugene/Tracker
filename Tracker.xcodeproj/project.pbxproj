@@ -13,6 +13,8 @@
 		444B90042AA9C77F0013D8FA /* NewHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90032AA9C77F0013D8FA /* NewHabitViewController.swift */; };
 		444B90062AA9D3280013D8FA /* TextFieldWithPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90052AA9D3280013D8FA /* TextFieldWithPadding.swift */; };
 		444B90082AAA13840013D8FA /* SeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90072AAA13840013D8FA /* SeparatorView.swift */; };
+		445936DE2AD548F000ED3495 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445936DD2AD548F000ED3495 /* OnboardingPageViewController.swift */; };
+		445936E02AD54EF600ED3495 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445936DF2AD54EF600ED3495 /* OnboardingViewController.swift */; };
 		447C66102AAF4D95002725ED /* AddScheduleViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447C660F2AAF4D95002725ED /* AddScheduleViewCell.swift */; };
 		449AA5232A97E876008D8D8E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449AA5222A97E876008D8D8E /* AppDelegate.swift */; };
 		449AA5252A97E876008D8D8E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449AA5242A97E876008D8D8E /* SceneDelegate.swift */; };
@@ -51,6 +53,8 @@
 		444B90032AA9C77F0013D8FA /* NewHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitViewController.swift; sourceTree = "<group>"; };
 		444B90052AA9D3280013D8FA /* TextFieldWithPadding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithPadding.swift; sourceTree = "<group>"; };
 		444B90072AAA13840013D8FA /* SeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorView.swift; sourceTree = "<group>"; };
+		445936DD2AD548F000ED3495 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
+		445936DF2AD54EF600ED3495 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		447C660F2AAF4D95002725ED /* AddScheduleViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddScheduleViewCell.swift; sourceTree = "<group>"; };
 		449AA51F2A97E876008D8D8E /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449AA5222A97E876008D8D8E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -130,6 +134,15 @@
 			path = HabitView;
 			sourceTree = "<group>";
 		};
+		445936DC2AD5489500ED3495 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				445936DD2AD548F000ED3495 /* OnboardingPageViewController.swift */,
+				445936DF2AD54EF600ED3495 /* OnboardingViewController.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		449AA5162A97E876008D8D8E = {
 			isa = PBXGroup;
 			children = (
@@ -149,6 +162,7 @@
 		449AA5212A97E876008D8D8E /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				445936DC2AD5489500ED3495 /* Onboarding */,
 				44D91E432ABAF4CC00BAB467 /* Domain */,
 				44D91E4E2ABC3C0300BAB467 /* Core Data */,
 				44BC89912A9E771400C0E23D /* TabBar */,
@@ -323,6 +337,7 @@
 				444B90062AA9D3280013D8FA /* TextFieldWithPadding.swift in Sources */,
 				44D91E4B2ABB355D00BAB467 /* DataManager.swift in Sources */,
 				44D91E412ABAECDD00BAB467 /* TrackerCoreDataModel.xcdatamodeld in Sources */,
+				445936DE2AD548F000ED3495 /* OnboardingPageViewController.swift in Sources */,
 				44A2F5D02AA88118004B8E3B /* Helpers.swift in Sources */,
 				449C744D2AAB2EE40088BB4A /* EmojiAndColorsArrayViewCell.swift in Sources */,
 				44FD01512AB388A0002EFC8F /* DayOfWeekExtractor.swift in Sources */,
@@ -346,6 +361,7 @@
 				441DF7EC2A9FD2FA005AC874 /* SupplementaryView.swift in Sources */,
 				44BC89992A9E7F2B00C0E23D /* TrackerRecord.swift in Sources */,
 				44D91E472ABAF4EA00BAB467 /* TrackerCategoryStore.swift in Sources */,
+				445936E02AD54EF600ED3495 /* OnboardingViewController.swift in Sources */,
 				44D3D2D22AB5C0CE006F33FE /* GeometricParams.swift in Sources */,
 				449AA5232A97E876008D8D8E /* AppDelegate.swift in Sources */,
 				449C744F2AAB39820088BB4A /* EmojiAndColorCellModel.swift in Sources */,

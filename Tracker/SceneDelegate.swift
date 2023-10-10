@@ -18,9 +18,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            let tabBarController = TabBarController()
             window.backgroundColor = .white
-            window.rootViewController = tabBarController
+            
+            let firstTimeLaunched = UserDefaults.standard.bool(forKey: appLaunchedFirstTimeKey)
+            
+            if !firstTimeLaunched {
+                let first = OnboardingViewController(
+                    imageName: firstOnboardingViewControllerName,
+                    infoText: firstOnboardingScreenDescription)
+                
+                let second = OnboardingViewController(
+                    imageName: secondOnboardingViewControllerName,
+                    infoText: secondOnboardingScreenDescription)
+                
+                let onboarding = OnboardingPageViewController(firstViewController: first, secondViewController: second)
+                
+                window.rootViewController = onboarding
+                UserDefaults.standard.set(true, forKey: appLaunchedFirstTimeKey)
+            } else {
+                let tabBarController = TabBarController()
+                window.rootViewController = tabBarController
+            }
+            
             self.window = window
             window.makeKeyAndVisible()
         }

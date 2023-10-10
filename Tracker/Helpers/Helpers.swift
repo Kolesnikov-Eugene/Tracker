@@ -29,3 +29,11 @@ let colorList: [UIColor] = [
 ]
 
 let emojiArray = ["🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
+
+let firstOnboardingViewControllerName = "onboarding_first"
+let secondOnboardingViewControllerName = "onboarding_second"
+
+let firstOnboardingScreenDescription = "Отслеживайте только то, что хотите"
+let secondOnboardingScreenDescription = "Даже если это не литры воды и йога"
+
+let appLaunchedFirstTimeKey = "firstTimeKey"
