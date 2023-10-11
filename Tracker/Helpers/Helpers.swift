@@ -37,3 +37,9 @@ let firstOnboardingScreenDescription = "Отслеживайте только т
 let secondOnboardingScreenDescription = "Даже если это не литры воды и йога"
 
 let appLaunchedFirstTimeKey = "firstTimeKey"
+
+let addCategoryEmptyStateText =
+"""
+Привычки и события можно
+объединить по смыслу
+"""

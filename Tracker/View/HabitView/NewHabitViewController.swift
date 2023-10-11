@@ -381,7 +381,7 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func categoryButtonTapped() {
-        //TODO present categoryView Sprint 16
+        navigationController?.pushViewController(AddCategoryView(), animated: true)
     }
     
     @objc private func scheduleButtonTapped() {

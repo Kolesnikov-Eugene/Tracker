@@ -20,9 +20,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let window = UIWindow(windowScene: windowScene)
             window.backgroundColor = .white
             
-            let firstTimeLaunched = UserDefaults.standard.bool(forKey: appLaunchedFirstTimeKey)
+            let appLaunchedSecondTime = UserDefaults.standard.bool(forKey: appLaunchedFirstTimeKey)
             
-            if !firstTimeLaunched {
+            if !appLaunchedSecondTime {
                 let first = OnboardingViewController(
                     imageName: firstOnboardingViewControllerName,
                     infoText: firstOnboardingScreenDescription)

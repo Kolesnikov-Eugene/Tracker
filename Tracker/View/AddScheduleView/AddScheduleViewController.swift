@@ -53,7 +53,6 @@ final class AddScheduleViewController: UIViewController {
         navigationItem.title = "Расписание"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         navigationItem.setHidesBackButton(true, animated: false)
-        view.backgroundColor = .white
         
         tableView.dataSource = self
         tableView.delegate = self
