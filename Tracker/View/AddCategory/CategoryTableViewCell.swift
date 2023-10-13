@@ -8,6 +8,7 @@
 import UIKit
 
 final class CategoryTableViewCell: UITableViewCell {
+    var cellIsSelected = false
     private lazy var categoryLabel: UILabel = {
         let label = UILabel()
         
@@ -17,11 +18,11 @@ final class CategoryTableViewCell: UITableViewCell {
         
         return label
     }()
-    private lazy var checkmarkImageView: UIImageView = {
+    lazy var checkmarkImageView: UIImageView = {
         let view = UIImageView()
         
         view.isHidden = false //DONt FORGET TO CHANGE
-        view.image = UIImage(named: "checkmark")
+//        view.image = UIImage(named: "checkmark")
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -34,6 +35,7 @@ final class CategoryTableViewCell: UITableViewCell {
         
         return view
     }()
+//    var callBackCheckmarkState: ((String?) -> (Void))?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -108,5 +110,15 @@ final class CategoryTableViewCell: UITableViewCell {
         contentView.layer.cornerRadius = 16
         contentView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         stringSeparator.backgroundColor = .clear
+    }
+    
+    func switchCellState() {
+//        cellIsSelected = !cellIsSelected
+        checkmarkImageView.image = cellIsSelected ? UIImage(named: "checkmark") : nil
+//        callBackCheckmarkState?(categoryLabel.text)
+    }
+    
+    func fetchCategoryName() -> String {
+        categoryLabel.text ?? ""
     }
 }

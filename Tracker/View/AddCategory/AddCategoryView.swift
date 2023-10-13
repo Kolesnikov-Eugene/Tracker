@@ -8,13 +8,14 @@
 import UIKit
 
 final class AddCategoryView: UIViewController {
-    private let counter = 0
+    private let counter = 5
     private var categoryName: String = "Classes"
     private let reuseCellIdentifier = "CategoryCell"
     private let tableView: UITableView = {
         let tableView = UITableView()
         
         tableView.separatorStyle = .none
+        tableView.allowsMultipleSelection = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
@@ -135,7 +136,6 @@ extension AddCategoryView: UITableViewDataSource {
         
         cell.configureCell(at: indexPath.row, and: categoryName, with: counter)
         
-        
         return cell
     }
     
@@ -146,6 +146,29 @@ extension AddCategoryView: UITableViewDataSource {
 
 //MARK: - UITableView delegate
 extension AddCategoryView: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return }
+        
+        cell.selectionStyle = .none
+
+        cell.cellIsSelected = !cell.cellIsSelected
+
+        cell.switchCellState()
+        
+        categoryName = cell.fetchCategoryName()
+//        cell.checkmarkImageView.image = cell.cellIsSelected ? UIImage(named: "checkmark") : nil
+        
+    }
     
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return }
+        
+
+        cell.cellIsSelected = false
+//        cell.checkmarkImageView.image = nil
+        cell.switchCellState()
+        
+        categoryName = ""
+    }
 }
 
