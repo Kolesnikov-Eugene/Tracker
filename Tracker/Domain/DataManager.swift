@@ -17,6 +17,11 @@ protocol DataManagerDelegate: AnyObject {
     func didUpdate()
 }
 
+protocol CategoriesManagerProtocol {
+    func fetchAllCategories() throws -> [TrackerCategoryProtocol]
+    func addCategory(_ category: String) throws
+}
+
 protocol DataManagerProtocol {
     var numberOfSections: Int { get }
     func numberOfRowsInSection(_ section: Int) -> Int
@@ -58,11 +63,35 @@ final class DataManager: NSObject {
         return fetchedResultsController
     }()
     
+    private lazy var categoriesFetchedResultsController:  NSFetchedResultsController<TrackerCategoryCoreData> = {
+        let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: "category",
+            cacheName: nil)
+        
+        fetchedResultsController.delegate = self
+        try? fetchedResultsController.performFetch()
+        
+        return fetchedResultsController
+    }()
+    
     init(_ dataStore: DataStoreProtocol, delegate: DataManagerDelegate) throws {
         guard let context = dataStore.managedObjectContext else {
             throw DataManagerError.failedToInitializeContext
         }
         self.delegate = delegate
+        self.context = context
+        self.dataStore = dataStore
+    }
+    
+    init(_ dataStore: DataStoreProtocol) throws {
+        guard let context = dataStore.managedObjectContext else {
+            throw DataManagerError.failedToInitializeContext
+        }
         self.context = context
         self.dataStore = dataStore
     }
@@ -74,9 +103,18 @@ extension DataManager: DataManagerProtocol {
         fetchedResultsController.sections?.count ?? 0
     }
     
+    var numberOfSectionsOfCategories: Int {
+        categoriesFetchedResultsController.sections?.count ?? 0
+    }
+    
     func numberOfRowsInSection(_ section: Int) -> Int {
         guard section <= numberOfSections else { return 0 }
         return fetchedResultsController.sections?[section].numberOfObjects ?? 0
+    }
+    
+    func numberOfRowsInSectionOfCategory(_ section: Int) -> Int {
+        guard section <= numberOfSectionsOfCategories else { return 0 }
+        return categoriesFetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
     
     func addTracker(_ tracker: TrackerProtocol, for category: String) throws {
@@ -88,12 +126,12 @@ extension DataManager: DataManagerProtocol {
         try? dataStore.deleteTracker(tracker)
     }
     
-    func addTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws {
-        try? dataStore.addTrackerRecord(trackerRecord)
+    func fetchAllCategories() throws -> [TrackerCategoryProtocol] {
+        try dataStore.fetchAllCategories()
     }
     
-    func fetchAllCategories() throws -> [TrackerCategoryProtocol] {
-        try! dataStore.fetchAllCategories()
+    func addTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws {
+        try? dataStore.addTrackerRecord(trackerRecord)
     }
     
     func fetchRecordsCounter(for trackerID: UUID) throws -> Int {
@@ -102,6 +140,12 @@ extension DataManager: DataManagerProtocol {
     
     func checkIfTrackerIsCompleted(_ trackerID: UUID, for currentDate: Date) throws -> Bool {
         try dataStore.trackerIsCompleted(trackerID, for: currentDate)
+    }
+}
+
+extension DataManager: CategoriesManagerProtocol {
+    func addCategory(_ category: String) throws {
+        try dataStore.addCategory(category)
     }
 }
 

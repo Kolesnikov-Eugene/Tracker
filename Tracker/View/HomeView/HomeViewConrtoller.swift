@@ -366,7 +366,9 @@ extension HomeViewController: DataManagerDelegate {
         filterTrackersByDate()
         collectionView.reloadData()
     }
-    
+}
+
+extension HomeViewController {
     private func fetchAllCategories() -> [TrackerCategoryProtocol] {
         guard let categories = try? dataManager?.fetchAllCategories() else { return [] }
         return categories

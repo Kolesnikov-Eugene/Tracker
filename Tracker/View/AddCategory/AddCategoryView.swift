@@ -7,13 +7,16 @@
 
 import UIKit
 
+
 final class AddCategoryView: UIViewController {
-    private let counter = 5
-    private var categoryName: String = "Classes"
+    private var viewModel: AddCategoryViewModel!
+    private let counter = 0
+    private var categoryName: String = ""
     private let reuseCellIdentifier = "CategoryCell"
     private let tableView: UITableView = {
         let tableView = UITableView()
         
+        tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.allowsMultipleSelection = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,6 +64,13 @@ final class AddCategoryView: UIViewController {
     
     init() {
         super.init(nibName: nil, bundle: nil)
+        viewModel = AddCategoryViewModel()
+        viewModel.onChange = {
+            self.emptyStateView.isHidden = self.viewModel.categories.count > 0
+            self.emptyStateLabel.isHidden = self.viewModel.categories.count > 0
+            self.tableView.isHidden = self.viewModel.categories.count < 0
+            self.tableView.reloadData()
+        }
         setupUI()
     }
     
@@ -83,8 +93,9 @@ final class AddCategoryView: UIViewController {
         tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: reuseCellIdentifier)
         
         
-        emptyStateView.isHidden = counter > 0
-        emptyStateLabel.isHidden = counter > 0
+        emptyStateView.isHidden = viewModel.categories.count > 0
+        emptyStateLabel.isHidden = viewModel.categories.count > 0
+        tableView.isHidden = viewModel.categories.count < 0
     }
     
     private func addSubviews() {
@@ -99,7 +110,7 @@ final class AddCategoryView: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.bottomAnchor.constraint(lessThanOrEqualTo: addCategoryButton.topAnchor, constant: -40),
-            tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(counter * 75)),
+            tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(500)),
             
             emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -117,24 +128,24 @@ final class AddCategoryView: UIViewController {
     }
     
     @objc private func addCategoryButtonTapped() {
-        navigationController?.pushViewController(TrackerCategoriesView(), animated: true)
+        navigationController?.pushViewController(NewCategoryView(delegate: viewModel, selectedCategory: nil), animated: true)
     }
 }
 
 //MARK: - UITableView DataSource
 extension AddCategoryView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return counter
+        viewModel.categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: reuseCellIdentifier, for: indexPath) as? CategoryTableViewCell
-//              let label = categoryName
         else {
             return UITableViewCell()
         }
+        categoryName = viewModel.categories[indexPath.row].category
         
-        cell.configureCell(at: indexPath.row, and: categoryName, with: counter)
+        cell.configureCell(at: indexPath.row, and: categoryName, with: viewModel.categories.count)
         
         return cell
     }
@@ -162,7 +173,6 @@ extension AddCategoryView: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return }
-        
 
         cell.cellIsSelected = false
 //        cell.checkmarkImageView.image = nil
@@ -171,4 +181,3 @@ extension AddCategoryView: UITableViewDelegate {
         categoryName = ""
     }
 }
-

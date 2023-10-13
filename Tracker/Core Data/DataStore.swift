@@ -14,6 +14,7 @@ protocol DataStoreProtocol {
     func addTracker(_ tarcker: TrackerProtocol, for category: String) throws
     func deleteTracker(_ tracker: NSManagedObject) throws
     func addTrackerRecord(_ record: TrackerRecordProtocol) throws
+    func addCategory(_ category: String) throws
     func fetchAllCategories() throws -> [TrackerCategoryProtocol]
     func fetchRecordsCounter(for trackerID: UUID) throws -> Int
     func trackerIsCompleted(_ trackerID: UUID, for currentDate: Date) throws -> Bool
@@ -97,6 +98,14 @@ extension DataStore: TrackerStore {
 
 //MARK: - TrackerCategoryStore protocol
 extension DataStore: TrackerCategoryStore {
+    func addCategory(_ category: String) throws {
+        let trackerCategory = TrackerCategoryCoreData(context: context)
+        trackerCategory.id = UUID()
+        trackerCategory.category = category
+        
+        try context.save()
+    }
+    
     func deleteCategory(_ category: NSManagedObject) throws {
         /*
         TODO

@@ -7,7 +7,8 @@
 
 import UIKit
 
-final class TrackerCategoriesView: UIViewController {
+final class NewCategoryView: UIViewController {
+    private var selectedCategory: String?
     private let categoryTextField: TextFieldWithPadding = {
         let view = TextFieldWithPadding(paddingTop: 0, paddingBottom: 0, paddingLeft: 16, paddingRight: 41)
         
@@ -43,9 +44,12 @@ final class TrackerCategoriesView: UIViewController {
         
         return button
     }()
+    weak var delegate: AddCategoryDelegate?
     
-    init() {
+    init(delegate: AddCategoryDelegate, selectedCategory: String?) {
         super.init(nibName: nil, bundle: nil)
+        self.delegate = delegate
+        self.selectedCategory = selectedCategory
         setupUI()
     }
     
@@ -88,7 +92,9 @@ final class TrackerCategoriesView: UIViewController {
     }
     
     @objc private func doneButtonTapped() {
-        dismiss(animated: true)
+        guard let text = categoryTextField.text else { return }
+        try? delegate?.didRecieveNewCategory(text)
+        navigationController?.popViewController(animated: true)
     }
     
     @objc private func dismissKeyboard() {
@@ -108,7 +114,7 @@ final class TrackerCategoriesView: UIViewController {
 }
 
 //MARK: - UITextField Delegate
-extension TrackerCategoriesView: UITextFieldDelegate {
+extension NewCategoryView: UITextFieldDelegate {
 //    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 //        let currentString = (categoryTextField.text ?? "") as NSString
 //        let newString = currentString.replacingCharacters(in: range, with: string)
