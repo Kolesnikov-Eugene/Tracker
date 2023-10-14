@@ -77,8 +77,37 @@ final class CategoryTableViewCell: UITableViewCell {
             stringSeparator.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
+//    
+//    func configureCell(with label: String, at index: Int) {
+//        print("-------------------------------------------------------------")
+//        print("-------------------------------------------------------------")
+//        print(index)
+//        print("-------------------------------------------------------------")
+//        print("-------------------------------------------------------------")
+//        categoryLabel.text = label
+//        switch index {
+//        case 0:
+//            contentView.backgroundColor = .red
+//        case 1:
+//            contentView.backgroundColor = .green
+//        case 2:
+//            contentView.backgroundColor = .blue
+//        case 3:
+//            contentView.backgroundColor = .yellow
+//        case 4:
+//            contentView.backgroundColor = .brown
+//        default:
+//            contentView.backgroundColor = .purple
+//        }
+//    }
     
     func configureCell(at index: Int, and label: String, with rowNumber: Int) {
+        print("-------------------------------------------------------------")
+        print("-------------------------------------------------------------")
+        print(index)
+        print(rowNumber)
+        print("-------------------------------------------------------------")
+        print("-------------------------------------------------------------")
         switch rowNumber {
         case 1:
             contentView.layer.cornerRadius = 16
@@ -90,14 +119,19 @@ final class CategoryTableViewCell: UITableViewCell {
                 roundBottomOfContentView()
             }
         case 2...Int.max:
-            stringSeparator.backgroundColor = .lightGray
             if index == 0 {
                 roundUpperSideOfContentView()
+                contentView.backgroundColor = .blue
             } else if index + 1 == rowNumber  {
                 roundBottomOfContentView()
+                contentView.backgroundColor = .yellow
+            } else {
+                stringSeparator.backgroundColor = .lightGray
+                contentView.backgroundColor = .red
             }
         default:
             stringSeparator.backgroundColor = .lightGray
+//            break
         }
         categoryLabel.text = label
     }
@@ -105,6 +139,7 @@ final class CategoryTableViewCell: UITableViewCell {
     private func roundUpperSideOfContentView() {
         contentView.layer.cornerRadius = 16
         contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        stringSeparator.backgroundColor = .lightGray
     }
     private func roundBottomOfContentView() {
         contentView.layer.cornerRadius = 16

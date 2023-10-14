@@ -10,7 +10,7 @@ import UIKit
 
 final class AddCategoryView: UIViewController {
     private var viewModel: AddCategoryViewModel!
-    private let counter = 0
+    private var categories: [TrackerCategoryProtocol] = []
     private var categoryName: String = ""
     private let reuseCellIdentifier = "CategoryCell"
     private let tableView: UITableView = {
@@ -19,7 +19,7 @@ final class AddCategoryView: UIViewController {
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.allowsMultipleSelection = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
         
         return tableView
     }()
@@ -65,17 +65,39 @@ final class AddCategoryView: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
         viewModel = AddCategoryViewModel()
-        viewModel.onChange = {
-            self.emptyStateView.isHidden = self.viewModel.categories.count > 0
-            self.emptyStateLabel.isHidden = self.viewModel.categories.count > 0
-            self.tableView.isHidden = self.viewModel.categories.count < 0
-            self.tableView.reloadData()
-        }
+//        bind()
         setupUI()
+        categories = viewModel.categories
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        tableView.reloadData()
+//    }
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        tableView.reloadData()
+//    }
+    
+    private func bind() {
+        viewModel.onChange = { [weak self] in
+            guard let self = self else { return }
+            self.emptyStateView.isHidden = self.viewModel.categories.count > 0
+            self.emptyStateLabel.isHidden = self.viewModel.categories.count > 0
+            self.tableView.isHidden = self.viewModel.categories.count < 0
+            categories = viewModel.categories
+            tableView.reloadData()
+        }
     }
     
     private func setupUI() {
@@ -102,6 +124,8 @@ final class AddCategoryView: UIViewController {
         let subviews = [emptyStateView, emptyStateLabel, addCategoryButton]
         subviews.forEach { view.addSubview($0) }
         view.addSubview(tableView)
+        
+        tableView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func applyConstraints() {
@@ -136,6 +160,7 @@ final class AddCategoryView: UIViewController {
 extension AddCategoryView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.categories.count
+//        categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -144,8 +169,12 @@ extension AddCategoryView: UITableViewDataSource {
             return UITableViewCell()
         }
         categoryName = viewModel.categories[indexPath.row].category
+//        categoryName = categories[indexPath.row].category
+        
+//        cell.prepareForReuse()
         
         cell.configureCell(at: indexPath.row, and: categoryName, with: viewModel.categories.count)
+//        cell.configureCell(with: categoryName, at: indexPath.row)
         
         return cell
     }

@@ -18,17 +18,25 @@ protocol AddCategoryDelegate: AnyObject {
 
 final class AddCategoryViewModel: AddCategoryProtocol {
     var onChange: (() -> Void)?
-    private(set) var categories: [TrackerCategoryProtocol] = [] {
+    var old: Int = 0
+    private(set) var new: Int = 0 {
         didSet {
             onChange?()
         }
     }
+    private(set) var categories: [TrackerCategoryProtocol] = []
+//    private(set) var categories: [TrackerCategoryProtocol] = [] {
+//        didSet {
+//            onChange?()
+//        }
+//    }
     private lazy var dataManager: CategoriesManagerProtocol? = {
         configureDataManager()
     }()
     
     init() {
-        categories = fetchAllCategoriesFromStore()
+        categories = fetchAllCategoriesFromStore().sorted(by: { $0.category < $1.category })
+        old = fetchAllCategoriesFromStore().count
     }
     
     private func configureDataManager() -> CategoriesManagerProtocol? {
@@ -51,6 +59,7 @@ final class AddCategoryViewModel: AddCategoryProtocol {
 extension AddCategoryViewModel: AddCategoryDelegate {
     func didRecieveNewCategory(_ categoryName: String) throws {
         try dataManager?.addCategory(categoryName)
-        categories = fetchAllCategoriesFromStore()
+        categories = fetchAllCategoriesFromStore().sorted(by: { $0.category < $1.category })
+        new = categories.count
     }
 }
