@@ -22,7 +22,6 @@ final class CategoryTableViewCell: UITableViewCell {
         let view = UIImageView()
         
         view.isHidden = false //DONt FORGET TO CHANGE
-//        view.image = UIImage(named: "checkmark")
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -35,7 +34,6 @@ final class CategoryTableViewCell: UITableViewCell {
         
         return view
     }()
-//    var callBackCheckmarkState: ((String?) -> (Void))?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -77,37 +75,8 @@ final class CategoryTableViewCell: UITableViewCell {
             stringSeparator.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
-//    
-//    func configureCell(with label: String, at index: Int) {
-//        print("-------------------------------------------------------------")
-//        print("-------------------------------------------------------------")
-//        print(index)
-//        print("-------------------------------------------------------------")
-//        print("-------------------------------------------------------------")
-//        categoryLabel.text = label
-//        switch index {
-//        case 0:
-//            contentView.backgroundColor = .red
-//        case 1:
-//            contentView.backgroundColor = .green
-//        case 2:
-//            contentView.backgroundColor = .blue
-//        case 3:
-//            contentView.backgroundColor = .yellow
-//        case 4:
-//            contentView.backgroundColor = .brown
-//        default:
-//            contentView.backgroundColor = .purple
-//        }
-//    }
     
     func configureCell(at index: Int, and label: String, with rowNumber: Int) {
-        print("-------------------------------------------------------------")
-        print("-------------------------------------------------------------")
-        print(index)
-        print(rowNumber)
-        print("-------------------------------------------------------------")
-        print("-------------------------------------------------------------")
         switch rowNumber {
         case 1:
             contentView.layer.cornerRadius = 16
@@ -121,19 +90,21 @@ final class CategoryTableViewCell: UITableViewCell {
         case 2...Int.max:
             if index == 0 {
                 roundUpperSideOfContentView()
-                contentView.backgroundColor = .blue
             } else if index + 1 == rowNumber  {
                 roundBottomOfContentView()
-                contentView.backgroundColor = .yellow
             } else {
-                stringSeparator.backgroundColor = .lightGray
-                contentView.backgroundColor = .red
+                configureMiddleCells()
             }
         default:
-            stringSeparator.backgroundColor = .lightGray
-//            break
+//            stringSeparator.backgroundColor = .lightGray
+            break
         }
         categoryLabel.text = label
+    }
+    
+    private func configureMiddleCells() {
+        stringSeparator.backgroundColor = .lightGray
+        contentView.layer.cornerRadius = 0
     }
     
     private func roundUpperSideOfContentView() {
