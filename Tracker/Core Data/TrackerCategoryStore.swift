@@ -10,6 +10,6 @@ import CoreData
 
 protocol TrackerCategoryStore {
     var managedObjectContext: NSManagedObjectContext? { get }
-    func deleteCategory(_ category: NSManagedObject) throws
+    func deleteCategory(_ category: String) throws
     func addCategory(_ category: String) throws
 }

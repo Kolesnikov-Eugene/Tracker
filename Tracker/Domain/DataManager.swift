@@ -20,11 +20,15 @@ protocol DataManagerDelegate: AnyObject {
 protocol CategoriesManagerProtocol {
     func fetchAllCategories() throws -> [TrackerCategoryProtocol]
     func addCategory(_ category: String) throws
+    func renameCategory(_ category: String, for oldCategory: String) throws
+    func deleteCategory(_ category: String) throws
 }
 
 protocol DataManagerProtocol {
     var numberOfSections: Int { get }
     func numberOfRowsInSection(_ section: Int) -> Int
+    var numberOfSectionsOfCategories: Int { get }
+    func numberOfRowsInSectionOfCategory(_ section: Int) -> Int
     func addTracker(_ tracker: TrackerProtocol, for category: String) throws
     func deleteTracker(at indexPath: IndexPath) throws
     func addTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws
@@ -146,6 +150,14 @@ extension DataManager: DataManagerProtocol {
 extension DataManager: CategoriesManagerProtocol {
     func addCategory(_ category: String) throws {
         try dataStore.addCategory(category)
+    }
+    
+    func renameCategory(_ category: String, for oldCategory: String) throws {
+        try dataStore.renameCategory(category, for: oldCategory)
+    }
+    
+    func deleteCategory(_ category: String) throws {
+        try dataStore.deleteCategory(category)
     }
 }
 

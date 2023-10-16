@@ -8,19 +8,19 @@
 import Foundation
 
 protocol AddCategoryProtocol: AnyObject {
-    
+    func deleteCategory(_ category: String)
 }
 
 protocol AddCategoryDelegate: AnyObject {
-    func didRecieveNewCategory(_ categoryName: String) throws
+    func didRecieveCategory(_ categoryName: String, for oldCategory: String, options: Editing) throws
 }
 
-
 final class AddCategoryViewModel: AddCategoryProtocol {
-    var onChange: (() -> Void)?
+    private var category: String = ""
+    var onChange: ((String) -> Void)?
     private(set) var categories: [TrackerCategoryProtocol] = [] {
         didSet {
-            onChange?()
+            onChange?(category)
         }
     }
     private lazy var dataManager: CategoriesManagerProtocol? = {
@@ -46,11 +46,23 @@ final class AddCategoryViewModel: AddCategoryProtocol {
         guard let categories = try? dataManager?.fetchAllCategories() else { return [] }
         return categories
     }
+    
+    func deleteCategory(_ category: String) {
+        try? dataManager?.deleteCategory(category)
+        categories = fetchAllCategoriesFromStore()
+    }
 }
 
 extension AddCategoryViewModel: AddCategoryDelegate {
-    func didRecieveNewCategory(_ categoryName: String) throws {
-        try dataManager?.addCategory(categoryName)
+    func didRecieveCategory(_ categoryName: String, for oldCategory:String, options: Editing) throws {
+        category = categoryName
+        switch options {
+        case .add:
+            try dataManager?.addCategory(categoryName)
+        case .rename:
+            try dataManager?.renameCategory(categoryName, for: oldCategory)
+        }
+        
         categories = fetchAllCategoriesFromStore()
     }
 }

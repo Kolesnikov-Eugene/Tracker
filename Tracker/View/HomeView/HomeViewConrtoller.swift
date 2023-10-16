@@ -269,11 +269,13 @@ extension HomeViewController: UISearchBarDelegate {
 extension HomeViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         let _ = dataManager?.numberOfSections
+        let _ = dataManager?.numberOfSectionsOfCategories
         return visibleCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let _ = dataManager?.numberOfRowsInSection(section)
+        let _ = dataManager?.numberOfRowsInSectionOfCategory(section)
         return visibleCategories[section].trackerArray.count
     }
     

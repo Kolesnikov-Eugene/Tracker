@@ -7,8 +7,14 @@
 
 import UIKit
 
+enum Editing {
+    case add
+    case rename
+}
+
 final class NewCategoryView: UIViewController {
-    private var selectedCategory: String?
+    private let options: Editing
+    private var selectedCategory: String
     private let categoryTextField: TextFieldWithPadding = {
         let view = TextFieldWithPadding(paddingTop: 0, paddingBottom: 0, paddingLeft: 16, paddingRight: 41)
         
@@ -46,10 +52,11 @@ final class NewCategoryView: UIViewController {
     }()
     weak var delegate: AddCategoryDelegate?
     
-    init(delegate: AddCategoryDelegate, selectedCategory: String?) {
-        super.init(nibName: nil, bundle: nil)
+    init(delegate: AddCategoryDelegate, selectedCategory: String, options: Editing) {
         self.delegate = delegate
         self.selectedCategory = selectedCategory
+        self.options = options
+        super.init(nibName: nil, bundle: nil)
         setupUI()
     }
     
@@ -70,6 +77,10 @@ final class NewCategoryView: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
+        
+        if !selectedCategory.isEmpty {
+            categoryTextField.text = selectedCategory
+        }
     }
     
     private func addSubviews() {
@@ -92,8 +103,8 @@ final class NewCategoryView: UIViewController {
     }
     
     @objc private func doneButtonTapped() {
-        guard let text = categoryTextField.text else { return }
-        try? delegate?.didRecieveNewCategory(text)
+        guard let newCategory = categoryTextField.text else { return }
+        try? delegate?.didRecieveCategory(newCategory, for: selectedCategory, options: options)
         navigationController?.popViewController(animated: true)
     }
     

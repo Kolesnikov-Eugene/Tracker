@@ -18,7 +18,7 @@ protocol CategoryPickerDelegate: AnyObject {
 final class NewHabitViewController: UIViewController {
     
 //    private let categories = ["Срочно", "Скучно", "Уборка", "Прогулка", "Важное", "Учеба"]
-    private var selectedCategory: String? = nil
+    private var selectedCategory: String = ""
     private let typeTracker: TypeTracker
     private var tracker: Tracker? = nil
     private var selectedEmoji: String? = nil
@@ -84,18 +84,6 @@ final class NewHabitViewController: UIViewController {
         button.addTarget(self, action: #selector(categoryButtonTapped), for: .touchUpInside)
         
         return button
-//        let button = UIButton(type: .system)
-//        
-//        button.setTitle("Категория", for: .normal)
-//        button.contentHorizontalAlignment = .left
-//        button.contentVerticalAlignment = .center
-//        button.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 16.0, bottom: 0.0, right: 0.0)
-//        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-//        button.tintColor = .black
-//        button.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
-//        button.addTarget(self, action: #selector(categoryButtonTapped), for: .touchUpInside)
-//        
-//        return button
     }()
     private let categoryButtonLabel: UILabel = {
         let label = UILabel()
@@ -410,7 +398,7 @@ final class NewHabitViewController: UIViewController {
         guard let selectedEmoji = selectedEmoji,
               let selectedColor = selectedColor,
               let text = trackerNameTextField.text,
-              let _ = selectedCategory, // TODO add category in AddCategoryView (next sprint)
+              !selectedCategory.isEmpty && selectedCategory.count > 0 && !selectedCategory.starts(with: " "),
               text.count > 0 ,
               !schedule.isEmpty
         else {
@@ -427,7 +415,7 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func categoryButtonTapped() {
-        navigationController?.pushViewController(AddCategoryView(delegate: self), animated: true)
+        navigationController?.pushViewController(AddCategoryView(delegate: self, category: selectedCategory), animated: true)
     }
     
     @objc private func scheduleButtonTapped() {
@@ -443,12 +431,12 @@ final class NewHabitViewController: UIViewController {
             dismiss(animated: true) { [weak self] in
                 guard let self = self,
                       let tracker = tracker,
-                      let category = selectedCategory,
+//                      let category = selectedCategory,
                       let parent = navigationController?.viewControllers.first as? AddTrackerViewController
                 else {
                     return
                 }
-                parent.delegate?.didCreateNewTracker(tracker, for: category)
+                parent.delegate?.didCreateNewTracker(tracker, for: selectedCategory)
             }
         }
     }
@@ -630,7 +618,7 @@ extension NewHabitViewController: AddScheduleDelegate {
 extension NewHabitViewController: CategoryPickerDelegate {
     func didRecieveCategory(_ category: String) {
         self.selectedCategory = category
-        guard let selectedCategory = selectedCategory else { return }
+//        guard let selectedCategory = selectedCategory else { return }
         
         categoryButtonLabelForSelectedCategory.text = selectedCategory
 //        

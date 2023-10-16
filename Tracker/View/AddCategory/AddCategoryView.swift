@@ -10,7 +10,7 @@ import UIKit
 
 final class AddCategoryView: UIViewController {
     private var viewModel: AddCategoryViewModel!
-    private var categoryName: String = ""
+    private var category: String
     private let reuseCellIdentifier = "CategoryCell"
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -62,8 +62,9 @@ final class AddCategoryView: UIViewController {
         return button
     }()
     
-    init(delegate: CategoryPickerDelegate) {
+    init(delegate: CategoryPickerDelegate, category: String) {
         self.delegate = delegate
+        self.category = category
         super.init(nibName: nil, bundle: nil)
         bind()
         setupUI()
@@ -76,11 +77,12 @@ final class AddCategoryView: UIViewController {
     
     private func bind() {
         viewModel = AddCategoryViewModel()
-        viewModel.onChange = { [weak self] in
+        viewModel.onChange = { [ weak self] newCategory in
             guard let self = self else { return }
             self.emptyStateView.isHidden = self.viewModel.categories.count > 0
             self.emptyStateLabel.isHidden = self.viewModel.categories.count > 0
             self.tableView.isHidden = self.viewModel.categories.count < 0
+            category = newCategory
             tableView.reloadData()
             view.layoutIfNeeded()
         }
@@ -136,7 +138,7 @@ final class AddCategoryView: UIViewController {
     }
     
     @objc private func addCategoryButtonTapped() {
-        navigationController?.pushViewController(NewCategoryView(delegate: viewModel, selectedCategory: nil), animated: true)
+        navigationController?.pushViewController(NewCategoryView(delegate: viewModel, selectedCategory: "", options: .add), animated: true)
     }
 }
 
@@ -151,9 +153,15 @@ extension AddCategoryView: UITableViewDataSource {
         else {
             return UITableViewCell()
         }
-        categoryName = viewModel.categories[indexPath.row].category
         
-        cell.configureCell(at: indexPath.row, and: categoryName, with: viewModel.categories.count)
+        let categoryLabel = viewModel.categories[indexPath.row].category
+        
+        cell.configureCell(at: indexPath.row, and: categoryLabel, with: viewModel.categories.count)
+        
+        if categoryLabel == category {
+            cell.cellIsSelected = true
+            cell.switchCellState()
+        }
         
         return cell
     }
@@ -167,29 +175,41 @@ extension AddCategoryView: UITableViewDataSource {
 extension AddCategoryView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return }
-        
         cell.selectionStyle = .none
 
         cell.cellIsSelected = !cell.cellIsSelected
 
         cell.switchCellState()
         
-        categoryName = cell.fetchCategoryName()
+        category = cell.fetchCategoryName()
         
         //categoryName --> NewHabitVC
-        delegate?.didRecieveCategory(categoryName)
+        delegate?.didRecieveCategory(category)
         navigationController?.popViewController(animated: true)
-//        cell.checkmarkImageView.image = cell.cellIsSelected ? UIImage(named: "checkmark") : nil
         
     }
-    
+    //Need this method?
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return }
 
         cell.cellIsSelected = false
-//        cell.checkmarkImageView.image = nil
         cell.switchCellState()
         
-        categoryName = ""
+        category = ""
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return nil }
+        let category = cell.fetchCategoryName()
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { action -> UIMenu? in
+            let correctAction = UIAction(title: "Редактировать") { action in
+                self.navigationController?.pushViewController(NewCategoryView(delegate: self.viewModel, selectedCategory: category, options: .rename), animated: true)
+            }
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { action in
+                self.viewModel.deleteCategory(category)
+            }
+            return UIMenu(children: [correctAction, deleteAction])
+        }
     }
 }

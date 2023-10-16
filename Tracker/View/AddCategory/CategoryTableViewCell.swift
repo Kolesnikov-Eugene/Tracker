@@ -11,7 +11,7 @@ final class CategoryTableViewCell: UITableViewCell {
     var cellIsSelected = false
     private lazy var categoryLabel: UILabel = {
         let label = UILabel()
-        
+
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -21,7 +21,7 @@ final class CategoryTableViewCell: UITableViewCell {
     lazy var checkmarkImageView: UIImageView = {
         let view = UIImageView()
         
-        view.isHidden = false //DONt FORGET TO CHANGE
+        view.isHidden = false
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -35,6 +35,13 @@ final class CategoryTableViewCell: UITableViewCell {
         return view
     }()
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner]
+        contentView.layer.cornerRadius = 16
+        checkmarkImageView.image = nil
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -46,7 +53,6 @@ final class CategoryTableViewCell: UITableViewCell {
     
     private func setupUI() {
         contentView.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
-        contentView.layer.masksToBounds = true
         addSubviews()
         applyConstraints()
     }
@@ -96,8 +102,8 @@ final class CategoryTableViewCell: UITableViewCell {
                 configureMiddleCells()
             }
         default:
-//            stringSeparator.backgroundColor = .lightGray
-            break
+            stringSeparator.backgroundColor = .lightGray
+            contentView.layer.cornerRadius = 0
         }
         categoryLabel.text = label
     }
@@ -119,9 +125,7 @@ final class CategoryTableViewCell: UITableViewCell {
     }
     
     func switchCellState() {
-//        cellIsSelected = !cellIsSelected
         checkmarkImageView.image = cellIsSelected ? UIImage(named: "checkmark") : nil
-//        callBackCheckmarkState?(categoryLabel.text)
     }
     
     func fetchCategoryName() -> String {
