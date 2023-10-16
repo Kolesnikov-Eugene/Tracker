@@ -53,6 +53,7 @@ final class CategoryTableViewCell: UITableViewCell {
     
     private func setupUI() {
         contentView.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
+        contentView.layer.cornerRadius = 16
         addSubviews()
         applyConstraints()
     }

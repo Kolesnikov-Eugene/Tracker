@@ -158,6 +158,8 @@ extension AddCategoryView: UITableViewDataSource {
         
         cell.configureCell(at: indexPath.row, and: categoryLabel, with: viewModel.categories.count)
         
+        cell.selectionStyle = .none
+        
         if categoryLabel == category {
             cell.cellIsSelected = true
             cell.switchCellState()
@@ -175,7 +177,7 @@ extension AddCategoryView: UITableViewDataSource {
 extension AddCategoryView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return }
-        cell.selectionStyle = .none
+//        cell.selectionStyle = .none
 
         cell.cellIsSelected = !cell.cellIsSelected
 

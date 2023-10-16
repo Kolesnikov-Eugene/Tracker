@@ -15,7 +15,7 @@ enum Editing {
 final class NewCategoryView: UIViewController {
     private let options: Editing
     private var selectedCategory: String
-    private let categoryTextField: TextFieldWithPadding = {
+    private lazy var categoryTextField: TextFieldWithPadding = {
         let view = TextFieldWithPadding(paddingTop: 0, paddingBottom: 0, paddingLeft: 16, paddingRight: 41)
         
         view.layer.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3).cgColor
@@ -28,6 +28,7 @@ final class NewCategoryView: UIViewController {
         view.placeholder = "Введите название категории"
         view.clearButtonMode = .whileEditing
         view.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        view.addTarget(self, action: #selector(textFieldDidBeginEditing), for: .allEvents)
 
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -103,7 +104,11 @@ final class NewCategoryView: UIViewController {
     }
     
     @objc private func doneButtonTapped() {
-        guard let newCategory = categoryTextField.text else { return }
+        guard let newCategory = categoryTextField.text,
+        !newCategory.isEmpty,
+        !newCategory.starts(with: " ") else {
+            return
+        }
         try? delegate?.didRecieveCategory(newCategory, for: selectedCategory, options: options)
         navigationController?.popViewController(animated: true)
     }
@@ -119,21 +124,16 @@ final class NewCategoryView: UIViewController {
     }
     
     private func allFieldsFilledOut() -> Bool {
-        guard let result = categoryTextField.text?.count else { return false }
-        return result > 0
+        guard let result = categoryTextField.text else { return false }
+        return !result.isEmpty
     }
 }
 
 //MARK: - UITextField Delegate
 extension NewCategoryView: UITextFieldDelegate {
-//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-//        let currentString = (categoryTextField.text ?? "") as NSString
-//        let newString = currentString.replacingCharacters(in: range, with: string)
-//
-//        switchCreateButton()
-//
-//        return newString.count < 1
-//    }
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        switchCreateButton()
+    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()

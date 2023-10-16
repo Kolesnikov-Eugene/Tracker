@@ -66,7 +66,6 @@ final class DataManager: NSObject {
         
         return fetchedResultsController
     }()
-    
     private lazy var categoriesFetchedResultsController:  NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
