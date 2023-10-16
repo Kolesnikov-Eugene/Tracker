@@ -62,11 +62,13 @@ final class AddCategoryView: UIViewController {
         return button
     }()
     
-    init() {
+    init(delegate: CategoryPickerDelegate) {
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
         bind()
         setupUI()
     }
+    weak var delegate: CategoryPickerDelegate?
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -173,6 +175,10 @@ extension AddCategoryView: UITableViewDelegate {
         cell.switchCellState()
         
         categoryName = cell.fetchCategoryName()
+        
+        //categoryName --> NewHabitVC
+        delegate?.didRecieveCategory(categoryName)
+        navigationController?.popViewController(animated: true)
 //        cell.checkmarkImageView.image = cell.cellIsSelected ? UIImage(named: "checkmark") : nil
         
     }
