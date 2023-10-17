@@ -16,6 +16,7 @@ final class AddScheduleViewController: UIViewController {
         
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
     }()
@@ -32,6 +33,7 @@ final class AddScheduleViewController: UIViewController {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.layer.borderWidth = 1
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -68,9 +70,6 @@ final class AddScheduleViewController: UIViewController {
     }
     
     private func applyConstraints() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        doneButton.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),

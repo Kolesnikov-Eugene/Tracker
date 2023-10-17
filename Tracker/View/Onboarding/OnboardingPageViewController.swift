@@ -14,25 +14,17 @@ final class OnboardingPageViewController: UIPageViewController {
     
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
+        
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
         
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.pageIndicatorTintColor = .lightGray
-        
         pageControl.translatesAutoresizingMaskIntoConstraints = false
-        
         pageControl.addTarget(self, action: #selector(pageControlTapped), for: .valueChanged)
         
         return pageControl
     }()
-    
-    @objc func pageControlTapped(_ sender: Any) {
-        guard let pageControl = sender as? UIPageControl else { return }
-        let selectedPage = pageControl.currentPage
-        let controller = pages[selectedPage]
-        setViewControllers([controller], direction: .forward, animated: true)
-    }
     
     init(firstViewController: UIViewController, secondViewController: UIViewController) {
         self.firstViewController = firstViewController
@@ -42,7 +34,7 @@ final class OnboardingPageViewController: UIPageViewController {
         
         setupUI()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -63,6 +55,13 @@ final class OnboardingPageViewController: UIPageViewController {
             pageControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -134),
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
+    }
+    
+    @objc func pageControlTapped(_ sender: Any) {
+        guard let pageControl = sender as? UIPageControl else { return }
+        let selectedPage = pageControl.currentPage
+        let controller = pages[selectedPage]
+        setViewControllers([controller], direction: .forward, animated: true)
     }
 }
 

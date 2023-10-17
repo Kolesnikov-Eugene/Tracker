@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 final class AddCategoryView: UIViewController {
     private var viewModel: AddCategoryViewModel!
     private var category: String
@@ -20,27 +19,28 @@ final class AddCategoryView: UIViewController {
         tableView.allowsMultipleSelection = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
-        
         return tableView
     }()
     private let emptyStateView: UIImageView = {
         let view = UIImageView()
         
-        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
         view.frame.size.width = 80
         view.frame.size.height = 80
         view.image = UIImage(named: "empty_home_view")
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
         
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = .clear
         label.text = addCategoryEmptyStateText
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.numberOfLines = 2
+        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
@@ -61,6 +61,7 @@ final class AddCategoryView: UIViewController {
         
         return button
     }()
+    weak var delegate: CategoryPickerDelegate?
     
     init(delegate: CategoryPickerDelegate, category: String) {
         self.delegate = delegate
@@ -69,20 +70,19 @@ final class AddCategoryView: UIViewController {
         bind()
         setupUI()
     }
-    weak var delegate: CategoryPickerDelegate?
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     private func bind() {
         viewModel = AddCategoryViewModel()
-        viewModel.onChange = { [ weak self] newCategory in
+        viewModel.onChange = { [ weak self ] newCategory in
             guard let self = self else { return }
-            self.emptyStateView.isHidden = self.viewModel.categories.count > 0
-            self.emptyStateLabel.isHidden = self.viewModel.categories.count > 0
-            self.tableView.isHidden = self.viewModel.categories.count < 0
+            
+            self.switchEmptyState()
             category = newCategory
+            
             tableView.reloadData()
             view.layoutIfNeeded()
         }
@@ -102,16 +102,12 @@ final class AddCategoryView: UIViewController {
         tableView.delegate = self
         tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: reuseCellIdentifier)
         
-        
-        emptyStateView.isHidden = viewModel.categories.count > 0
-        emptyStateLabel.isHidden = viewModel.categories.count > 0
-        tableView.isHidden = viewModel.categories.count < 0
+        switchEmptyState()
     }
     
     private func addSubviews() {
-        let subviews = [emptyStateView, emptyStateLabel, addCategoryButton]
+        let subviews = [emptyStateView, emptyStateLabel, addCategoryButton, tableView]
         subviews.forEach { view.addSubview($0) }
-        view.addSubview(tableView)
     }
     
     private func applyConstraints() {
@@ -137,8 +133,16 @@ final class AddCategoryView: UIViewController {
         ])
     }
     
+    private func switchEmptyState() {
+        emptyStateView.isHidden = viewModel.categories.count > 0
+        emptyStateLabel.isHidden = viewModel.categories.count > 0
+        tableView.isHidden = viewModel.categories.count < 0
+    }
+    
     @objc private func addCategoryButtonTapped() {
-        navigationController?.pushViewController(NewCategoryView(delegate: viewModel, selectedCategory: "", options: .add), animated: true)
+        navigationController?.pushViewController(
+            NewCategoryView(delegate: viewModel, selectedCategory: "", mode: .add),
+            animated: true)
     }
 }
 
@@ -177,23 +181,19 @@ extension AddCategoryView: UITableViewDataSource {
 extension AddCategoryView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return }
-//        cell.selectionStyle = .none
-
+        
         cell.cellIsSelected = !cell.cellIsSelected
-
+        
         cell.switchCellState()
         
         category = cell.fetchCategoryName()
         
-        //categoryName --> NewHabitVC
         delegate?.didRecieveCategory(category)
         navigationController?.popViewController(animated: true)
-        
     }
-    //Need this method?
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return }
-
+        
         cell.cellIsSelected = false
         cell.switchCellState()
         
@@ -206,7 +206,9 @@ extension AddCategoryView: UITableViewDelegate {
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { action -> UIMenu? in
             let correctAction = UIAction(title: "Редактировать") { action in
-                self.navigationController?.pushViewController(NewCategoryView(delegate: self.viewModel, selectedCategory: category, options: .rename), animated: true)
+                self.navigationController?.pushViewController(
+                    NewCategoryView(delegate: self.viewModel, selectedCategory: category, mode: .rename),
+                    animated: true)
             }
             let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { action in
                 self.viewModel.deleteCategory(category)

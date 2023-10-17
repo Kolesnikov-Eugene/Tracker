@@ -8,17 +8,16 @@
 import UIKit
 
 final class CategoryTableViewCell: UITableViewCell {
-    var cellIsSelected = false
     private lazy var categoryLabel: UILabel = {
         let label = UILabel()
-
+        
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
-    lazy var checkmarkImageView: UIImageView = {
+    private lazy var checkmarkImageView: UIImageView = {
         let view = UIImageView()
         
         view.isHidden = false
@@ -34,6 +33,7 @@ final class CategoryTableViewCell: UITableViewCell {
         
         return view
     }()
+    var cellIsSelected = false
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -70,8 +70,6 @@ final class CategoryTableViewCell: UITableViewCell {
             categoryLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -22),
             categoryLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
-//            checkmarkImageView.topAnchor.constraint(equalTo: categoryLabel.topAnchor),
-//            checkmarkImageView.bottomAnchor.constraint(equalTo: categoryLabel.bottomAnchor),
             checkmarkImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkmarkImageView.heightAnchor.constraint(equalToConstant: 24),
             checkmarkImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -100,7 +98,7 @@ final class CategoryTableViewCell: UITableViewCell {
             } else if index + 1 == rowNumber  {
                 roundBottomOfContentView()
             } else {
-                configureMiddleCells()
+                configureMiddleCell()
             }
         default:
             stringSeparator.backgroundColor = .lightGray
@@ -109,7 +107,7 @@ final class CategoryTableViewCell: UITableViewCell {
         categoryLabel.text = label
     }
     
-    private func configureMiddleCells() {
+    private func configureMiddleCell() {
         stringSeparator.backgroundColor = .lightGray
         contentView.layer.cornerRadius = 0
     }

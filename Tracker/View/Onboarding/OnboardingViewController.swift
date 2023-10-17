@@ -12,6 +12,7 @@ final class OnboardingViewController: UIViewController {
     private let infoText: String
     private lazy var backgroundImageView: UIImageView = {
         let imageView = UIImageView()
+        
         imageView.image = UIImage(named: imageName)
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -20,12 +21,12 @@ final class OnboardingViewController: UIViewController {
     }()
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
+        
         label.text = infoText
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.numberOfLines = 0
         label.textAlignment = .center
-        
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -39,7 +40,6 @@ final class OnboardingViewController: UIViewController {
         button.tintColor = .white
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -47,7 +47,7 @@ final class OnboardingViewController: UIViewController {
     
     @objc private func doneButtonTapped() {
         guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
-
+        
         let tabBarController = TabBarController()
         window.rootViewController = tabBarController
     }

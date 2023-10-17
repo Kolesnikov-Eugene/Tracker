@@ -14,6 +14,7 @@ final class AddScheduleViewCell: UITableViewCell {
         
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
+        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
@@ -22,6 +23,7 @@ final class AddScheduleViewCell: UITableViewCell {
         
         button.onTintColor = UIColor(red: 0.22, green: 0.45, blue: 0.91, alpha: 1)
         button.addTarget(self, action: #selector(switchDidChangeValue), for: .valueChanged)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -29,6 +31,7 @@ final class AddScheduleViewCell: UITableViewCell {
         let view = UIView()
         
         view.backgroundColor = .lightGray
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -54,10 +57,6 @@ final class AddScheduleViewCell: UITableViewCell {
     }
     
     private func applyConstraints() {
-        dayOfWeekLabel.translatesAutoresizingMaskIntoConstraints = false
-        addDayToScheduleSwitch.translatesAutoresizingMaskIntoConstraints = false
-        stringSeparator.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             dayOfWeekLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 22),
             dayOfWeekLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -22),

@@ -23,7 +23,6 @@ protocol DataStoreProtocol {
 }
 
 final class DataStore: DataStoreProtocol {
-    
     var managedObjectContext: NSManagedObjectContext? {
         context
     }

@@ -19,6 +19,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.clear.cgColor
         view.layer.cornerRadius = 16
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -34,6 +35,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         view.layer.cornerRadius = view.frame.width / 2
         view.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3).cgColor
         view.contentMode = .center
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -44,6 +46,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
@@ -57,6 +60,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.clear.cgColor
         view.layer.cornerRadius = 16
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -66,6 +70,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         label.frame.size.height = 34
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
+        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
@@ -80,14 +85,17 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         button.layer.borderColor = UIColor.clear.cgColor
         button.layer.cornerRadius = button.frame.width / 2
         button.addTarget(self, action: #selector(addToDoneButtonTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     private let mainStackView: UIStackView = {
         let stackView = UIStackView()
+        
         stackView.axis = NSLayoutConstraint.Axis.vertical
         stackView.spacing = 8
         stackView.backgroundColor = .white
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         
         return stackView
     }()
@@ -102,6 +110,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         view.layer.borderColor = UIColor.clear.cgColor
         view.layer.cornerRadius = view.frame.width / 2
         view.backgroundColor = .clear
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -128,7 +137,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         trackerInfoView.addSubview(emojiView)
         trackerInfoView.addSubview(titleLabel)
         bottomCellView.addSubview(scheduleLabel)
-        bottomCellView.addSubview(buttonView) 
+        bottomCellView.addSubview(buttonView)
         buttonView.addSubview(doneButton)
         mainStackView.addArrangedSubview(trackerInfoView)
         mainStackView.addArrangedSubview(bottomCellView)
@@ -136,15 +145,6 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     }
     
     private func applyConstraints() {
-        trackerInfoView.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        emojiView.translatesAutoresizingMaskIntoConstraints = false
-        bottomCellView.translatesAutoresizingMaskIntoConstraints = false
-        doneButton.translatesAutoresizingMaskIntoConstraints = false
-        scheduleLabel.translatesAutoresizingMaskIntoConstraints = false
-        mainStackView.translatesAutoresizingMaskIntoConstraints = false
-        buttonView.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             emojiView.leadingAnchor.constraint(equalTo: trackerInfoView.leadingAnchor, constant: 12),
             emojiView.topAnchor.constraint(equalTo: trackerInfoView.topAnchor, constant: 12),

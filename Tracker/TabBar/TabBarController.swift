@@ -18,6 +18,7 @@ final class TabBarController: UITabBarController {
     }
     
     private func setupView() {
+        view.backgroundColor = .white
         
         let homeViewController = HomeViewController()
         let statisticViewController = StatisticViewController()
