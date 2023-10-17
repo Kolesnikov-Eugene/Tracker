@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		440FCC792ADEB51F00CD0DD7 /* HomeViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440FCC782ADEB51F00CD0DD7 /* HomeViewViewModel.swift */; };
 		441DF7EA2A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441DF7E92A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift */; };
 		441DF7EC2A9FD2FA005AC874 /* SupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441DF7EB2A9FD2FA005AC874 /* SupplementaryView.swift */; };
 		441DF7EE2A9FD629005AC874 /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441DF7ED2A9FD629005AC874 /* StatisticViewController.swift */; };
@@ -51,6 +52,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		440FCC782ADEB51F00CD0DD7 /* HomeViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewViewModel.swift; sourceTree = "<group>"; };
 		441DF7E92A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewCollectionViewCell.swift; sourceTree = "<group>"; };
 		441DF7EB2A9FD2FA005AC874 /* SupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryView.swift; sourceTree = "<group>"; };
 		441DF7ED2A9FD629005AC874 /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				4459370A2AD6B44C00ED3495 /* AddCategoryViewModel.swift */,
+				440FCC782ADEB51F00CD0DD7 /* HomeViewViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -372,6 +375,7 @@
 				447C66102AAF4D95002725ED /* AddScheduleViewCell.swift in Sources */,
 				44BC89972A9E7F0800C0E23D /* TrackerCategory.swift in Sources */,
 				44AFD67E2AC3544000A58C27 /* String+Extension.swift in Sources */,
+				440FCC792ADEB51F00CD0DD7 /* HomeViewViewModel.swift in Sources */,
 				444B90082AAA13840013D8FA /* SeparatorView.swift in Sources */,
 				4459370F2AD6D09400ED3495 /* CategoryTableViewCell.swift in Sources */,
 				44D91E492ABAF4F900BAB467 /* TrackerRecordStore.swift in Sources */,

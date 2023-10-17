@@ -57,7 +57,6 @@ final class AddScheduleViewController: UIViewController {
         navigationItem.setHidesBackButton(true, animated: false)
         
         tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(AddScheduleViewCell.self, forCellReuseIdentifier: reuseCellIdentifier)
         
         addSubviews()
@@ -90,6 +89,7 @@ final class AddScheduleViewController: UIViewController {
     }
 }
 
+//MARK: - UITableViewDataSource
 extension AddScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return Schedule.allCases.count
@@ -125,7 +125,4 @@ extension AddScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
-}
-
-extension AddScheduleViewController: UITableViewDelegate {
 }

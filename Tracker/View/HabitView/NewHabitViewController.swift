@@ -452,6 +452,7 @@ final class NewHabitViewController: UIViewController {
     }
 }
 
+//MARK: - UITextFieldDelegate
 extension NewHabitViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let maxLength = 38
@@ -488,6 +489,7 @@ extension NewHabitViewController: UITextFieldDelegate {
     }
 }
 
+//MARK: - UICollectionViewDataSource
 extension NewHabitViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return emojiArray.count
@@ -535,6 +537,7 @@ extension NewHabitViewController: UICollectionViewDataSource {
     }
 }
 
+//MARK: - UICollectionViewDelegateFlowLayout
 extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -604,6 +607,7 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+//MARK: - AddScheduleDelegate
 extension NewHabitViewController: AddScheduleDelegate {
     func didRecieveSchedule(for selectedDays: [Schedule]) {
         self.schedule = selectedDays.sorted()
@@ -620,6 +624,7 @@ extension NewHabitViewController: AddScheduleDelegate {
     }
 }
 
+//MARK: - CategoryPickerDelegate 
 extension NewHabitViewController: CategoryPickerDelegate {
     func didRecieveCategory(_ category: String) {
         self.selectedCategory = category

@@ -53,6 +53,7 @@ final class AddCategoryViewModel: AddCategoryProtocol {
     }
 }
 
+//MARK: - AddCategoryDelegate
 extension AddCategoryViewModel: AddCategoryDelegate {
     func didRecieveCategory(_ categoryName: String, for oldCategory:String, mode: Editing) throws {
         category = categoryName
