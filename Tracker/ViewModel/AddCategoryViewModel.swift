@@ -8,6 +8,8 @@
 import Foundation
 
 protocol AddCategoryProtocol: AnyObject {
+    var onChange: ((String) -> Void)? { get set }
+    var categories: [TrackerCategoryProtocol] { get }
     func deleteCategory(_ category: String)
 }
 

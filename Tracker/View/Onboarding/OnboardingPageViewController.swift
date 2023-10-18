@@ -8,8 +8,7 @@
 import UIKit
 
 final class OnboardingPageViewController: UIPageViewController {
-    private var firstViewController: UIViewController
-    private var secondViewController: UIViewController
+    private var onboardingFactory: OnboardingFactoryProtocol
     private var pages: [UIViewController]
     
     private lazy var pageControl: UIPageControl = {
@@ -26,12 +25,18 @@ final class OnboardingPageViewController: UIPageViewController {
         return pageControl
     }()
     
-    init(firstViewController: UIViewController, secondViewController: UIViewController) {
-        self.firstViewController = firstViewController
-        self.secondViewController = secondViewController
-        self.pages = [firstViewController, secondViewController]
+    init(onboardingFactory: OnboardingFactoryProtocol) {
+        self.onboardingFactory = onboardingFactory
+        let firstPage = onboardingFactory.createViewController(
+            imageName: firstOnboardingViewControllerName,
+            infoText: firstOnboardingScreenDescription
+        )
+        let secondPage = onboardingFactory.createViewController(
+            imageName: secondOnboardingViewControllerName,
+            infoText: secondOnboardingScreenDescription
+        )
+        self.pages = [firstPage, secondPage]
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        
         setupUI()
     }
     

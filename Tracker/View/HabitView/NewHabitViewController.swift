@@ -417,9 +417,8 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func categoryButtonTapped() {
-        navigationController?.pushViewController(
-            AddCategoryView(delegate: self, category: selectedCategory),
-            animated: true)
+        let addCategoryView = AddCategoryView(delegate: self, category: selectedCategory)
+        navigationController?.pushViewController(addCategoryView, animated: true)
     }
     
     @objc private func scheduleButtonTapped() {

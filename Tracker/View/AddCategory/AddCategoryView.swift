@@ -8,7 +8,7 @@
 import UIKit
 
 final class AddCategoryView: UIViewController {
-    private var viewModel: AddCategoryViewModel!
+    private var viewModel: AddCategoryProtocol!
     private var category: String
     private let reuseCellIdentifier = "CategoryCell"
     private let tableView: UITableView = {
@@ -77,7 +77,7 @@ final class AddCategoryView: UIViewController {
     
     private func bind() {
         viewModel = AddCategoryViewModel()
-        viewModel.onChange = { [ weak self ] newCategory in
+        viewModel.onChange = { [weak self] newCategory in
             guard let self = self else { return }
             
             self.switchEmptyState()
@@ -141,7 +141,7 @@ final class AddCategoryView: UIViewController {
     
     @objc private func addCategoryButtonTapped() {
         navigationController?.pushViewController(
-            NewCategoryView(delegate: viewModel, selectedCategory: "", mode: .add),
+            NewCategoryView(delegate: viewModel as! AddCategoryDelegate, selectedCategory: "", mode: .add),
             animated: true)
     }
 }
@@ -205,12 +205,14 @@ extension AddCategoryView: UITableViewDelegate {
         let category = cell.fetchCategoryName()
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { action -> UIMenu? in
-            let correctAction = UIAction(title: "Редактировать") { action in
+            let correctAction = UIAction(title: "Редактировать") { [weak self] action in
+                guard let self = self else { return }
                 self.navigationController?.pushViewController(
-                    NewCategoryView(delegate: self.viewModel, selectedCategory: category, mode: .rename),
+                    NewCategoryView(delegate: self.viewModel as! AddCategoryDelegate, selectedCategory: category, mode: .rename),
                     animated: true)
             }
-            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { action in
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] action in
+                guard let self = self else { return }
                 self.viewModel.deleteCategory(category)
             }
             return UIMenu(children: [correctAction, deleteAction])

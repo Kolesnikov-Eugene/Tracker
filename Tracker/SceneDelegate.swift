@@ -23,15 +23,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let appLaunchedSecondTime = UserDefaults.standard.bool(forKey: appLaunchedFirstTimeKey)
             
             if !appLaunchedSecondTime {
-                let first = OnboardingViewController(
-                    imageName: firstOnboardingViewControllerName,
-                    infoText: firstOnboardingScreenDescription)
-                
-                let second = OnboardingViewController(
-                    imageName: secondOnboardingViewControllerName,
-                    infoText: secondOnboardingScreenDescription)
-                
-                let onboarding = OnboardingPageViewController(firstViewController: first, secondViewController: second)
+                let factory = OnboardingViewControllerFactory()
+                let onboarding = OnboardingPageViewController(onboardingFactory: factory)
                 
                 window.rootViewController = onboarding
                 UserDefaults.standard.set(true, forKey: appLaunchedFirstTimeKey)
