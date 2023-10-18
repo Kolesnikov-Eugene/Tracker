@@ -17,6 +17,7 @@ final class AddTrackerViewController: UIViewController {
         button.tintColor = .white
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(addHabit), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -29,6 +30,7 @@ final class AddTrackerViewController: UIViewController {
         button.tintColor = .white
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(addIrregularHabit), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -38,26 +40,27 @@ final class AddTrackerViewController: UIViewController {
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         
         return stackView
     }()
-    
     weak var delegate: NewHabitDelegate?
     
     init(delegate: NewHabitDelegate) {
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
+        setupUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    private func setupUI() {
         navigationItem.title = "Создание трекера"
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+        navigationController?.navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)
+        ]
         
         view.backgroundColor = .white
         
@@ -72,9 +75,6 @@ final class AddTrackerViewController: UIViewController {
     }
     
     private func applyConstraints() {
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        addHabitButton.translatesAutoresizingMaskIntoConstraints = false
-        addIrregularEventButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             stackView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20),
             stackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),

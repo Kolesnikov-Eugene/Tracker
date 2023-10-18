@@ -16,6 +16,7 @@ final class AddScheduleViewController: UIViewController {
         
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
     }()
@@ -32,6 +33,7 @@ final class AddScheduleViewController: UIViewController {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.layer.borderWidth = 1
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -53,10 +55,8 @@ final class AddScheduleViewController: UIViewController {
         navigationItem.title = "Расписание"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         navigationItem.setHidesBackButton(true, animated: false)
-        view.backgroundColor = .white
         
         tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(AddScheduleViewCell.self, forCellReuseIdentifier: reuseCellIdentifier)
         
         addSubviews()
@@ -69,9 +69,6 @@ final class AddScheduleViewController: UIViewController {
     }
     
     private func applyConstraints() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        doneButton.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -92,6 +89,7 @@ final class AddScheduleViewController: UIViewController {
     }
 }
 
+//MARK: - UITableViewDataSource
 extension AddScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return Schedule.allCases.count
@@ -127,7 +125,4 @@ extension AddScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
-}
-
-extension AddScheduleViewController: UITableViewDelegate {
 }

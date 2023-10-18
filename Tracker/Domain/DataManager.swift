@@ -8,18 +8,22 @@
 import Foundation
 import CoreData
 
-struct TrackerCategoryUpdate {
-    let insertedIndexes: IndexSet
-    let deletedIndexes: IndexSet
-}
-
 protocol DataManagerDelegate: AnyObject {
     func didUpdate()
 }
 
+protocol CategoriesManagerProtocol {
+    func fetchAllCategories() throws -> [TrackerCategoryProtocol]
+    func addCategory(_ category: String) throws
+    func renameCategory(_ category: String, for oldCategory: String) throws
+    func deleteCategory(_ category: String) throws
+}
+
 protocol DataManagerProtocol {
     var numberOfSections: Int { get }
+    var numberOfSectionsOfCategories: Int { get }
     func numberOfRowsInSection(_ section: Int) -> Int
+    func numberOfRowsInSectionOfCategory(_ section: Int) -> Int
     func addTracker(_ tracker: TrackerProtocol, for category: String) throws
     func deleteTracker(at indexPath: IndexPath) throws
     func addTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws
@@ -34,14 +38,8 @@ final class DataManager: NSObject {
         case failedToInitializeContext
     }
     
-    weak var delegate: DataManagerDelegate?
-    
-    private var currentSection: Int?
     private let context: NSManagedObjectContext
-    private var insertedIndexes: IndexSet?
-    private var deletedIndexes: IndexSet?
     private var dataStore: DataStoreProtocol
-    
     private lazy var fetchedResultsController:  NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "categoryID", ascending: true)]
@@ -57,6 +55,23 @@ final class DataManager: NSObject {
         
         return fetchedResultsController
     }()
+    private lazy var categoriesFetchedResultsController:  NSFetchedResultsController<TrackerCategoryCoreData> = {
+        let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: "category",
+            cacheName: nil)
+        
+        fetchedResultsController.delegate = self
+        try? fetchedResultsController.performFetch()
+        
+        return fetchedResultsController
+    }()
+    
+    weak var delegate: DataManagerDelegate?
     
     init(_ dataStore: DataStoreProtocol, delegate: DataManagerDelegate) throws {
         guard let context = dataStore.managedObjectContext else {
@@ -66,17 +81,34 @@ final class DataManager: NSObject {
         self.context = context
         self.dataStore = dataStore
     }
+    
+    init(_ dataStore: DataStoreProtocol) throws {
+        guard let context = dataStore.managedObjectContext else {
+            throw DataManagerError.failedToInitializeContext
+        }
+        self.context = context
+        self.dataStore = dataStore
+    }
 }
 
+//MARK: - DataManagerProtocol
 extension DataManager: DataManagerProtocol {
-    
     var numberOfSections: Int {
         fetchedResultsController.sections?.count ?? 0
+    }
+    
+    var numberOfSectionsOfCategories: Int {
+        categoriesFetchedResultsController.sections?.count ?? 0
     }
     
     func numberOfRowsInSection(_ section: Int) -> Int {
         guard section <= numberOfSections else { return 0 }
         return fetchedResultsController.sections?[section].numberOfObjects ?? 0
+    }
+    
+    func numberOfRowsInSectionOfCategory(_ section: Int) -> Int {
+        guard section <= numberOfSectionsOfCategories else { return 0 }
+        return categoriesFetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
     
     func addTracker(_ tracker: TrackerProtocol, for category: String) throws {
@@ -88,12 +120,12 @@ extension DataManager: DataManagerProtocol {
         try? dataStore.deleteTracker(tracker)
     }
     
-    func addTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws {
-        try? dataStore.addTrackerRecord(trackerRecord)
+    func fetchAllCategories() throws -> [TrackerCategoryProtocol] {
+        try dataStore.fetchAllCategories()
     }
     
-    func fetchAllCategories() throws -> [TrackerCategoryProtocol] {
-        try! dataStore.fetchAllCategories()
+    func addTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws {
+        try? dataStore.addTrackerRecord(trackerRecord)
     }
     
     func fetchRecordsCounter(for trackerID: UUID) throws -> Int {
@@ -105,16 +137,29 @@ extension DataManager: DataManagerProtocol {
     }
 }
 
+//MARK: - CategoriesManagerProtocol
+extension DataManager: CategoriesManagerProtocol {
+    func addCategory(_ category: String) throws {
+        try dataStore.addCategory(category)
+    }
+    
+    func renameCategory(_ category: String, for oldCategory: String) throws {
+        try dataStore.renameCategory(category, for: oldCategory)
+    }
+    
+    func deleteCategory(_ category: String) throws {
+        try dataStore.deleteCategory(category)
+    }
+}
+
+//MARK: - NSFetchedResultsControllerDelegate
 extension DataManager: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        insertedIndexes = IndexSet()
-        deletedIndexes = IndexSet()
+        delegate?.didUpdate()
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate()
-        insertedIndexes = nil
-        deletedIndexes = nil
     }
     
     func controller(

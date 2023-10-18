@@ -11,9 +11,13 @@ protocol AddScheduleDelegate: AnyObject {
     func didRecieveSchedule(for selectedDays: [Schedule])
 }
 
+protocol CategoryPickerDelegate: AnyObject {
+    func didRecieveCategory(_ category: String)
+}
+
 final class NewHabitViewController: UIViewController {
     
-    private let categories = ["Срочно", "Скучно", "Уборка", "Прогулка", "Важное", "Учеба"] //FOR Testing delete later
+    private var selectedCategory: String = ""
     private let typeTracker: TypeTracker
     private var tracker: Tracker? = nil
     private var selectedEmoji: String? = nil
@@ -30,15 +34,21 @@ final class NewHabitViewController: UIViewController {
     private lazy var scheduleButtonLabelNewTopConstraint: NSLayoutConstraint = {
         scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 15)
     }()
+    private lazy var categoryButtonLabelNewTopConstraint: NSLayoutConstraint = {
+        categoryButtonLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 15)
+    }()
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         
         view.isScrollEnabled = true
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
     private lazy var contentView: UIView = {
         let view = UIView()
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -55,6 +65,7 @@ final class NewHabitViewController: UIViewController {
         view.placeholder = "Введите название трекера"
         view.clearButtonMode = .whileEditing
         view.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -66,28 +77,45 @@ final class NewHabitViewController: UIViewController {
         field.text = "Ограничение 38 символов"
         field.isHidden = true
         field.textAlignment = .center
+        field.translatesAutoresizingMaskIntoConstraints = false
         
         return field
     }()
     private lazy var categoryButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.setTitle("Категория", for: .normal)
-        button.contentHorizontalAlignment = .left
-        button.contentVerticalAlignment = .center
-        button.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 16.0, bottom: 0.0, right: 0.0)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        button.tintColor = .black
         button.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
         button.addTarget(self, action: #selector(categoryButtonTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
+    }()
+    private let categoryButtonLabel: UILabel = {
+        let label = UILabel()
+        
+        label.text = "Категория"
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    private let categoryButtonLabelForSelectedCategory: UILabel = {
+        let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        label.textColor = UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
     }()
     private lazy var scheduleButton: UIButton = {
         let button = UIButton(type: .system)
         
         button.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
         button.addTarget(self, action: #selector(scheduleButtonTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -97,6 +125,7 @@ final class NewHabitViewController: UIViewController {
         label.text = "Расписание"
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
@@ -106,6 +135,7 @@ final class NewHabitViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.textColor = UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
         label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
@@ -113,6 +143,7 @@ final class NewHabitViewController: UIViewController {
         let view = UIImageView()
         
         view.image = UIImage(named: "array_for_button")
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -120,6 +151,7 @@ final class NewHabitViewController: UIViewController {
         let view = UIImageView()
         
         view.image = UIImage(named: "array_for_button")
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -130,6 +162,7 @@ final class NewHabitViewController: UIViewController {
         stackView.spacing = 0
         stackView.layer.masksToBounds = true
         stackView.layer.cornerRadius = 16
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         
         return stackView
     }()
@@ -137,6 +170,7 @@ final class NewHabitViewController: UIViewController {
         let view = UIView()
         
         view.backgroundColor = .lightGray
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -151,6 +185,8 @@ final class NewHabitViewController: UIViewController {
         collection.isScrollEnabled = false
         collection.allowsMultipleSelection = true
         
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        
         return collection
     }()
     private let bottomButtonsStackView: UIStackView = {
@@ -159,6 +195,7 @@ final class NewHabitViewController: UIViewController {
         view.axis = .horizontal
         view.distribution = .fillEqually
         view.spacing = 8
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -176,6 +213,7 @@ final class NewHabitViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderColor = UIColor(red: 0.961, green: 0.42, blue: 0.424, alpha: 1).cgColor
         button.layer.borderWidth = 1
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -192,6 +230,7 @@ final class NewHabitViewController: UIViewController {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.isEnabled = true
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -199,16 +238,18 @@ final class NewHabitViewController: UIViewController {
     init(typeTracker: TypeTracker) {
         self.typeTracker = typeTracker
         super.init(nibName: nil, bundle: nil)
-        setupView()
+        setupUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupView() {
+    private func setupUI() {
         navigationItem.title = typeTracker.typeTrackerName
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+        navigationController?.navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)
+        ]
         navigationItem.setHidesBackButton(true, animated: false)
         view.backgroundColor = .white
         
@@ -254,6 +295,8 @@ final class NewHabitViewController: UIViewController {
         }
         
         categoryButton.addSubview(arrayPictureViewForCategoryButton)
+        categoryButton.addSubview(categoryButtonLabel)
+        categoryButton.addSubview(categoryButtonLabelForSelectedCategory)
         scheduleButton.addSubview(arrayPictureViewForScheduleButton)
         scheduleButton.addSubview(scheduleButtonLabel)
         scheduleButton.addSubview(scheduleButtonLabelForSelectedDays)
@@ -267,23 +310,6 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func applyConstraints() {
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        trackerNameTextField.translatesAutoresizingMaskIntoConstraints = false
-        categoryStackView.translatesAutoresizingMaskIntoConstraints = false
-        categoryButton.translatesAutoresizingMaskIntoConstraints = false
-        scheduleButton.translatesAutoresizingMaskIntoConstraints = false
-        stringSeparator.translatesAutoresizingMaskIntoConstraints = false
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        arrayPictureViewForCategoryButton.translatesAutoresizingMaskIntoConstraints = false
-        arrayPictureViewForScheduleButton.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        bottomButtonsStackView.translatesAutoresizingMaskIntoConstraints = false
-        cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        createButton.translatesAutoresizingMaskIntoConstraints = false
-        exceedingCharacterLimitErrorField.translatesAutoresizingMaskIntoConstraints = false
-        scheduleButtonLabel.translatesAutoresizingMaskIntoConstraints = false
-        scheduleButtonLabelForSelectedDays.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -310,6 +336,14 @@ final class NewHabitViewController: UIViewController {
             categoryStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             categoryStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             categoryStackView.heightAnchor.constraint(equalToConstant: typeTracker == .habit ? 150 : 75),
+            
+            categoryButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+            categoryButtonLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 26),
+            categoryButtonLabel.heightAnchor.constraint(equalToConstant: 22),
+            
+            categoryButtonLabelForSelectedCategory.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+            categoryButtonLabelForSelectedCategory.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 39),
+            categoryButtonLabelForSelectedCategory.heightAnchor.constraint(equalToConstant: 22),
             
             collectionView.topAnchor.constraint(equalTo: categoryStackView.bottomAnchor, constant: 16),
             collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -364,7 +398,9 @@ final class NewHabitViewController: UIViewController {
         guard let selectedEmoji = selectedEmoji,
               let selectedColor = selectedColor,
               let text = trackerNameTextField.text,
-              let _ = categories.randomElement(), // TODO add category in AddCategoryView (next sprint)
+              !selectedCategory.isEmpty,
+              selectedCategory.count > 0,
+              !selectedCategory.starts(with: " "),
               text.count > 0 ,
               !schedule.isEmpty
         else {
@@ -381,11 +417,14 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func categoryButtonTapped() {
-        //TODO present categoryView Sprint 16
+        let addCategoryView = AddCategoryView(delegate: self, category: selectedCategory)
+        navigationController?.pushViewController(addCategoryView, animated: true)
     }
     
     @objc private func scheduleButtonTapped() {
-        navigationController?.pushViewController(AddScheduleViewController(delegate: self, selectedDays: schedule), animated: true)
+        navigationController?.pushViewController(
+            AddScheduleViewController(delegate: self, selectedDays: schedule),
+            animated: true)
     }
     
     @objc private func cancelButtonTapped() {
@@ -397,12 +436,11 @@ final class NewHabitViewController: UIViewController {
             dismiss(animated: true) { [weak self] in
                 guard let self = self,
                       let tracker = tracker,
-                      let category = categories.randomElement(),
                       let parent = navigationController?.viewControllers.first as? AddTrackerViewController
                 else {
                     return
                 }
-                parent.delegate?.didCreateNewTracker(tracker, for: category)
+                parent.delegate?.didCreateNewTracker(tracker, for: selectedCategory)
             }
         }
     }
@@ -413,6 +451,7 @@ final class NewHabitViewController: UIViewController {
     }
 }
 
+//MARK: - UITextFieldDelegate
 extension NewHabitViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let maxLength = 38
@@ -449,6 +488,7 @@ extension NewHabitViewController: UITextFieldDelegate {
     }
 }
 
+//MARK: - UICollectionViewDataSource
 extension NewHabitViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return emojiArray.count
@@ -496,6 +536,7 @@ extension NewHabitViewController: UICollectionViewDataSource {
     }
 }
 
+//MARK: - UICollectionViewDelegateFlowLayout
 extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -565,6 +606,7 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+//MARK: - AddScheduleDelegate
 extension NewHabitViewController: AddScheduleDelegate {
     func didRecieveSchedule(for selectedDays: [Schedule]) {
         self.schedule = selectedDays.sorted()
@@ -576,6 +618,20 @@ extension NewHabitViewController: AddScheduleDelegate {
         }
         scheduleButtonLabelNewTopConstraint.isActive = !selectedDays.isEmpty
         scheduleButtonLabelForSelectedDays.isHidden = selectedDays.isEmpty
+        
+        switchCreateButton()
+    }
+}
+
+//MARK: - CategoryPickerDelegate 
+extension NewHabitViewController: CategoryPickerDelegate {
+    func didRecieveCategory(_ category: String) {
+        self.selectedCategory = category
+        
+        categoryButtonLabelForSelectedCategory.text = selectedCategory
+        
+        categoryButtonLabelNewTopConstraint.isActive = !selectedCategory.isEmpty && !selectedCategory.starts(with: " ")
+        categoryButtonLabelForSelectedCategory.isHidden = selectedCategory.isEmpty && selectedCategory.starts(with: " ")
         
         switchCreateButton()
     }

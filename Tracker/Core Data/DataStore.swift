@@ -10,10 +10,12 @@ import CoreData
 
 protocol DataStoreProtocol {
     var managedObjectContext: NSManagedObjectContext? { get }
-    func deleteCategory(_ category: NSManagedObject) throws
     func addTracker(_ tarcker: TrackerProtocol, for category: String) throws
     func deleteTracker(_ tracker: NSManagedObject) throws
     func addTrackerRecord(_ record: TrackerRecordProtocol) throws
+    func addCategory(_ category: String) throws
+    func renameCategory(_ category: String, for oldCategory: String) throws
+    func deleteCategory(_ category: String) throws
     func fetchAllCategories() throws -> [TrackerCategoryProtocol]
     func fetchRecordsCounter(for trackerID: UUID) throws -> Int
     func trackerIsCompleted(_ trackerID: UUID, for currentDate: Date) throws -> Bool
@@ -21,7 +23,6 @@ protocol DataStoreProtocol {
 }
 
 final class DataStore: DataStoreProtocol {
-    
     var managedObjectContext: NSManagedObjectContext? {
         context
     }
@@ -35,7 +36,7 @@ final class DataStore: DataStoreProtocol {
 // MARK: - TrackerStore protocol
 extension DataStore: TrackerStore {
     func addTracker(_ tracker: TrackerProtocol, for category: String) throws {
-        let categoryID = try? fetchCategoryID(for: category, and: tracker.id)
+        let categoryID = try? fetchCategoryID(for: category)
         
         let trackerCoreData = TrackerCoreData(context: context)
         
@@ -97,15 +98,38 @@ extension DataStore: TrackerStore {
 
 //MARK: - TrackerCategoryStore protocol
 extension DataStore: TrackerCategoryStore {
-    func deleteCategory(_ category: NSManagedObject) throws {
-        /*
-        TODO
-        Implement logic of deleting category from the DB after deleting a tracker,
-        if there are no matching trackers left for category
-        */
+    func addCategory(_ category: String) throws {
+        let categoryExists = try categoryExists(category)
+        if !categoryExists {
+            let trackerCategory = TrackerCategoryCoreData(context: context)
+            trackerCategory.id = UUID()
+            trackerCategory.category = category
+            
+            try context.save()
+        }
     }
     
-    func fetchCategoryID(for categoryName: String, and trackerID: UUID) throws -> UUID? {
+    func renameCategory(_ category: String, for oldCategory: String) throws {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCategoryCoreData.category), oldCategory)
+        
+        let categoryObject = try context.fetch(request)[0]
+        categoryObject.setValue(category, forKey: "category")
+        
+        try context.save()
+    }
+    
+    func deleteCategory(_ category: String) throws {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCategoryCoreData.category), category)
+        
+        let categoryObject = try context.fetch(request)[0]
+        context.delete(categoryObject)
+        
+        try context.save()
+    }
+    
+    func fetchCategoryID(for categoryName: String) throws -> UUID? {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         
         request.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCategoryCoreData.category), categoryName)
@@ -133,6 +157,9 @@ extension DataStore: TrackerCategoryStore {
     
     func fetchAllCategories() throws -> [TrackerCategoryProtocol] {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        let nameSort = NSSortDescriptor(key: "category", ascending: true)
+
+        request.sortDescriptors = [nameSort]
         
         let categoriesData = try context.fetch(request)
         

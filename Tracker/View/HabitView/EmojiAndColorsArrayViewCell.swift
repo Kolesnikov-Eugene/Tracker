@@ -14,6 +14,7 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
         
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
@@ -26,6 +27,7 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
         view.frame.size.width = contentView.frame.width * multiplier
         view.frame.size.height = contentView.frame.height * multiplier
         view.layer.cornerRadius = 8
+        view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
@@ -47,10 +49,6 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
     }
     
     private func applyConstraints() {
-        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
-        colorView.translatesAutoresizingMaskIntoConstraints = false
-        
-        
         NSLayoutConstraint.activate([
             emojiLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             emojiLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
