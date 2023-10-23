@@ -18,21 +18,22 @@ final class TabBarController: UITabBarController {
     }
     
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.shared.viewBackgroundColor
         
         let homeViewController = HomeViewController()
-        let statisticViewController = StatisticViewController()
+        let statisticService = StatisticService()
+        let statisticViewController = StatisticViewController(statisticService: statisticService)
         let homeViewNavigationController = UINavigationController(rootViewController: homeViewController)
         homeViewNavigationController.interactivePopGestureRecognizer?.isEnabled = false
         
         homeViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: trackersTabBarLabel,
             image: UIImage(named: "trackers"),
             selectedImage: nil
         )
         
         statisticViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: statisticTabBarLabel,
             image: UIImage(named: "statistics"),
             selectedImage: nil)
         

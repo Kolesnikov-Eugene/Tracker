@@ -14,6 +14,7 @@ final class AddScheduleViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         
+        tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -23,8 +24,8 @@ final class AddScheduleViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.backgroundColor = .black
-        button.tintColor = .white
+        button.backgroundColor = Colors.shared.buttonsBackgroundColor
+        button.setTitleColor(Colors.shared.buttonsTextColor, for: .normal)
         button.contentHorizontalAlignment = .center
         button.contentVerticalAlignment = .center
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -51,7 +52,7 @@ final class AddScheduleViewController: UIViewController {
     }
     
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.shared.viewBackgroundColor
         navigationItem.title = "Расписание"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         navigationItem.setHidesBackButton(true, animated: false)

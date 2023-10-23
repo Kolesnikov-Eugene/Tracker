@@ -19,6 +19,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.clear.cgColor
         view.layer.cornerRadius = 16
+        view.backgroundColor = .clear
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -46,6 +47,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         label.numberOfLines = 0
+        label.backgroundColor = .clear
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -60,6 +62,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.clear.cgColor
         view.layer.cornerRadius = 16
+        view.backgroundColor = .clear
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -69,7 +72,8 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         
         label.frame.size.height = 34
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-        label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
+        label.textColor = Colors.shared.screensTextColor
+        label.backgroundColor = .clear
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -85,6 +89,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         button.layer.borderColor = UIColor.clear.cgColor
         button.layer.cornerRadius = button.frame.width / 2
         button.addTarget(self, action: #selector(addToDoneButtonTapped), for: .touchUpInside)
+        button.backgroundColor = .clear
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -94,7 +99,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         
         stackView.axis = NSLayoutConstraint.Axis.vertical
         stackView.spacing = 8
-        stackView.backgroundColor = .white
+        stackView.backgroundColor = .clear
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         return stackView
@@ -114,6 +119,15 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         
         return view
     }()
+    private let pinImageView: UIImageView = {
+        let view = UIImageView()
+        
+        view.backgroundColor = .clear
+        view.image = UIImage(named: "pin_image")
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
     weak var delegate: HomeViewCellDelegate?
     var buttonChecked = false
     
@@ -121,21 +135,26 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         addSubviews()
         applyConstraints()
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .clear
         
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     @objc private func addToDoneButtonTapped() {
         delegate?.didTapDoneStatus(self)
+    }
+    
+    func previewView() -> UIView {
+        trackerInfoView
     }
     
     private func addSubviews() {
         trackerInfoView.addSubview(emojiView)
         trackerInfoView.addSubview(titleLabel)
+        trackerInfoView.addSubview(pinImageView)
         bottomCellView.addSubview(scheduleLabel)
         bottomCellView.addSubview(buttonView)
         buttonView.addSubview(doneButton)
@@ -156,6 +175,11 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
             titleLabel.trailingAnchor.constraint(equalTo: trackerInfoView.trailingAnchor, constant: -12),
             titleLabel.heightAnchor.constraint(equalToConstant: 34),
             titleLabel.centerYAnchor.constraint(equalTo: trackerInfoView.centerYAnchor, constant: 16),
+            
+            pinImageView.trailingAnchor.constraint(equalTo: trackerInfoView.trailingAnchor, constant: -4),
+            pinImageView.topAnchor.constraint(equalTo: trackerInfoView.topAnchor, constant: 12),
+            pinImageView.heightAnchor.constraint(equalToConstant: 24),
+            pinImageView.widthAnchor.constraint(equalToConstant: 24),
             
             mainStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -185,8 +209,9 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         self.titleLabel.text = trackerModel.description
         trackerInfoView.backgroundColor = trackerModel.color
         emojiView.text = trackerModel.emoji
-        scheduleLabel.text = String("\(counter) \(counter.counterRepresentation)")
-        
+        scheduleLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("numberOfDays",
+                              comment: "Number of remaining tasks"), counter)
         buttonView.backgroundColor = .white
         
         let image = !buttonChecked ? UIImage(named: "tracker_unchecked")?.withRenderingMode(.alwaysTemplate) :
@@ -199,5 +224,9 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         } else {
             doneButton.tintColor = trackerModel.color
         }
+    }
+    
+    func changePinState(trackerIsPinned: Bool) {
+        pinImageView.isHidden = !trackerIsPinned
     }
 }

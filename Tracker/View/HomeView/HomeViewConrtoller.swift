@@ -8,7 +8,8 @@
 import UIKit
 
 protocol NewHabitDelegate: AnyObject {
-    func didCreateNewTracker(_ tracker: Tracker, for category: String)
+    func didCreateNewTracker(_ tracker: TrackerProtocol, for category: String)
+    func didChangeTracker(_ tracker: TrackerProtocol, for category: String)
 }
 
 protocol HomeViewCellDelegate: AnyObject {
@@ -26,7 +27,8 @@ final class HomeViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.alwaysBounceVertical = true
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .clear
+        collectionView.allowsMultipleSelection = false
         
         return collectionView
     }()
@@ -38,6 +40,7 @@ final class HomeViewController: UIViewController {
         picker.calendar.firstWeekday = 2
         picker.locale = Locale(identifier: "ru_RU")
         picker.addTarget(self, action: #selector(datePickerDidChangeDate), for: .valueChanged)
+        picker.setValue(UIColor.orange, forKeyPath: "textColor")
         picker.translatesAutoresizingMaskIntoConstraints = false
         
         return picker
@@ -47,8 +50,8 @@ final class HomeViewController: UIViewController {
         
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
-        searchController.searchBar.setValue("Отменить", forKey: "cancelButtonText")
+        searchController.searchBar.placeholder = searchFieldLabel
+        searchController.searchBar.setValue(searchFieldCancelButton, forKey: "cancelButtonText")
         searchController.searchBar.delegate = self
         
         return searchController
@@ -66,7 +69,7 @@ final class HomeViewController: UIViewController {
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
         
-        label.text = "Что будем отслеживать?"
+        label.text = trackersEmpryStateText
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -76,18 +79,32 @@ final class HomeViewController: UIViewController {
     private lazy var leftBarButton: UIBarButtonItem = {
         let button = UIBarButtonItem()
         
-        button.image = UIImage(named: "add_tracker")?.withRenderingMode(.alwaysOriginal)
+        button.image = UIImage(named: "add_tracker")?.withRenderingMode(.alwaysTemplate)
         button.style = .plain
         button.target = self
         button.action = #selector(addTrackerButtonTapped)
         button.imageInsets = UIEdgeInsets(top: 0, left: -10, bottom: 0, right: 0)
+        button.tintColor = Colors.shared.buttonsBackgroundColor
+        
+        return button
+    }()
+    private lazy var filterButton: UIButton = {
+        let button = UIButton()
+        
+        button.setTitle(filterButtonText, for: .normal)
+        button.backgroundColor = UIColor(red: 0.22, green: 0.45, blue: 0.91, alpha: 1)
+        button.layer.cornerRadius = 16
+        button.tintColor = .white
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        button.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.shared.viewBackgroundColor
         configureNavBar()
         
         collectionView.register(HomeViewCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
@@ -123,6 +140,7 @@ final class HomeViewController: UIViewController {
         viewModel = HomeViewViewModel()
         viewModel.onState = { [weak self] in
             guard let self = self else { return }
+            datePicker.date = viewModel.currentDate
             
             self.collectionView.reloadData()
             self.view.layoutIfNeeded()
@@ -151,6 +169,7 @@ final class HomeViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(emptyStateView)
         view.addSubview(emptyStateLabel)
+        view.addSubview(filterButton)
     }
     
     private func applyConstraints() {
@@ -168,14 +187,19 @@ final class HomeViewController: UIViewController {
             emptyStateView.heightAnchor.constraint(equalToConstant: 80),
             
             emptyStateLabel.topAnchor.constraint(equalTo: emptyStateView.bottomAnchor, constant: 8),
-            emptyStateLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor)
+            emptyStateLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor),
+            
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
+            filterButton.widthAnchor.constraint(equalToConstant: 114)
         ])
     }
     
     private func configureNavBar() {
         if let navBar = navigationController?.navigationBar {
             navBar.prefersLargeTitles = true
-            navigationItem.title = "Трекеры"
+            navigationItem.title = trackersLabelMainText
             navBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 34, weight: .bold)]
             
             let datePickerItem = UIBarButtonItem(customView: datePicker)
@@ -189,16 +213,21 @@ final class HomeViewController: UIViewController {
     private func switchEmptyStateView() {
         emptyStateView.isHidden = !viewModel.visibleCategories.isEmpty
         emptyStateLabel.isHidden = !viewModel.visibleCategories.isEmpty
+        filterButton.isHidden = viewModel.visibleCategories.isEmpty
     }
     
     private func switchToEmptyState() {
         emptyStateView.image = UIImage(named: "empty_home_view")
-        emptyStateLabel.text = "Что будем отслеживать?"
+        emptyStateLabel.text = trackersEmpryStateText
+        filterButton.isHidden = true
     }
     
     private func switchToEmptySearchResult() {
         emptyStateView.image = UIImage(named: "empty_search_result")
-        emptyStateLabel.text = "Ничего не найдено"
+        emptyStateLabel.text = EmptySearchResultText
+        emptyStateView.isHidden = !viewModel.visibleCategories.isEmpty
+        emptyStateLabel.isHidden = !viewModel.visibleCategories.isEmpty
+        filterButton.isHidden = false
     }
     
     @objc private func datePickerDidChangeDate(_ sender: UIDatePicker) {
@@ -207,9 +236,16 @@ final class HomeViewController: UIViewController {
     
     @objc func addTrackerButtonTapped() {
         let addTracker = AddTrackerViewController(delegate: self)
-        let addTrackerNavigationCOntroller = UINavigationController(rootViewController: addTracker)
+        let addTrackerNavigationController = UINavigationController(rootViewController: addTracker)
         
-        present(addTrackerNavigationCOntroller, animated: true)
+        present(addTrackerNavigationController, animated: true)
+    }
+    
+    @objc func didTapFilterButton() {
+        guard let model = viewModel as? FilterPickerDelegate else { return }
+        let filtersViewController = FiltersViewController(delegate: model, filterText: model.filter)
+        let filtersNavigationController = UINavigationController(rootViewController: filtersViewController)
+        present(filtersNavigationController, animated: true)
     }
 }
 
@@ -235,11 +271,11 @@ extension HomeViewController: UISearchBarDelegate {
 //MARK: - UICollectionViewDataSource
 extension HomeViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
+        viewModel.subscribe()
         return viewModel.visibleCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel.subscribe(section)
         return viewModel.visibleCategories[section].trackerArray.count
     }
     
@@ -247,17 +283,17 @@ extension HomeViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? HomeViewCollectionViewCell else {
             return UICollectionViewCell()
         }
-        cell.prepareForReuse()
+//        cell.prepareForReuse()
         cell.delegate = self
         
         let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
-        
+        let pinStatus = viewModel.trackerIsPinned(currentTracker.id)
         let counter = viewModel.getTrackerCompletionCounter(for: currentTracker)
      
         cell.buttonChecked = viewModel.trackerIsCompleted(currentTracker.id)
         
         cell.configureCell(with: currentTracker, counter: counter)
-        
+        cell.changePinState(trackerIsPinned: pinStatus)
         return cell
     }
     
@@ -321,12 +357,75 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
                                                   withHorizontalFittingPriority: .required,
                                                   verticalFittingPriority: .fittingSizeLevel)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let indexPath = indexPaths.first else { return nil }
+        guard let cell = collectionView.cellForItem(at: indexPath) as? HomeViewCollectionViewCell else { return nil }
+//        cell.prepareForReuse()
+        let identifier = "previewIdentifier" as NSCopying
+        let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
+        let pinText = viewModel.trackerIsPinned(currentTracker.id) ? unpinContextMenuLabel : pinContextMenuLabel
+        
+        return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { action -> UIMenu? in
+            let pinAction = UIAction(title: pinText) { [weak self] action in
+                guard let self = self else { return }
+                viewModel.pinTracker(currentTracker)
+            }
+            
+            let correctAction = UIAction(title: "Редактировать") { [weak self] action in
+                guard let self = self else { return }
+                
+                let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
+                let category = viewModel.visibleCategories[indexPath.section].category
+                let counter = viewModel.getTrackerCompletionCounter(for: currentTracker)
+                let trackerEdit = TrackerEdit(tracker: currentTracker, category: category, counter: counter)
+                
+                let habitViewController = NewHabitViewController(typeTracker: .habit, trackerEdit: trackerEdit, delegate: self)
+                let navigationConroller = UINavigationController(rootViewController: habitViewController)
+                
+                present(navigationConroller, animated: true)
+                
+            }
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] action in
+                guard let self = self else { return }
+                let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
+                let alertModel = AlertModel(message: alertMessage, okButtonText: alertDeleteButtonText, cancelButtonText: alertCancelButtonText) { [weak self] in
+                    guard let self = self else { return }
+                    viewModel.deleteTracker(currentTracker)
+                }
+                let alertPresenter = AlertPresenter()
+                alertPresenter.show(in: self, model: alertModel)
+            }
+            return UIMenu(children: [pinAction, correctAction, deleteAction])
+        }
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfiguration configuration: UIContextMenuConfiguration,
+        highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview?
+    {
+        guard let _ = configuration.identifier as? String else { return nil }
+        
+        guard let cell = collectionView.cellForItem(at: indexPath) as? HomeViewCollectionViewCell else { return nil }
+        
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = .clear
+        
+        let previewView = cell.previewView()
+        
+        return UITargetedPreview(view: previewView, parameters: parameters)
+    }
 }
 
 //MARK: - NewHabitDelegate
 extension HomeViewController: NewHabitDelegate {
-    func didCreateNewTracker(_ tracker: Tracker, for category: String) {
+    func didCreateNewTracker(_ tracker: TrackerProtocol, for category: String) {
         viewModel.createNewTracker(tracker, category: category)
+    }
+    
+    func didChangeTracker(_ tracker: TrackerProtocol, for category: String) {
+        viewModel.editTracker(tracker, category: category)
     }
 }
 

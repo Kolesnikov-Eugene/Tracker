@@ -43,3 +43,27 @@ let addCategoryEmptyStateText =
 Привычки и события можно
 объединить по смыслу
 """
+
+let alertMessage = "Уверены что хотите удалить трекер?"
+let categoryDeletionMessage = "Эта категория точно не нужна?"
+let alertDeleteButtonText = "Удалить"
+let alertCancelButtonText = "Отменить"
+
+let trackerEditingViewText = "Редактирование привычки"
+let pinnedCategoryText = "Закрепленные"
+let pinContextMenuLabel = "Закрепить"
+let unpinContextMenuLabel = "Открепить"
+
+//HomeView labels
+let trackersLabelMainText = NSLocalizedString("homeView.title", comment: "")
+let searchFieldLabel = NSLocalizedString("searchField.text", comment: "")
+let trackersTabBarLabel = NSLocalizedString("trackersTabBar.text", comment: "")
+let statisticTabBarLabel = NSLocalizedString("statisticTabBar.text", comment: "")
+let searchFieldCancelButton = NSLocalizedString("searchFieldCancelButton.text", comment: "")
+let filterButtonText = NSLocalizedString("filterButton.text", comment: "")
+let trackersEmpryStateText = NSLocalizedString("trackersEmptyState.text", comment: "")
+let EmptySearchResultText = NSLocalizedString("emptySearchResult.text", comment: "")
+
+//Statistics screen
+let statisticsMainLabel = NSLocalizedString("statisticsMainLabel.text", comment: "")
+let emptyStatisticsLabel = NSLocalizedString("emptyStatisticsLabel.text", comment: "")

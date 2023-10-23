@@ -47,8 +47,8 @@ final class AddCategoryView: UIViewController {
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.backgroundColor = .black
-        button.tintColor = .white
+        button.backgroundColor = Colors.shared.buttonsBackgroundColor
+        button.setTitleColor(Colors.shared.buttonsTextColor, for: .normal)
         button.contentHorizontalAlignment = .center
         button.contentVerticalAlignment = .center
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -89,7 +89,7 @@ final class AddCategoryView: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.shared.viewBackgroundColor
         
         navigationItem.title = "Категория"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
@@ -149,7 +149,8 @@ final class AddCategoryView: UIViewController {
 //MARK: - UITableView DataSource
 extension AddCategoryView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.categories.count
+        viewModel.subscribe()
+        return viewModel.categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

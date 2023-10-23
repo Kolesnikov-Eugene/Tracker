@@ -28,7 +28,7 @@ final class SupplementaryView: UICollectionReusableView {
     }
     
     func configureView(with trackerCategory: TrackerCategoryProtocol) {
-        titleLabel.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
+        titleLabel.textColor = Colors.shared.screensTextColor
         titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         titleLabel.text = trackerCategory.category
     }
@@ -36,6 +36,6 @@ final class SupplementaryView: UICollectionReusableView {
     func configureHeaderForHabitView(with titleType: TrackerCellType) {
         titleLabel.text = titleType.rawValue == 0 ? "Emoji" : "Цвет"
         titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
+        titleLabel.textColor = Colors.shared.screensTextColor
     }
 }
