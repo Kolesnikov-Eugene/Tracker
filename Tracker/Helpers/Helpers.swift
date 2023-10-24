@@ -67,3 +67,5 @@ let EmptySearchResultText = NSLocalizedString("emptySearchResult.text", comment:
 //Statistics screen
 let statisticsMainLabel = NSLocalizedString("statisticsMainLabel.text", comment: "")
 let emptyStatisticsLabel = NSLocalizedString("emptyStatisticsLabel.text", comment: "")
+
+let metrikaAPI = "5250086e-108d-40d3-9111-62f2f8ba464b"

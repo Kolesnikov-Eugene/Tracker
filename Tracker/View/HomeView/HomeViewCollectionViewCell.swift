@@ -212,19 +212,40 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         scheduleLabel.text = String.localizedStringWithFormat(
             NSLocalizedString("numberOfDays",
                               comment: "Number of remaining tasks"), counter)
-        buttonView.backgroundColor = .white
+        buttonView.backgroundColor = Colors.shared.viewBackgroundColor
         
         let image = !buttonChecked ? UIImage(named: "tracker_unchecked")?.withRenderingMode(.alwaysTemplate) :
-        UIImage(named: "checkmark")?.withTintColor(.white, renderingMode: .alwaysTemplate)
+        UIImage(named: "checkmark")?.withTintColor(Colors.shared.viewBackgroundColor, renderingMode: .alwaysTemplate)
         doneButton.setImage(image, for: .normal)
         
         if buttonChecked {
             buttonView.backgroundColor = trackerModel.color.withAlphaComponent(0.3)
-            doneButton.tintColor = .white
+            doneButton.tintColor = Colors.shared.viewBackgroundColor
         } else {
             doneButton.tintColor = trackerModel.color
         }
     }
+    
+//    func configureCell(with trackerModel: TrackerProtocol, counter: Int) {
+//        self.titleLabel.text = trackerModel.description
+//        trackerInfoView.backgroundColor = trackerModel.color
+//        emojiView.text = trackerModel.emoji
+//        scheduleLabel.text = String.localizedStringWithFormat(
+//            NSLocalizedString("numberOfDays",
+//                              comment: "Number of remaining tasks"), counter)
+//        buttonView.backgroundColor = .white
+//        
+//        let image = !buttonChecked ? UIImage(named: "tracker_unchecked")?.withRenderingMode(.alwaysTemplate) :
+//        UIImage(named: "checkmark")?.withTintColor(.white, renderingMode: .alwaysTemplate)
+//        doneButton.setImage(image, for: .normal)
+//        
+//        if buttonChecked {
+//            buttonView.backgroundColor = trackerModel.color.withAlphaComponent(0.3)
+//            doneButton.tintColor = .white
+//        } else {
+//            doneButton.tintColor = trackerModel.color
+//        }
+//    }
     
     func changePinState(trackerIsPinned: Bool) {
         pinImageView.isHidden = !trackerIsPinned

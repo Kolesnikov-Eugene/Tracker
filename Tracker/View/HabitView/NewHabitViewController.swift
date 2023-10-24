@@ -57,7 +57,7 @@ final class NewHabitViewController: UIViewController {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-        label.textColor = .black
+        label.textColor = Colors.shared.screensTextColor
         label.textAlignment = .center
 //        label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
