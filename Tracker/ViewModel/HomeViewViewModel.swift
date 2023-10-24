@@ -37,6 +37,7 @@ protocol FilterPickerDelegate: AnyObject {
 
 final class HomeViewViewModel: HomeViewProtocol {
     
+    private let analyticsService = AnalyticsService()
     private var pinnedTrackersForCurrentDay: [TrackerProtocol] = []
     private(set) var visibleCategories: [TrackerCategoryProtocol] = [] {
         didSet {
@@ -121,6 +122,7 @@ final class HomeViewViewModel: HomeViewProtocol {
     }
     
     func subscribe() {
+        
         let _ = trackersManager?.numberOfSections
 //        let _ = trackersManager?.numberOfSectionsOfCategories
 //        let _ = dataManager?.numberOfRowsInSection(section)

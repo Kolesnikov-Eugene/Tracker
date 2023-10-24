@@ -18,6 +18,7 @@ protocol HomeViewCellDelegate: AnyObject {
 
 final class HomeViewController: UIViewController {
     
+    private let analyticsService = AnalyticsService()
     private var viewModel: HomeViewProtocol!
     private let reuseIdentifier = "TrackerViewCell"
     private var addBarButtonItem: UIBarButtonItem?
@@ -125,6 +126,16 @@ final class HomeViewController: UIViewController {
         applyConstraints()
         
         switchEmptyStateView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        analyticsService.report(event: "open", params: ["screen": "Main"])
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        analyticsService.report(event: "close", params: ["screen": "Main"])
     }
     
     init() {
@@ -235,6 +246,7 @@ final class HomeViewController: UIViewController {
     }
     
     @objc func addTrackerButtonTapped() {
+        analyticsService.report(event: "click", params: ["screen": "Main", "item": "add_track"])
         let addTracker = AddTrackerViewController(delegate: self)
         let addTrackerNavigationController = UINavigationController(rootViewController: addTracker)
         
@@ -242,6 +254,7 @@ final class HomeViewController: UIViewController {
     }
     
     @objc func didTapFilterButton() {
+        analyticsService.report(event: "click", params: ["screen": "Main", "item": "filter"])
         guard let model = viewModel as? FilterPickerDelegate else { return }
         let filtersViewController = FiltersViewController(delegate: model, filterText: model.filter)
         let filtersNavigationController = UINavigationController(rootViewController: filtersViewController)
@@ -375,6 +388,8 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             let correctAction = UIAction(title: "Редактировать") { [weak self] action in
                 guard let self = self else { return }
                 
+                analyticsService.report(event: "click", params: ["screen": "Main", "item": "edit"])
+                
                 let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
                 let category = viewModel.visibleCategories[indexPath.section].category
                 let counter = viewModel.getTrackerCompletionCounter(for: currentTracker)
@@ -386,8 +401,12 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
                 present(navigationConroller, animated: true)
                 
             }
+            
             let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] action in
                 guard let self = self else { return }
+                
+                analyticsService.report(event: "click", params: ["screen": "Main", "item": "delete"])
+                
                 let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
                 let alertModel = AlertModel(message: alertMessage, okButtonText: alertDeleteButtonText, cancelButtonText: alertCancelButtonText) { [weak self] in
                     guard let self = self else { return }
@@ -435,6 +454,7 @@ extension HomeViewController: HomeViewCellDelegate {
         guard let indexPath = collectionView.indexPath(for: cell) else {
             return
         }
+        analyticsService.report(event: "click", params: ["screen": "Main", "item": "track"])
         viewModel.didTapDoneStatus(at: indexPath)
     }
 }
