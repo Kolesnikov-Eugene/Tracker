@@ -204,7 +204,8 @@ final class HomeViewViewModel: HomeViewProtocol {
     private func filterTrackers(_ trackerIDs: [UUID]? = nil, option: Filter) {
         let curDate = DayOfWeekExtractor(date: currentDate)
         
-        visibleCategories = categories.compactMap { category -> TrackerCategory? in
+        let categoriesToFilter = visibleCategories
+        visibleCategories = categoriesToFilter.compactMap { category -> TrackerCategory? in
             var filteredTrackers: [TrackerProtocol] = []
             switch option {
             case .all:
@@ -288,8 +289,10 @@ extension HomeViewViewModel: FilterPickerDelegate {
             currentDate = Date()
             filterTrackersByDate()
         case .completed:
+            filterTrackersByDate()
             filterCompletedTrackers()
         case .uncompleted:
+            filterTrackersByDate()
             filterUncompletedTrackers()
         }
     }
