@@ -37,7 +37,6 @@ protocol FilterPickerDelegate: AnyObject {
 
 final class HomeViewViewModel: HomeViewProtocol {
     
-    private let analyticsService = AnalyticsService()
     private var pinnedTrackersForCurrentDay: [TrackerProtocol] = []
     private(set) var visibleCategories: [TrackerCategoryProtocol] = [] {
         didSet {
@@ -60,6 +59,69 @@ final class HomeViewViewModel: HomeViewProtocol {
     var onSwitchToEmptySearchResult: (() -> Void)?
     
     init() {
+        categories = fetchAllCategories()
+        filterTrackersByDate()
+    }
+    
+    func subscribe() {
+        let _ = trackersManager?.numberOfSections
+    }
+    
+    func getTrackerCompletionCounter(for tracker: TrackerProtocol) -> Int {
+        guard let counter = try? trackersManager?.fetchRecordsCounter(for: tracker.id) else { return 0 }
+        return counter
+    }
+    
+    func trackerIsCompleted(_ trackerID: UUID) -> Bool {
+        guard let completion = try? trackersManager?.checkIfTrackerIsCompleted(trackerID, for: currentDate) else { return false }
+        return completion
+    }
+    
+    func datePickerDidChangeDate(_ date: Date) {
+        currentDate = date
+        filterTrackersByDate()
+    }
+    
+    func searchFilterDidChangeState(_ searchQuery: String) {
+        applySearchQueryFilter(text: searchQuery)
+    }
+    
+    func searchDidCancel() {
+        filterTrackersByDate()
+    }
+    
+    func searchTextDidChange(_ searchText: String) {
+        filterTrackersByDate()
+        
+        if !searchText.isEmpty {
+            applySearchQueryFilter(text: searchText)
+        }
+    }
+    
+    func didTapDoneStatus(at indexPath: IndexPath) {
+        let selectedTracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
+        let completedTracker = TrackerRecord(id: selectedTracker.id, date: currentDate)
+        
+        try? trackersManager?.addTrackerRecord(completedTracker)
+        
+        filterTrackersByDate()
+    }
+    
+    func createNewTracker(_ tracker: TrackerProtocol, category: String) {
+        try? trackersManager?.addTracker(tracker, for: category)
+    }
+    
+    func editTracker(_ tracker: TrackerProtocol, category: String) {
+        try? trackersManager?.editTracker(tracker, for: category)
+    }
+    
+    func deleteTracker(_ tracker: TrackerProtocol) {
+        try? trackersManager?.deleteTracker(tracker)
+    }
+    
+    func pinTracker(_ tracker: TrackerProtocol) {
+        try? trackersManager?.pinTracker(tracker)
+        
         categories = fetchAllCategories()
         filterTrackersByDate()
     }
@@ -119,83 +181,6 @@ final class HomeViewViewModel: HomeViewProtocol {
         }
         visibleCategories = filteredCategories
         onSwitchEmptyStateView?()
-    }
-    
-    func subscribe() {
-        
-        let _ = trackersManager?.numberOfSections
-//        let _ = trackersManager?.numberOfSectionsOfCategories
-//        let _ = dataManager?.numberOfRowsInSection(section)
-//        let _ = dataManager?.numberOfRowsInSectionOfCategory(section)
-    }
-    
-    func getTrackerCompletionCounter(for tracker: TrackerProtocol) -> Int {
-        guard let counter = try? trackersManager?.fetchRecordsCounter(for: tracker.id) else { return 0 }
-        return counter
-    }
-    
-    func trackerIsCompleted(_ trackerID: UUID) -> Bool {
-        guard let completion = try? trackersManager?.checkIfTrackerIsCompleted(trackerID, for: currentDate) else { return false }
-        return completion
-    }
-    
-    func datePickerDidChangeDate(_ date: Date) {
-        currentDate = date
-        filterTrackersByDate()
-    }
-    
-    func searchFilterDidChangeState(_ searchQuery: String) {
-        applySearchQueryFilter(text: searchQuery)
-    }
-    
-    func searchDidCancel() {
-        filterTrackersByDate()
-    }
-    
-    func searchTextDidChange(_ searchText: String) {
-        filterTrackersByDate()
-        
-        if !searchText.isEmpty {
-            applySearchQueryFilter(text: searchText)
-        }
-    }
-    
-    func didTapDoneStatus(at indexPath: IndexPath) {
-        let selectedTracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
-        let completedTracker = TrackerRecord(id: selectedTracker.id, date: currentDate)
-        
-        try? trackersManager?.addTrackerRecord(completedTracker)
-        
-        filterTrackersByDate()
-    }
-    
-    func createNewTracker(_ tracker: TrackerProtocol, category: String) {
-        try? trackersManager?.addTracker(tracker, for: category)
-        
-//        categories = fetchAllCategories()
-//        filterTrackersByDate()
-    }
-    
-    //redone
-    func editTracker(_ tracker: TrackerProtocol, category: String) {
-        try? trackersManager?.editTracker(tracker, for: category)
-        
-        //        categories = fetchAllCategories()
-        //        filterTrackersByDate()
-    }
-    
-    func deleteTracker(_ tracker: TrackerProtocol) {
-        try? trackersManager?.deleteTracker(tracker)
-        
-        //        categories = fetchAllCategories()
-        //        filterTrackersByDate()
-    }
-    
-    func pinTracker(_ tracker: TrackerProtocol) {
-        try? trackersManager?.pinTracker(tracker)
-
-        categories = fetchAllCategories()
-        filterTrackersByDate()
     }
     
     private func filterCompletedTrackers() {

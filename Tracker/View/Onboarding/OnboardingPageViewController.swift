@@ -28,12 +28,12 @@ final class OnboardingPageViewController: UIPageViewController {
     init(onboardingFactory: OnboardingFactoryProtocol) {
         self.onboardingFactory = onboardingFactory
         let firstPage = onboardingFactory.createViewController(
-            imageName: firstOnboardingViewControllerName,
-            infoText: firstOnboardingScreenDescription
+            imageName: Constants.firstOnboardingViewControllerName,
+            infoText: Constants.firstOnboardingScreenDescription
         )
         let secondPage = onboardingFactory.createViewController(
-            imageName: secondOnboardingViewControllerName,
-            infoText: secondOnboardingScreenDescription
+            imageName: Constants.secondOnboardingViewControllerName,
+            infoText: Constants.secondOnboardingScreenDescription
         )
         self.pages = [firstPage, secondPage]
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)

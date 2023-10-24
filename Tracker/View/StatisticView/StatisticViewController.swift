@@ -15,7 +15,7 @@ final class StatisticViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         
-        label.text = statisticsMainLabel
+        label.text = Constants.statisticsMainLabel
         label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         label.backgroundColor = .clear
         label.textColor = Colors.shared.screensTextColor
@@ -38,7 +38,7 @@ final class StatisticViewController: UIViewController {
         let label = UILabel()
         
         label.backgroundColor = .clear
-        label.text = emptyStatisticsLabel
+        label.text = Constants.emptyStatisticsLabel
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false

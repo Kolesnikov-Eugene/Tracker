@@ -9,20 +9,12 @@ import UIKit
 
 final class StatisticTableViewCell: UITableViewCell {
     
-//    private lazy var gradientView: UIView = {
-//        let view = UIView()
-//
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return view
-//    }()
     private var gradientView: UIView!
     private let counterLabel: UILabel = {
         let label = UILabel()
         
         label.backgroundColor = .clear
         label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-//        label.textColor = Colors.shared.screensTextColor
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -34,7 +26,6 @@ final class StatisticTableViewCell: UITableViewCell {
         
         label.backgroundColor = .clear
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-//        label.textColor = Colors.shared.screensTextColor
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -80,8 +71,6 @@ final class StatisticTableViewCell: UITableViewCell {
     
     private func applyConstraints() {
         NSLayoutConstraint.activate([
-//            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-//            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentView.heightAnchor.constraint(equalToConstant: 102),
             
             counterLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
@@ -92,9 +81,7 @@ final class StatisticTableViewCell: UITableViewCell {
             descriptionLabel.topAnchor.constraint(equalTo: counterLabel.bottomAnchor, constant: 7),
             descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
             descriptionLabel.leadingAnchor.constraint(equalTo: counterLabel.leadingAnchor),
-            descriptionLabel.trailingAnchor.constraint(equalTo: counterLabel.trailingAnchor),
-            
-//            gradientView.heightAnchor.constraint(equalToConstant: 90)
+            descriptionLabel.trailingAnchor.constraint(equalTo: counterLabel.trailingAnchor)
         ])
     }
     
@@ -106,14 +93,14 @@ final class StatisticTableViewCell: UITableViewCell {
         contentView.addSubview(gradientView)
         
         let gradient = CAGradientLayer()
-
+        
         let colorLeft = UIColor(named: "gradient_left")?.cgColor ?? UIColor.clear.cgColor
         let colorMiddle = UIColor(named: "gradient_middle")?.cgColor ?? UIColor.clear.cgColor
         let colorRight = UIColor(named: "gradient_right")?.cgColor ?? UIColor.clear.cgColor
-
+        
         gradient.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradient.endPoint = CGPoint(x: 1.0, y: 0.5)
-    
+        
         gradient.frame =  CGRect(origin: .zero, size: gradientView.frame.size)
         gradient.colors = [colorLeft, colorMiddle, colorRight]
         

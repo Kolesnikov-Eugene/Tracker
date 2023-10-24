@@ -59,7 +59,6 @@ final class NewHabitViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.textColor = Colors.shared.screensTextColor
         label.textAlignment = .center
-//        label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -360,8 +359,6 @@ final class NewHabitViewController: UIViewController {
             contentView.heightAnchor.constraint(equalToConstant: typeTracker == .habit ? 740 : 670),
             
             counterLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-//            counterLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-//            counterLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             counterLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             counterLabel.heightAnchor.constraint(equalToConstant: 38),
             
@@ -369,11 +366,6 @@ final class NewHabitViewController: UIViewController {
             trackerNameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             trackerNameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
-            
-//            trackerNameTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-//            trackerNameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-//            trackerNameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-//            trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
             
             exceedingCharacterLimitErrorField.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 8),
             exceedingCharacterLimitErrorField.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor),
@@ -417,7 +409,6 @@ final class NewHabitViewController: UIViewController {
                 stringSeparator.heightAnchor.constraint(equalToConstant: 0.5),
                 stringSeparator.leftAnchor.constraint(equalTo: categoryButton.leftAnchor, constant: 16),
                 stringSeparator.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
-//                stringSeparator.topAnchor.constraint(equalTo: categoryButton.bottomAnchor, constant: -0.5),
                 stringSeparator.centerYAnchor.constraint(equalTo: categoryStackView.centerYAnchor),
                 
                 arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
@@ -480,7 +471,7 @@ final class NewHabitViewController: UIViewController {
             return false
         }
         let id = editingModeIsOn ? tracker?.id : UUID()
-
+        
         tracker = Tracker(
             id: id ?? UUID(),
             emoji: selectedEmoji,
@@ -574,7 +565,7 @@ extension NewHabitViewController: UITextFieldDelegate {
 //MARK: - UICollectionViewDataSource
 extension NewHabitViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return emojiArray.count
+        return Constants.emojiArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -585,7 +576,7 @@ extension NewHabitViewController: UICollectionViewDataSource {
         
         if section == 0 {
             let model = EmojiAndColorCellModel(
-                emoji: emojiArray[indexPath.row],
+                emoji: Constants.emojiArray[indexPath.row],
                 color: nil,
                 type: .emoji)
             cell.configure(with: model)
@@ -596,7 +587,7 @@ extension NewHabitViewController: UICollectionViewDataSource {
         } else {
             let model = EmojiAndColorCellModel(
                 emoji: nil,
-                color: colorList[indexPath.row],
+                color: Constants.colorList[indexPath.row],
                 type: .color)
             cell.configure(with: model)
             
@@ -648,24 +639,26 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
             at: indexPath
         )
         
-        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: collectionView.frame.height),
-                                                  withHorizontalFittingPriority: .required,
-                                                  verticalFittingPriority: .fittingSizeLevel)
+        return headerView.systemLayoutSizeFitting(
+            CGSize(width: collectionView.frame.width,
+                   height: collectionView.frame.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.indexPathsForSelectedItems != nil {
             deselectSelectedItemsInSection(indexPath: indexPath, collectionView: collectionView)
         }
-//        deselectSelectedItemsInSection(indexPath: indexPath, collectionView: collectionView)
         guard let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorsArrayViewCell else { return }
         
         let cellModel: EmojiAndColorCellModel
         if indexPath.section == 0 {
-            selectedEmoji = emojiArray[indexPath.row]
+            selectedEmoji = Constants.emojiArray[indexPath.row]
             cellModel = EmojiAndColorCellModel(emoji: selectedEmoji, color: nil, type: .emoji)
         } else {
-            selectedColor = colorList[indexPath.row]
+            selectedColor = Constants.colorList[indexPath.row]
             cellModel = EmojiAndColorCellModel(emoji: nil, color: selectedColor, type: .color)
         }
         cell.configureBackgroundForSelectedCell(with: cellModel)

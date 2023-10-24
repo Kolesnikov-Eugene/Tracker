@@ -51,8 +51,8 @@ final class HomeViewController: UIViewController {
         
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.placeholder = searchFieldLabel
-        searchController.searchBar.setValue(searchFieldCancelButton, forKey: "cancelButtonText")
+        searchController.searchBar.placeholder = Constants.searchFieldLabel
+        searchController.searchBar.setValue(Constants.searchFieldCancelButton, forKey: "cancelButtonText")
         searchController.searchBar.delegate = self
         
         return searchController
@@ -70,7 +70,7 @@ final class HomeViewController: UIViewController {
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
         
-        label.text = trackersEmpryStateText
+        label.text = Constants.trackersEmpryStateText
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -92,7 +92,7 @@ final class HomeViewController: UIViewController {
     private lazy var filterButton: UIButton = {
         let button = UIButton()
         
-        button.setTitle(filterButtonText, for: .normal)
+        button.setTitle(Constants.filterButtonText, for: .normal)
         button.backgroundColor = UIColor(red: 0.22, green: 0.45, blue: 0.91, alpha: 1)
         button.layer.cornerRadius = 16
         button.tintColor = .white
@@ -210,7 +210,7 @@ final class HomeViewController: UIViewController {
     private func configureNavBar() {
         if let navBar = navigationController?.navigationBar {
             navBar.prefersLargeTitles = true
-            navigationItem.title = trackersLabelMainText
+            navigationItem.title = Constants.trackersLabelMainText
             navBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 34, weight: .bold)]
             
             let datePickerItem = UIBarButtonItem(customView: datePicker)
@@ -229,13 +229,13 @@ final class HomeViewController: UIViewController {
     
     private func switchToEmptyState() {
         emptyStateView.image = UIImage(named: "empty_home_view")
-        emptyStateLabel.text = trackersEmpryStateText
+        emptyStateLabel.text = Constants.trackersEmpryStateText
         filterButton.isHidden = true
     }
     
     private func switchToEmptySearchResult() {
         emptyStateView.image = UIImage(named: "empty_search_result")
-        emptyStateLabel.text = EmptySearchResultText
+        emptyStateLabel.text = Constants.EmptySearchResultText
         emptyStateView.isHidden = !viewModel.visibleCategories.isEmpty
         emptyStateLabel.isHidden = !viewModel.visibleCategories.isEmpty
         filterButton.isHidden = false
@@ -247,6 +247,7 @@ final class HomeViewController: UIViewController {
     
     @objc func addTrackerButtonTapped() {
         analyticsService.report(event: "click", params: ["screen": "Main", "item": "add_track"])
+        
         let addTracker = AddTrackerViewController(delegate: self)
         let addTrackerNavigationController = UINavigationController(rootViewController: addTracker)
         
@@ -255,9 +256,12 @@ final class HomeViewController: UIViewController {
     
     @objc func didTapFilterButton() {
         analyticsService.report(event: "click", params: ["screen": "Main", "item": "filter"])
+        
         guard let model = viewModel as? FilterPickerDelegate else { return }
+        
         let filtersViewController = FiltersViewController(delegate: model, filterText: model.filter)
         let filtersNavigationController = UINavigationController(rootViewController: filtersViewController)
+        
         present(filtersNavigationController, animated: true)
     }
 }
@@ -296,7 +300,6 @@ extension HomeViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? HomeViewCollectionViewCell else {
             return UICollectionViewCell()
         }
-//        cell.prepareForReuse()
         cell.delegate = self
         
         let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
@@ -307,6 +310,7 @@ extension HomeViewController: UICollectionViewDataSource {
         
         cell.configureCell(with: currentTracker, counter: counter)
         cell.changePinState(trackerIsPinned: pinStatus)
+        
         return cell
     }
     
@@ -373,11 +377,10 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         guard let indexPath = indexPaths.first else { return nil }
-        guard let cell = collectionView.cellForItem(at: indexPath) as? HomeViewCollectionViewCell else { return nil }
-//        cell.prepareForReuse()
+        
         let identifier = "previewIdentifier" as NSCopying
         let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
-        let pinText = viewModel.trackerIsPinned(currentTracker.id) ? unpinContextMenuLabel : pinContextMenuLabel
+        let pinText = viewModel.trackerIsPinned(currentTracker.id) ? Constants.unpinContextMenuLabel : Constants.pinContextMenuLabel
         
         return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { action -> UIMenu? in
             let pinAction = UIAction(title: pinText) { [weak self] action in
@@ -389,8 +392,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
                 guard let self = self else { return }
                 
                 analyticsService.report(event: "click", params: ["screen": "Main", "item": "edit"])
-                
-                let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
+
                 let category = viewModel.visibleCategories[indexPath.section].category
                 let counter = viewModel.getTrackerCompletionCounter(for: currentTracker)
                 let trackerEdit = TrackerEdit(tracker: currentTracker, category: category, counter: counter)
@@ -407,8 +409,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
                 
                 analyticsService.report(event: "click", params: ["screen": "Main", "item": "delete"])
                 
-                let currentTracker = viewModel.visibleCategories[indexPath.section].trackerArray[indexPath.row]
-                let alertModel = AlertModel(message: alertMessage, okButtonText: alertDeleteButtonText, cancelButtonText: alertCancelButtonText) { [weak self] in
+                let alertModel = AlertModel(message: Constants.alertMessage, okButtonText: Constants.alertDeleteButtonText, cancelButtonText: Constants.alertCancelButtonText) { [weak self] in
                     guard let self = self else { return }
                     viewModel.deleteTracker(currentTracker)
                 }
@@ -455,6 +456,7 @@ extension HomeViewController: HomeViewCellDelegate {
             return
         }
         analyticsService.report(event: "click", params: ["screen": "Main", "item": "track"])
+        
         viewModel.didTapDoneStatus(at: indexPath)
     }
 }

@@ -8,6 +8,7 @@
 import UIKit
 
 final class AddCategoryView: UIViewController {
+    
     private var viewModel: AddCategoryProtocol!
     private var category: String
     private let reuseCellIdentifier = "CategoryCell"
@@ -36,7 +37,7 @@ final class AddCategoryView: UIViewController {
         let label = UILabel()
         
         label.backgroundColor = .clear
-        label.text = addCategoryEmptyStateText
+        label.text = Constants.addCategoryEmptyStateText
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.numberOfLines = 2
@@ -209,8 +210,11 @@ extension AddCategoryView: UITableViewDelegate {
             let correctAction = UIAction(title: "Редактировать") { [weak self] action in
                 guard let self = self else { return }
                 self.navigationController?.pushViewController(
-                    NewCategoryView(delegate: self.viewModel as! AddCategoryDelegate, selectedCategory: category, mode: .rename),
-                    animated: true)
+                    NewCategoryView(
+                        delegate: self.viewModel as! AddCategoryDelegate,
+                        selectedCategory: category,
+                        mode: .rename), animated: true
+                )
             }
             let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] action in
                 guard let self = self else { return }

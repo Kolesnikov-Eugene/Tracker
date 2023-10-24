@@ -40,7 +40,6 @@ final class AddCategoryViewModel: AddCategoryProtocol {
     
     func deleteCategory(_ category: String) {
         try? categoriesManager?.deleteCategory(category)
-//        categories = fetchAllCategoriesFromStore()
     }
     
     private func configureDataManager() -> CategoriesManagerProtocol? {
@@ -70,11 +69,10 @@ extension AddCategoryViewModel: AddCategoryDelegate {
         case .rename:
             try categoriesManager?.renameCategory(categoryName, for: oldCategory)
         }
-        
-//        categories = fetchAllCategoriesFromStore()
     }
 }
 
+//MARK: - CategoriesManagerDelegate
 extension AddCategoryViewModel: CategoriesManagerDelegate {
     func didUpdate() {
         categories = fetchAllCategoriesFromStore()

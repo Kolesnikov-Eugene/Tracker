@@ -14,7 +14,6 @@ final class AlertPresenter {
             message: model.message,
             preferredStyle: .actionSheet)
         
-        
         let okAction = UIAlertAction(title: model.okButtonText, style: .destructive) { _ in
             model.completion()
         }

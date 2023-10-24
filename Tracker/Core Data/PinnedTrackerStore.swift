@@ -10,5 +10,4 @@ import CoreData
 
 protocol PinnedTrackerStore {
     var managedObjectContext: NSManagedObjectContext? { get }
-//    func fetchPinnedTrackers() throws -> [TrackerProtocol]
 }

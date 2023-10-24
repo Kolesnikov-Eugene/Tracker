@@ -15,7 +15,6 @@ final class AddTrackerViewController: UIViewController {
         button.setTitleColor(Colors.shared.buttonsTextColor, for: .normal)
         button.backgroundColor = Colors.shared.buttonsBackgroundColor
         button.layer.cornerRadius = 16
-//        button.tintColor = .clear
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(addHabit), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -29,7 +28,6 @@ final class AddTrackerViewController: UIViewController {
         button.setTitleColor(Colors.shared.buttonsTextColor, for: .normal)
         button.backgroundColor = Colors.shared.buttonsBackgroundColor
         button.layer.cornerRadius = 16
-//        button.tintColor = .white
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(addIrregularHabit), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

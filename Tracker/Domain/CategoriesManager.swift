@@ -14,7 +14,6 @@ protocol CategoriesManagerDelegate: AnyObject {
 
 protocol CategoriesManagerProtocol {
     var numberOfSectionsOfCategories: Int { get }
-//    func numberOfRowsInSectionOfCategory(_ section: Int) -> Int
     func fetchAllCategories() throws -> [TrackerCategoryProtocol]
     func addCategory(_ category: String) throws
     func renameCategory(_ category: String, for oldCategory: String) throws
@@ -29,7 +28,6 @@ final class CategoriesManager: NSObject {
     
     private let context: NSManagedObjectContext
     private var dataStore: DataStoreProtocol
-    
     private lazy var categoriesFetchedResultsController:  NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
@@ -45,7 +43,6 @@ final class CategoriesManager: NSObject {
         
         return fetchedResultsController
     }()
-    
     weak var delegate: CategoriesManagerDelegate?
     
     init(_ dataStore: DataStoreProtocol, delegate: CategoriesManagerDelegate) throws {
@@ -67,11 +64,6 @@ extension CategoriesManager: CategoriesManagerProtocol {
     var numberOfSectionsOfCategories: Int {
         categoriesFetchedResultsController.sections?.count ?? 0
     }
-//
-//    func numberOfRowsInSectionOfCategory(_ section: Int) -> Int {
-//        guard section <= numberOfSectionsOfCategories else { return 0 }
-//        return categoriesFetchedResultsController.sections?[section].numberOfObjects ?? 0
-//    }
     
     func addCategory(_ category: String) throws {
         try dataStore.addCategory(category)
@@ -88,25 +80,7 @@ extension CategoriesManager: CategoriesManagerProtocol {
 
 //MARK: - NSFetchedResultsControllerDelegate
 extension CategoriesManager: NSFetchedResultsControllerDelegate {
-//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        delegate?.didUpdate()
-//    }
-    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate()
     }
-    
-//    func controller(
-//        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
-//        didChange anObject: Any, at indexPath: IndexPath?,
-//        for type: NSFetchedResultsChangeType,
-//        newIndexPath: IndexPath?
-//    ) {
-//        switch type {
-//        case .delete, .insert, .update:
-//            delegate?.didUpdate()
-//        default:
-//            break
-//        }
-//    }
 }

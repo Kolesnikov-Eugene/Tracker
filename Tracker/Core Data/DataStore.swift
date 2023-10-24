@@ -11,7 +11,6 @@ import CoreData
 protocol DataStoreProtocol {
     var managedObjectContext: NSManagedObjectContext? { get }
     func addTracker(_ tarcker: TrackerProtocol, for category: String) throws
-//    func deleteTracker(_ tracker: NSManagedObject) throws
     func addTrackerRecord(_ record: TrackerRecordProtocol) throws
     func addCategory(_ category: String) throws
     func renameCategory(_ category: String, for oldCategory: String) throws
@@ -203,7 +202,7 @@ extension DataStore: TrackerCategoryStore {
     func fetchAllCategories() throws -> [TrackerCategoryProtocol] {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         let nameSort = NSSortDescriptor(key: "category", ascending: true)
-
+        
         request.sortDescriptors = [nameSort]
         
         let categoriesData = try context.fetch(request)

@@ -29,7 +29,6 @@ final class NewCategoryView: UIViewController {
         view.clearButtonMode = .whileEditing
         view.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         view.addTarget(self, action: #selector(textFieldDidBeginEditing), for: .allEvents)
-        
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -46,7 +45,6 @@ final class NewCategoryView: UIViewController {
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button

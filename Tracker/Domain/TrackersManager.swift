@@ -18,7 +18,6 @@ protocol TrackersRecordManagerProtocol {
 
 protocol TrackersManagerProtocol {
     var numberOfSections: Int { get }
-//    func numberOfRowsInSection(_ section: Int) -> Int
     func addTracker(_ tracker: TrackerProtocol, for category: String) throws
     func deleteTracker(_ tracker: TrackerProtocol) throws
     func addTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws
@@ -30,7 +29,6 @@ protocol TrackersManagerProtocol {
     func pinTracker(_ tracker: TrackerProtocol) throws
     func fetchPinnedTrackersIDs() throws -> [UUID]
     func fetchPinnedTrackers() throws -> [TrackerProtocol]
-//    func trackerIsPinned(_ trackerID: UUID) throws -> Bool
 }
 
 // MARK: - TrackersManager
@@ -48,7 +46,7 @@ final class TrackersManager: NSObject {
         let fetchedResultsController = NSFetchedResultsController(
             fetchRequest: fetchRequest,
             managedObjectContext: context,
-            sectionNameKeyPath: "categoryID", //categoryID
+            sectionNameKeyPath: "categoryID",
             cacheName: nil)
         
         fetchedResultsController.delegate = self
@@ -79,15 +77,9 @@ final class TrackersManager: NSObject {
 //MARK: - TrackersManagerProtocol
 extension TrackersManager: TrackersManagerProtocol {
     
-    
     var numberOfSections: Int {
         fetchedResultsController.sections?.count ?? 0
     }
-    
-//    func numberOfRowsInSection(_ section: Int) -> Int {
-//        guard section <= numberOfSections else { return 0 }
-//        return fetchedResultsController.sections?[section].numberOfObjects ?? 0
-//    }
     
     func addTracker(_ tracker: TrackerProtocol, for category: String) throws {
         try? dataStore.addTracker(tracker, for: category)
@@ -132,10 +124,6 @@ extension TrackersManager: TrackersManagerProtocol {
     func fetchPinnedTrackers() throws -> [TrackerProtocol] {
         try dataStore.fetchPinnedTrackers()
     }
-    
-//    func trackerIsPinned(_ trackerID: UUID) throws -> Bool {
-//        try dataStore.trackerIsPinned(trackerID)
-//    }
 }
 //MARK: - TrackersRecordManagerProtocol
 extension TrackersManager: TrackersRecordManagerProtocol {
@@ -146,27 +134,7 @@ extension TrackersManager: TrackersRecordManagerProtocol {
 
 //MARK: - NSFetchedResultsControllerDelegate
 extension TrackersManager: NSFetchedResultsControllerDelegate {
-//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        delegate?.didUpdate()
-//    }
-    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate()
     }
-    
-//    func controller(
-//        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
-//        didChange anObject: Any, at indexPath: IndexPath?,
-//        for type: NSFetchedResultsChangeType,
-//        newIndexPath: IndexPath?
-//    ) {
-//        switch type {
-//        case .delete, .insert:
-//            delegate?.didUpdate()
-//        case .update:
-//            delegate?.didUpdate()
-//        default:
-//            break
-//        }
-//    }
 }

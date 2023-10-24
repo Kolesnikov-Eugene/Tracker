@@ -20,14 +20,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let window = UIWindow(windowScene: windowScene)
             window.backgroundColor = Colors.shared.viewBackgroundColor
             
-            let appLaunchedSecondTime = UserDefaults.standard.bool(forKey: appLaunchedFirstTimeKey)
+            let appLaunchedSecondTime = UserDefaults.standard.bool(forKey: Constants.appLaunchedFirstTimeKey)
             
             if !appLaunchedSecondTime {
                 let factory = OnboardingViewControllerFactory()
                 let onboarding = OnboardingPageViewController(onboardingFactory: factory)
                 
                 window.rootViewController = onboarding
-                UserDefaults.standard.set(true, forKey: appLaunchedFirstTimeKey)
+                UserDefaults.standard.set(true, forKey: Constants.appLaunchedFirstTimeKey)
             } else {
                 let tabBarController = TabBarController()
                 window.rootViewController = tabBarController

@@ -27,13 +27,13 @@ final class TabBarController: UITabBarController {
         homeViewNavigationController.interactivePopGestureRecognizer?.isEnabled = false
         
         homeViewController.tabBarItem = UITabBarItem(
-            title: trackersTabBarLabel,
+            title: Constants.trackersTabBarLabel,
             image: UIImage(named: "trackers"),
             selectedImage: nil
         )
         
         statisticViewController.tabBarItem = UITabBarItem(
-            title: statisticTabBarLabel,
+            title: Constants.statisticTabBarLabel,
             image: UIImage(named: "statistics"),
             selectedImage: nil)
         
