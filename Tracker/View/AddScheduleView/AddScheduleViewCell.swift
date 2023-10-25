@@ -13,7 +13,7 @@ final class AddScheduleViewCell: UITableViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        label.textColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
+        label.textColor = Colors.shared.screensTextColor
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -42,7 +42,7 @@ final class AddScheduleViewCell: UITableViewCell {
         
         addSubviews()
         applyConstraints()
-        contentView.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3)
+        contentView.backgroundColor = Colors.shared.tableViewsBackgroundColor
     }
     
     

@@ -8,6 +8,7 @@
 import UIKit
 
 final class AddCategoryView: UIViewController {
+    
     private var viewModel: AddCategoryProtocol!
     private var category: String
     private let reuseCellIdentifier = "CategoryCell"
@@ -36,7 +37,7 @@ final class AddCategoryView: UIViewController {
         let label = UILabel()
         
         label.backgroundColor = .clear
-        label.text = addCategoryEmptyStateText
+        label.text = Constants.addCategoryEmptyStateText
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.numberOfLines = 2
@@ -47,8 +48,8 @@ final class AddCategoryView: UIViewController {
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.backgroundColor = .black
-        button.tintColor = .white
+        button.backgroundColor = Colors.shared.buttonsBackgroundColor
+        button.setTitleColor(Colors.shared.buttonsTextColor, for: .normal)
         button.contentHorizontalAlignment = .center
         button.contentVerticalAlignment = .center
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -89,7 +90,7 @@ final class AddCategoryView: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.shared.viewBackgroundColor
         
         navigationItem.title = "Категория"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
@@ -149,7 +150,8 @@ final class AddCategoryView: UIViewController {
 //MARK: - UITableView DataSource
 extension AddCategoryView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.categories.count
+        viewModel.subscribe()
+        return viewModel.categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -208,8 +210,11 @@ extension AddCategoryView: UITableViewDelegate {
             let correctAction = UIAction(title: "Редактировать") { [weak self] action in
                 guard let self = self else { return }
                 self.navigationController?.pushViewController(
-                    NewCategoryView(delegate: self.viewModel as! AddCategoryDelegate, selectedCategory: category, mode: .rename),
-                    animated: true)
+                    NewCategoryView(
+                        delegate: self.viewModel as! AddCategoryDelegate,
+                        selectedCategory: category,
+                        mode: .rename), animated: true
+                )
             }
             let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] action in
                 guard let self = self else { return }

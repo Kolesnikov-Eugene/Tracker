@@ -11,7 +11,6 @@ import CoreData
 protocol DataStoreProtocol {
     var managedObjectContext: NSManagedObjectContext? { get }
     func addTracker(_ tarcker: TrackerProtocol, for category: String) throws
-    func deleteTracker(_ tracker: NSManagedObject) throws
     func addTrackerRecord(_ record: TrackerRecordProtocol) throws
     func addCategory(_ category: String) throws
     func renameCategory(_ category: String, for oldCategory: String) throws
@@ -20,6 +19,13 @@ protocol DataStoreProtocol {
     func fetchRecordsCounter(for trackerID: UUID) throws -> Int
     func trackerIsCompleted(_ trackerID: UUID, for currentDate: Date) throws -> Bool
     func deleteTrackerRecord(_ trackerRecord: TrackerRecordProtocol) throws
+    func editTracker(_ tracker: TrackerProtocol, for category: String) throws
+    func deleteTracker(_ tracker: TrackerProtocol) throws
+    func fetchCompletedTrackersIDs(for date: Date)  throws -> [UUID]
+    func pinTracker(_ tracker: TrackerProtocol) throws
+    func fetchPinnedTrackers() throws -> [TrackerProtocol]
+    func fetchPinnedTrackersIDs() throws -> [UUID]
+    func fetcAllCompletedTrackersCounter() throws -> Int
 }
 
 final class DataStore: DataStoreProtocol {
@@ -58,9 +64,32 @@ extension DataStore: TrackerStore {
         try context.save()
     }
     
-    func deleteTracker(_ tracker: NSManagedObject) throws {
-        //TODO
-        //Implement logic of deleting a tracker from DB when user taps to delete it from the MainScreen
+    func deleteTracker(_ tracker: TrackerProtocol) throws {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.predicate = NSPredicate(format: "%K = %@", (\TrackerCoreData.id)._kvcKeyPathString!, tracker.id as NSUUID)
+        
+        let trackerObject = try context.fetch(request)[0]
+        context.delete(trackerObject)
+        
+        try deleteTrackerRecordsForTracker(tracker.id)
+        
+        try context.save()
+    }
+    
+    func editTracker(_ tracker: TrackerProtocol, for category: String) throws {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.predicate = NSPredicate(format: "%K = %@", (\TrackerCoreData.id)._kvcKeyPathString!, tracker.id as NSUUID)
+        
+        let oldTracker = try context.fetch(request)[0]
+        let categoryID = try fetchCategoryID(for: category)
+        
+        oldTracker.setValue(tracker.color.hexString(), forKey: "colorHex")
+        oldTracker.setValue(tracker.description, forKey: "descriptionText")
+        oldTracker.setValue(tracker.emoji, forKey: "emoji")
+        oldTracker.setValue(tracker.schedule.map { String($0.rawValue) }.joined(separator: ","), forKey: "schedule")
+        oldTracker.setValue(categoryID, forKey: "categoryID")
+        
+        try context.save()
     }
     
     func fetchTrackers(for categoryID: UUID) throws -> [TrackerProtocol] {
@@ -94,6 +123,22 @@ extension DataStore: TrackerStore {
         }
         return trackers
     }
+    
+    func fetchTrackers(with ids: [UUID]) throws -> [TrackerCoreData] {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        var subpredicates: [NSPredicate] = []
+        ids.forEach { id in
+            let predicate = NSPredicate(format: "%K = %@", (\TrackerCoreData.id)._kvcKeyPathString!, id as NSUUID)
+            subpredicates.append(predicate)
+        }
+        
+        let orPredicate = NSCompoundPredicate(type: .or, subpredicates: subpredicates)
+        request.predicate = orPredicate
+        
+        let result = try context.fetch(request)
+        
+        return result
+    }
 }
 
 //MARK: - TrackerCategoryStore protocol
@@ -125,6 +170,25 @@ extension DataStore: TrackerCategoryStore {
         
         let categoryObject = try context.fetch(request)[0]
         context.delete(categoryObject)
+        
+        //deleting trackers and records
+        try deleteAllTrackersForCategory(categoryObject.id!)
+        
+        try context.save()
+    }
+    
+    private func deleteAllTrackersForCategory(_ categoryID: UUID) throws {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.categoryID), categoryID as NSUUID)
+        
+        let oblects = try context.fetch(request)
+        
+        try oblects.forEach { tracker in
+            guard let trackerID = tracker.id else { return }
+            try deleteTrackerRecordsForTracker(trackerID)
+            
+            context.delete(tracker)
+        }
         
         try context.save()
     }
@@ -158,7 +222,7 @@ extension DataStore: TrackerCategoryStore {
     func fetchAllCategories() throws -> [TrackerCategoryProtocol] {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         let nameSort = NSSortDescriptor(key: "category", ascending: true)
-
+        
         request.sortDescriptors = [nameSort]
         
         let categoriesData = try context.fetch(request)
@@ -226,5 +290,125 @@ extension DataStore: TrackerRecordStore {
         
         context.delete(result[0]) // there always will be one record matching
         try context.save()
+    }
+    
+    func fetchCompletedTrackersIDs(for date: Date)  throws -> [UUID] {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        
+        let predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerRecordCoreData.date), date.onlyDate)
+        request.predicate = predicate
+        
+        let trackersCompleted = try context.fetch(request)
+        
+        let ids = trackersCompleted.map { $0.trackerID ?? UUID() }
+        
+        return ids
+    }
+    
+    func fetcAllCompletedTrackersCounter() throws -> Int {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        
+        let result = try context.fetch(request)
+        
+        return result.count
+    }
+    
+    private func deleteTrackerRecordsForTracker(_ trackerID: UUID) throws {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        
+        request.predicate = NSPredicate(format: "%K = %@", (\TrackerRecordCoreData.trackerID)._kvcKeyPathString!, trackerID as NSUUID)
+        
+        let result = try context.fetch(request)
+        
+        result.forEach { record in
+            context.delete(record)
+        }
+        
+        try context.save()
+    }
+}
+
+//MARK: - PinnedTrackersStore
+extension DataStore: PinnedTrackerStore {
+    func pinTracker(_ tracker: TrackerProtocol) throws {
+        if try trackerIsPinned(tracker.id) {
+            try unPinTracker(tracker.id)
+        } else {
+            let pinnedTracker = PinnedTrackerCoreData(context: context)
+            
+            pinnedTracker.trackerID = tracker.id
+            
+            try context.save()
+        }
+    }
+    
+    func trackerIsPinned(_ trackerID: UUID) throws -> Bool {
+        let request = NSFetchRequest<PinnedTrackerCoreData>(entityName: "PinnedTrackerCoreData")
+        
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(PinnedTrackerCoreData.trackerID), trackerID as NSUUID)
+        
+        request.predicate = predicate
+        
+        let result = try context.fetch(request)
+        
+        return !result.isEmpty
+    }
+    
+    func unPinTracker(_ trackerID: UUID) throws {
+        let request = NSFetchRequest<PinnedTrackerCoreData>(entityName: "PinnedTrackerCoreData")
+        
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.trackerID), trackerID as NSUUID)
+        
+        request.predicate = predicate
+        
+        let result = try context.fetch(request)
+        
+        context.delete(result[0]) // there always will be one record matching
+        try context.save()
+    }
+    
+    func fetchPinnedTrackersIDs() throws -> [UUID] {
+        let request = NSFetchRequest<PinnedTrackerCoreData>(entityName: "PinnedTrackerCoreData")
+        
+        let pinnedTrackers = try context.fetch(request)
+        
+        let ids = pinnedTrackers.map { $0.trackerID ?? UUID() }
+        
+        return ids
+    }
+    
+    func fetchPinnedTrackers() throws -> [TrackerProtocol] {
+        let request = NSFetchRequest<PinnedTrackerCoreData>(entityName: "PinnedTrackerCoreData")
+        
+        let pinnedTrackers = try context.fetch(request)
+        
+        let ids = pinnedTrackers.map { $0.trackerID! }
+        if !ids.isEmpty {
+            let trackersData = try fetchTrackers(with: ids)
+            var trackers = [TrackerProtocol]()
+            trackersData.forEach { tracker in
+                guard let id = tracker.id,
+                      let emoji = tracker.emoji,
+                      let color = tracker.colorHex?.colorFromHex(),
+                      let description = tracker.descriptionText,
+                      let scheduleString = tracker.schedule else {
+                    return
+                }
+                
+                let scheduleArray: [String] = scheduleString.components(separatedBy: ",").map { $0 }
+                
+                let schedule: [Schedule] = scheduleArray.map { dayValue in
+                    let dayInteger = Int(dayValue) ?? 0
+                    let scheduleDay = Schedule(rawValue: dayInteger)
+                    return scheduleDay ?? Schedule(rawValue: 0)!
+                }
+                
+                let newTracker = Tracker(id: id, emoji: emoji, color: color, description: description, schedule: schedule)
+                trackers.append(newTracker)
+            }
+            
+            return trackers
+        }
+        return []
     }
 }

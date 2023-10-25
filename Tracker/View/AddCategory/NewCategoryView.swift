@@ -18,7 +18,7 @@ final class NewCategoryView: UIViewController {
     private lazy var categoryTextField: TextFieldWithPadding = {
         let view = TextFieldWithPadding(paddingTop: 0, paddingBottom: 0, paddingLeft: 16, paddingRight: 41)
         
-        view.layer.backgroundColor = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 0.3).cgColor
+        view.backgroundColor = Colors.shared.tableViewsBackgroundColor
         view.frame.size.height = 75
         view.clipsToBounds = true
         view.layer.masksToBounds = false
@@ -29,7 +29,6 @@ final class NewCategoryView: UIViewController {
         view.clearButtonMode = .whileEditing
         view.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         view.addTarget(self, action: #selector(textFieldDidBeginEditing), for: .allEvents)
-        
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -37,8 +36,8 @@ final class NewCategoryView: UIViewController {
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.backgroundColor = UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
-        button.tintColor = .white
+        button.backgroundColor = Colors.shared.buttonDisabledColor
+        button.setTitleColor(Colors.shared.screensTextColor, for: .normal)
         button.contentHorizontalAlignment = .center
         button.contentVerticalAlignment = .center
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -46,7 +45,6 @@ final class NewCategoryView: UIViewController {
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -66,7 +64,7 @@ final class NewCategoryView: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.shared.viewBackgroundColor
         
         navigationItem.title = "Новая категория"
         navigationController?.navigationBar.titleTextAttributes = [
@@ -121,8 +119,9 @@ final class NewCategoryView: UIViewController {
     }
     
     private func switchCreateButton() {
-        doneButton.backgroundColor = allFieldsFilledOut() ?
-        UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1) : UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
+        doneButton.backgroundColor = allFieldsFilledOut() ? Colors.shared.buttonEnabledColor : Colors.shared.buttonDisabledColor
+        let color = allFieldsFilledOut() ? Colors.shared.buttonsTextColor : .white
+        doneButton.setTitleColor(color, for: .normal)
     }
     
     private func allFieldsFilledOut() -> Bool {

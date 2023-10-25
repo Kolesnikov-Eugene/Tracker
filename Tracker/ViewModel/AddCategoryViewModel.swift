@@ -11,6 +11,7 @@ protocol AddCategoryProtocol: AnyObject {
     var onChange: ((String) -> Void)? { get set }
     var categories: [TrackerCategoryProtocol] { get }
     func deleteCategory(_ category: String)
+    func subscribe()
 }
 
 protocol AddCategoryDelegate: AnyObject {
@@ -24,7 +25,7 @@ final class AddCategoryViewModel: AddCategoryProtocol {
             onChange?(category)
         }
     }
-    private lazy var dataManager: CategoriesManagerProtocol? = {
+    private lazy var categoriesManager: CategoriesManagerProtocol? = {
         configureDataManager()
     }()
     var onChange: ((String) -> Void)?
@@ -33,11 +34,19 @@ final class AddCategoryViewModel: AddCategoryProtocol {
         categories = fetchAllCategoriesFromStore()
     }
     
+    func subscribe() {
+        let _ = categoriesManager?.numberOfSectionsOfCategories
+    }
+    
+    func deleteCategory(_ category: String) {
+        try? categoriesManager?.deleteCategory(category)
+    }
+    
     private func configureDataManager() -> CategoriesManagerProtocol? {
         let dataStore = DataStore()
         do {
-            try dataManager = DataManager(dataStore)
-            return dataManager
+            try categoriesManager = CategoriesManager(dataStore, delegate: self)
+            return categoriesManager
         } catch {
             print("error")
             return nil
@@ -45,13 +54,8 @@ final class AddCategoryViewModel: AddCategoryProtocol {
     }
     
     private func fetchAllCategoriesFromStore() -> [TrackerCategoryProtocol] {
-        guard let categories = try? dataManager?.fetchAllCategories() else { return [] }
+        guard let categories = try? categoriesManager?.fetchAllCategories() else { return [] }
         return categories
-    }
-    
-    func deleteCategory(_ category: String) {
-        try? dataManager?.deleteCategory(category)
-        categories = fetchAllCategoriesFromStore()
     }
 }
 
@@ -61,11 +65,16 @@ extension AddCategoryViewModel: AddCategoryDelegate {
         category = categoryName
         switch mode {
         case .add:
-            try dataManager?.addCategory(categoryName)
+            try categoriesManager?.addCategory(categoryName)
         case .rename:
-            try dataManager?.renameCategory(categoryName, for: oldCategory)
+            try categoriesManager?.renameCategory(categoryName, for: oldCategory)
         }
-        
+    }
+}
+
+//MARK: - CategoriesManagerDelegate
+extension AddCategoryViewModel: CategoriesManagerDelegate {
+    func didUpdate() {
         categories = fetchAllCategoriesFromStore()
     }
 }

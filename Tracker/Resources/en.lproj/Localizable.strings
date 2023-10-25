@@ -1,0 +1,18 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Eugene Kolesnikov on 23.10.2023.
+  
+*/
+
+"homeView.title" = "Trackers";
+"searchField.text" = "Search";
+"trackersTabBar.text" = "Trackers";
+"statisticTabBar.text" = "Statistics";
+"searchFieldCancelButton.text" = "Cancel";
+"filterButton.text" = "Filters";
+"trackersEmptyState.text" = "What we will track?";
+"emptySearchResult.text" = "Nothing was found";
+"statisticsMainLabel.text" = "Statistics";
+"emptyStatisticsLabel.text" = "Nothing to analize yet";

@@ -12,9 +12,9 @@ final class AddTrackerViewController: UIViewController {
         let button = UIButton()
         
         button.setTitle("Привычка", for: .normal)
-        button.backgroundColor = .black
+        button.setTitleColor(Colors.shared.buttonsTextColor, for: .normal)
+        button.backgroundColor = Colors.shared.buttonsBackgroundColor
         button.layer.cornerRadius = 16
-        button.tintColor = .white
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(addHabit), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -25,9 +25,9 @@ final class AddTrackerViewController: UIViewController {
         let button = UIButton()
         
         button.setTitle("Нерегулярные события", for: .normal)
-        button.backgroundColor = .black
+        button.setTitleColor(Colors.shared.buttonsTextColor, for: .normal)
+        button.backgroundColor = Colors.shared.buttonsBackgroundColor
         button.layer.cornerRadius = 16
-        button.tintColor = .white
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(addIrregularHabit), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -37,6 +37,7 @@ final class AddTrackerViewController: UIViewController {
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         
+        stackView.backgroundColor = .clear
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.distribution = .fillEqually
@@ -62,7 +63,7 @@ final class AddTrackerViewController: UIViewController {
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
         
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.shared.viewBackgroundColor
         
         addSubviews()
         applyConstraints()
