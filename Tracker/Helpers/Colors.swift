@@ -57,7 +57,7 @@ final class Colors {
         if traits.userInterfaceStyle == .light {
             return UIColor.lightGray
         } else {
-            return UIColor.clear
+            return UIColor.clear  
         }
     }
 }
