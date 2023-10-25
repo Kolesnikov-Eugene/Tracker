@@ -28,6 +28,7 @@ protocol HomeViewProtocol: AnyObject {
     func pinTracker(_ tracker: TrackerProtocol)
     func trackerIsPinned(_ trackerID: UUID) -> Bool
     func subscribe()
+    func fetchCategory(for trackerID: UUID) -> String
 }
 
 protocol FilterPickerDelegate: AnyObject {
@@ -61,6 +62,23 @@ final class HomeViewViewModel: HomeViewProtocol {
     init() {
         categories = fetchAllCategories()
         filterTrackersByDate()
+    }
+    
+    func fetchCategory(for trackerID: UUID) -> String {
+        let category = categories.compactMap { category -> TrackerCategory? in
+            let filteredTrackers = category.trackerArray.filter { tracker in
+                let condition = tracker.id == trackerID
+                return condition
+            }
+            if !filteredTrackers.isEmpty {
+                return TrackerCategory(category: category.category,
+                                       trackerArray: filteredTrackers)
+            } else {
+                return nil
+            }
+        }
+        guard let category = category.first?.category else { return "" }
+        return category
     }
     
     func subscribe() {
@@ -170,7 +188,6 @@ final class HomeViewViewModel: HomeViewProtocol {
     
     private func applySearchQueryFilter(text: String) {
         onSwitchToEmptySearchResult?()
-        
         var filteredCategories = [TrackerCategory]()
         for category in visibleCategories {
             let new = category.trackerArray.filter { $0.description.lowercased().contains(text.lowercased()) }
@@ -203,6 +220,8 @@ final class HomeViewViewModel: HomeViewProtocol {
     
     private func filterTrackers(_ trackerIDs: [UUID]? = nil, option: Filter) {
         let curDate = DayOfWeekExtractor(date: currentDate)
+        
+        filterTrackersByDate()
         
         let categoriesToFilter = visibleCategories
         visibleCategories = categoriesToFilter.compactMap { category -> TrackerCategory? in
@@ -289,10 +308,8 @@ extension HomeViewViewModel: FilterPickerDelegate {
             currentDate = Date()
             filterTrackersByDate()
         case .completed:
-            filterTrackersByDate()
             filterCompletedTrackers()
         case .uncompleted:
-            filterTrackersByDate()
             filterUncompletedTrackers()
         }
     }

@@ -53,4 +53,11 @@ final class Colors {
             return UIColor(red: 0.254, green: 0.254, blue: 0.254, alpha: 0.85)
         }
     }
+    let tabBarBorderColor = UIColor { (traits: UITraitCollection) -> UIColor in
+        if traits.userInterfaceStyle == .light {
+            return UIColor.lightGray
+        } else {
+            return UIColor.clear
+        }
+    }
 }

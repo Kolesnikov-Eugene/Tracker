@@ -27,7 +27,7 @@ final class CategoriesManager: NSObject {
     }
     
     private let context: NSManagedObjectContext
-    private var dataStore: DataStoreProtocol
+    private let dataStore: DataStoreProtocol
     private lazy var categoriesFetchedResultsController:  NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]

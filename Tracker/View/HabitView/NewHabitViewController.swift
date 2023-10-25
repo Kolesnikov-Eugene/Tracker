@@ -41,6 +41,8 @@ final class NewHabitViewController: UIViewController {
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         
+        view.bounces = true
+        view.alwaysBounceVertical = true
         view.isScrollEnabled = true
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -248,6 +250,7 @@ final class NewHabitViewController: UIViewController {
         return button
     }()
     weak var delegate: NewHabitDelegate?
+    var contentRect: CGRect?
     
     init(typeTracker: TypeTracker) {
         self.typeTracker = typeTracker
@@ -304,11 +307,12 @@ final class NewHabitViewController: UIViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: headerID
         )
-        
         addSubviews()
         applyConstraints()
+        
         sctackTopConstraintWhenErrorLabelShown.isActive = true
     }
+
     
     private func addSubviews() {
         view.addSubview(scrollView)
@@ -345,6 +349,7 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func applyConstraints() {
+        contentView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).priority = .defaultLow
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -356,7 +361,7 @@ final class NewHabitViewController: UIViewController {
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: 0),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 0),
             contentView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
-            contentView.heightAnchor.constraint(equalToConstant: typeTracker == .habit ? 740 : 670),
+            contentView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1),
             
             counterLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             counterLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -415,18 +420,18 @@ final class NewHabitViewController: UIViewController {
                 arrayPictureViewForCategoryButton.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
                 
                 arrayPictureViewForScheduleButton.trailingAnchor.constraint(equalTo: scheduleButton.trailingAnchor, constant: -16),
-                arrayPictureViewForScheduleButton.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor),
+                arrayPictureViewForScheduleButton.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor)
             ])
         case .irregularIvent:
             NSLayoutConstraint.activate([
                 arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
-                arrayPictureViewForCategoryButton.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
+                arrayPictureViewForCategoryButton.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor)
             ])
         }
     }
     
     private func configureEditingMode(with trackerEdit: TrackerEdit) {
-        navigationItem.title = "Редактрирование привычки"
+        navigationItem.title = "Редактирование привычки"
         trackerNameTextField.text = trackerEdit.tracker.description
         createButton.setTitle("Сохранить", for: .normal)
         
@@ -539,6 +544,7 @@ extension NewHabitViewController: UITextFieldDelegate {
             sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
             
             UIView.animate(withDuration: 0.5) {
+                self.contentView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1.05).isActive = true
                 self.view.layoutIfNeeded()
             }
             
@@ -547,9 +553,11 @@ extension NewHabitViewController: UITextFieldDelegate {
             sctackTopConstraintWhenErrorLabelIsHidden.isActive = false
             
             UIView.animate(withDuration: 0.5) {
+                self.contentView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1).isActive = true
                 self.view.layoutIfNeeded()
             }
         }
+        
         switchCreateButton()
         
         return newString.count <= maxLength

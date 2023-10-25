@@ -69,8 +69,9 @@ extension DataStore: TrackerStore {
         request.predicate = NSPredicate(format: "%K = %@", (\TrackerCoreData.id)._kvcKeyPathString!, tracker.id as NSUUID)
         
         let trackerObject = try context.fetch(request)[0]
-        
         context.delete(trackerObject)
+        
+        try deleteTrackerRecordsForTracker(tracker.id)
         
         try context.save()
     }
@@ -169,6 +170,25 @@ extension DataStore: TrackerCategoryStore {
         
         let categoryObject = try context.fetch(request)[0]
         context.delete(categoryObject)
+        
+        //deleting trackers and records
+        try deleteAllTrackersForCategory(categoryObject.id!)
+        
+        try context.save()
+    }
+    
+    private func deleteAllTrackersForCategory(_ categoryID: UUID) throws {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.categoryID), categoryID as NSUUID)
+        
+        let oblects = try context.fetch(request)
+        
+        try oblects.forEach { tracker in
+            guard let trackerID = tracker.id else { return }
+            try deleteTrackerRecordsForTracker(trackerID)
+            
+            context.delete(tracker)
+        }
         
         try context.save()
     }
@@ -291,6 +311,20 @@ extension DataStore: TrackerRecordStore {
         let result = try context.fetch(request)
         
         return result.count
+    }
+    
+    private func deleteTrackerRecordsForTracker(_ trackerID: UUID) throws {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        
+        request.predicate = NSPredicate(format: "%K = %@", (\TrackerRecordCoreData.trackerID)._kvcKeyPathString!, trackerID as NSUUID)
+        
+        let result = try context.fetch(request)
+        
+        result.forEach { record in
+            context.delete(record)
+        }
+        
+        try context.save()
     }
 }
 

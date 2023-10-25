@@ -38,7 +38,7 @@ final class TrackersManager: NSObject {
     }
     
     private let context: NSManagedObjectContext
-    private var dataStore: DataStoreProtocol
+    private let dataStore: DataStoreProtocol
     private lazy var fetchedResultsController:  NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "categoryID", ascending: true)]

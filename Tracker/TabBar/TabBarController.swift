@@ -40,7 +40,7 @@ final class TabBarController: UITabBarController {
         tabBar.unselectedItemTintColor = .gray
         
         let lineView = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.size.width, height: 0.5))
-        lineView.backgroundColor = .lightGray
+        lineView.backgroundColor = Colors.shared.tabBarBorderColor
         tabBar.addSubview(lineView)
         
         self.viewControllers = [homeViewNavigationController, statisticViewController]

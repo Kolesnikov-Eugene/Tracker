@@ -393,8 +393,13 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
                 
                 analyticsService.report(event: "click", params: ["screen": "Main", "item": "edit"])
 
-                let category = viewModel.visibleCategories[indexPath.section].category
+                var category = viewModel.visibleCategories[indexPath.section].category
                 let counter = viewModel.getTrackerCompletionCounter(for: currentTracker)
+                
+                if category.lowercased() == "закрепленные" {
+                    category = viewModel.fetchCategory(for: currentTracker.id)
+                }
+                
                 let trackerEdit = TrackerEdit(tracker: currentTracker, category: category, counter: counter)
                 
                 let habitViewController = NewHabitViewController(typeTracker: .habit, trackerEdit: trackerEdit, delegate: self)
