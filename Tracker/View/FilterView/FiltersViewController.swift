@@ -23,9 +23,9 @@ final class FiltersViewController: UIViewController {
     }()
     weak var delegate: FilterPickerDelegate?
     
-    init(delegate: FilterPickerDelegate, filterText: String) {
+    init(delegate: FilterPickerDelegate, filterText: Filter) {
         self.delegate = delegate
-        self.filterText = filterText
+        self.filterText = filterText.representFilterText()
         super.init(nibName: nil, bundle: nil)
         setupUI()
     }

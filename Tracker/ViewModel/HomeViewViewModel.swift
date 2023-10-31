@@ -32,7 +32,7 @@ protocol HomeViewProtocol: AnyObject {
 }
 
 protocol FilterPickerDelegate: AnyObject {
-    var filter: String { get set }
+    var filter: Filter { get set }
     func didRecieveFilter(_ filter: Filter)
 }
 
@@ -53,7 +53,7 @@ final class HomeViewViewModel: HomeViewProtocol {
         configureTrackersManager()
     }()
     var currentDate = Date()
-    var filter = ""
+    var filter: Filter = .all
     var onState: (() -> Void)?
     var onSwitchToEmptyState: (() -> Void)?
     var onSwitchEmptyStateView: (() -> Void)?
@@ -97,7 +97,8 @@ final class HomeViewViewModel: HomeViewProtocol {
     
     func datePickerDidChangeDate(_ date: Date) {
         currentDate = date
-        filterTrackersByDate()
+        didRecieveFilter(filter)
+//        filterTrackersByDate()
     }
     
     func searchFilterDidChangeState(_ searchQuery: String) {
@@ -299,7 +300,7 @@ extension HomeViewViewModel: TrackersManagerDelegate {
 //MARK: - FilterPickerDelegate
 extension HomeViewViewModel: FilterPickerDelegate {
     func didRecieveFilter(_ filter: Filter) {
-        self.filter = filter.representFilterText()
+        self.filter = filter
         
         switch filter {
         case .all:

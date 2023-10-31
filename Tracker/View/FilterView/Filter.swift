@@ -25,4 +25,19 @@ enum Filter: Int, CaseIterable {
             return "Не завершенные"
         }
     }
+    
+    func createFilterModel(with filterText: String) -> Filter {
+        switch filterText {
+        case "Все трекеры":
+            return Filter(rawValue: 0) ?? Filter(rawValue: 0)!
+        case "Трекеры на сегодня":
+            return Filter(rawValue: 1) ?? Filter(rawValue: 0)!
+        case "Завершенные":
+            return Filter(rawValue: 2) ?? Filter(rawValue: 0)!
+        case "Не завершенные":
+            return Filter(rawValue: 3) ?? Filter(rawValue: 0)!
+        default:
+            return Filter(rawValue: 0) ?? Filter(rawValue: 0)!
+        }
+    }
 }
