@@ -13,6 +13,13 @@
 		441DF7EA2A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441DF7E92A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift */; };
 		441DF7EC2A9FD2FA005AC874 /* SupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441DF7EB2A9FD2FA005AC874 /* SupplementaryView.swift */; };
 		441DF7EE2A9FD629005AC874 /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441DF7ED2A9FD629005AC874 /* StatisticViewController.swift */; };
+		442E6E122AED46E4005B5BC9 /* Configurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442E6E112AED46E4005B5BC9 /* Configurator.swift */; };
+		442E6E152AED47AE005B5BC9 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 442E6E142AED47AE005B5BC9 /* Swinject */; };
+		442E6E172AED47AE005B5BC9 /* Swinject-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 442E6E162AED47AE005B5BC9 /* Swinject-Dynamic */; };
+		442E6E192AED4B06005B5BC9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442E6E182AED4B06005B5BC9 /* HomeView.swift */; };
+		442E6E1B2AED4B89005B5BC9 /* AddTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442E6E1A2AED4B89005B5BC9 /* AddTrackerView.swift */; };
+		442E6E1E2AED4CC6005B5BC9 /* ScreenWideButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442E6E1D2AED4CC6005B5BC9 /* ScreenWideButton.swift */; };
+		442E6E202AED4CE3005B5BC9 /* SmallBottomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442E6E1F2AED4CE3005B5BC9 /* SmallBottomButton.swift */; };
 		444B90042AA9C77F0013D8FA /* NewHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90032AA9C77F0013D8FA /* NewHabitViewController.swift */; };
 		444B90062AA9D3280013D8FA /* TextFieldWithPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90052AA9D3280013D8FA /* TextFieldWithPadding.swift */; };
 		444B90082AAA13840013D8FA /* SeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90072AAA13840013D8FA /* SeparatorView.swift */; };
@@ -89,6 +96,11 @@
 		441DF7E92A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewCollectionViewCell.swift; sourceTree = "<group>"; };
 		441DF7EB2A9FD2FA005AC874 /* SupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryView.swift; sourceTree = "<group>"; };
 		441DF7ED2A9FD629005AC874 /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
+		442E6E112AED46E4005B5BC9 /* Configurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configurator.swift; sourceTree = "<group>"; };
+		442E6E182AED4B06005B5BC9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		442E6E1A2AED4B89005B5BC9 /* AddTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTrackerView.swift; sourceTree = "<group>"; };
+		442E6E1D2AED4CC6005B5BC9 /* ScreenWideButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenWideButton.swift; sourceTree = "<group>"; };
+		442E6E1F2AED4CE3005B5BC9 /* SmallBottomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallBottomButton.swift; sourceTree = "<group>"; };
 		444B90032AA9C77F0013D8FA /* NewHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitViewController.swift; sourceTree = "<group>"; };
 		444B90052AA9D3280013D8FA /* TextFieldWithPadding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithPadding.swift; sourceTree = "<group>"; };
 		444B90072AAA13840013D8FA /* SeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorView.swift; sourceTree = "<group>"; };
@@ -169,7 +181,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				442E6E172AED47AE005B5BC9 /* Swinject-Dynamic in Frameworks */,
 				85BD7BFE76E85A39DDBA49A8 /* Pods_Tracker.framework in Frameworks */,
+				442E6E152AED47AE005B5BC9 /* Swinject in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,6 +204,7 @@
 				44BC898F2A9E76A700C0E23D /* HomeViewConrtoller.swift */,
 				441DF7E92A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift */,
 				441DF7EB2A9FD2FA005AC874 /* SupplementaryView.swift */,
+				442E6E182AED4B06005B5BC9 /* HomeView.swift */,
 			);
 			path = HomeView;
 			sourceTree = "<group>";
@@ -198,6 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				44BC899A2A9EA52F00C0E23D /* AddTrackerViewController.swift */,
+				442E6E1A2AED4B89005B5BC9 /* AddTrackerView.swift */,
 			);
 			path = AddTrackerView;
 			sourceTree = "<group>";
@@ -209,6 +225,15 @@
 				446BB4A82AE6FF1700361C29 /* StatisticsTableViewCell.swift */,
 			);
 			path = StatisticView;
+			sourceTree = "<group>";
+		};
+		442E6E1C2AED4C2D005B5BC9 /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				442E6E1D2AED4CC6005B5BC9 /* ScreenWideButton.swift */,
+				442E6E1F2AED4CE3005B5BC9 /* SmallBottomButton.swift */,
+			);
+			path = Buttons;
 			sourceTree = "<group>";
 		};
 		444B90022AA9C75A0013D8FA /* HabitView */ = {
@@ -263,6 +288,7 @@
 				446BB4AB2AE6FF6900361C29 /* StatisticsService.swift */,
 				446BB4AD2AE6FFAF00361C29 /* AlertPresenter.swift */,
 				446BB4AF2AE6FFC100361C29 /* AlertModel.swift */,
+				442E6E112AED46E4005B5BC9 /* Configurator.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -340,6 +366,7 @@
 		44BC898B2A9E764000C0E23D /* View */ = {
 			isa = PBXGroup;
 			children = (
+				442E6E1C2AED4C2D005B5BC9 /* Buttons */,
 				446BB4B52AE7100900361C29 /* FilterView */,
 				445937072AD5965800ED3495 /* AddCategory */,
 				445936DC2AD5489500ED3495 /* Onboarding */,
@@ -474,6 +501,10 @@
 			dependencies = (
 			);
 			name = Tracker;
+			packageProductDependencies = (
+				442E6E142AED47AE005B5BC9 /* Swinject */,
+				442E6E162AED47AE005B5BC9 /* Swinject-Dynamic */,
+			);
 			productName = Tracker;
 			productReference = 449AA51F2A97E876008D8D8E /* Tracker.app */;
 			productType = "com.apple.product-type.application";
@@ -509,6 +540,7 @@
 			mainGroup = 449AA5162A97E876008D8D8E;
 			packageReferences = (
 				44A8FBD62AE7C763002B577B /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+				442E6E132AED47AE005B5BC9 /* XCRemoteSwiftPackageReference "Swinject" */,
 			);
 			productRefGroup = 449AA5202A97E876008D8D8E /* Products */;
 			projectDirPath = "";
@@ -650,12 +682,14 @@
 				44BC899B2A9EA52F00C0E23D /* AddTrackerViewController.swift in Sources */,
 				44D91E502ABC3C5600BAB467 /* DataStore.swift in Sources */,
 				44BDB22B2AB8961E000FD8DC /* Int+Extension.swift in Sources */,
+				442E6E202AED4CE3005B5BC9 /* SmallBottomButton.swift in Sources */,
 				44DB60822AB8BCEE00E2B40B /* Schedule.swift in Sources */,
 				446BB4A92AE6FF1700361C29 /* StatisticsTableViewCell.swift in Sources */,
 				44BC89932A9E77A400C0E23D /* TabBarController.swift in Sources */,
 				44B7D7D12ADFD5C800DADD83 /* OnboardingViewControllerFactory.swift in Sources */,
 				44FD01532AB4F6BC002EFC8F /* Date+Extension.swift in Sources */,
 				441DF7EC2A9FD2FA005AC874 /* SupplementaryView.swift in Sources */,
+				442E6E192AED4B06005B5BC9 /* HomeView.swift in Sources */,
 				44BC89992A9E7F2B00C0E23D /* TrackerRecord.swift in Sources */,
 				44D91E472ABAF4EA00BAB467 /* TrackerCategoryStore.swift in Sources */,
 				446BB4A52AE6FA0800361C29 /* Colors.swift in Sources */,
@@ -664,6 +698,8 @@
 				44D3D2D22AB5C0CE006F33FE /* GeometricParams.swift in Sources */,
 				449AA5232A97E876008D8D8E /* AppDelegate.swift in Sources */,
 				445937092AD6B42200ED3495 /* AddCategoryView.swift in Sources */,
+				442E6E1B2AED4B89005B5BC9 /* AddTrackerView.swift in Sources */,
+				442E6E122AED46E4005B5BC9 /* Configurator.swift in Sources */,
 				446BB4BD2AE713D600361C29 /* PinnedTrackerStore.swift in Sources */,
 				446BB4B22AE70B2000361C29 /* TrackersManager.swift in Sources */,
 				449C744F2AAB39820088BB4A /* EmojiAndColorCellModel.swift in Sources */,
@@ -671,6 +707,7 @@
 				441DF7EA2A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift in Sources */,
 				44BC89952A9E7EE300C0E23D /* Tracker.swift in Sources */,
 				444B90042AA9C77F0013D8FA /* NewHabitViewController.swift in Sources */,
+				442E6E1E2AED4CC6005B5BC9 /* ScreenWideButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -977,6 +1014,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		442E6E132AED47AE005B5BC9 /* XCRemoteSwiftPackageReference "Swinject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Swinject/Swinject.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.4;
+			};
+		};
 		44A8FBD62AE7C763002B577B /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
@@ -988,6 +1033,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		442E6E142AED47AE005B5BC9 /* Swinject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 442E6E132AED47AE005B5BC9 /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = Swinject;
+		};
+		442E6E162AED47AE005B5BC9 /* Swinject-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 442E6E132AED47AE005B5BC9 /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = "Swinject-Dynamic";
+		};
 		44A8FBD72AE7C763002B577B /* InlineSnapshotTesting */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 44A8FBD62AE7C763002B577B /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
