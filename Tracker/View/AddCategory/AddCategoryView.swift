@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 final class AddCategoryView: UIViewController {
     
@@ -62,6 +63,8 @@ final class AddCategoryView: UIViewController {
         
         return button
     }()
+    private var subscribes = [AnyCancellable]()
+    private var subscribes1 = [AnyCancellable]()
     weak var delegate: CategoryPickerDelegate?
     
     init(delegate: CategoryPickerDelegate, category: String) {
@@ -76,17 +79,73 @@ final class AddCategoryView: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func bind() {
-        viewModel = AddCategoryViewModel()
-        viewModel.onChange = { [weak self] newCategory in
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewModel.categoriesPublisher.receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.switchEmptyState()
+//            category = viewModel.category //removes category in view. UI incorrect
+
+            tableView.reloadData()
+            view.layoutIfNeeded()
+            }.store(in: &subscribes)
+        
+        viewModel.categoryPublisher.receive(on: DispatchQueue.main)
+            .sink { [weak self] newCategory in
             guard let self = self else { return }
             
             self.switchEmptyState()
             category = newCategory
-            
-            tableView.reloadData()
+
+//            tableView.reloadData() // return this method
             view.layoutIfNeeded()
-        }
+        }.store(in: &subscribes)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+//        subscribes.forEach { $0.cancel() }
+//        subscribes.removeAll()
+    }
+    
+    private func bind() {
+        viewModel = AddCategoryViewModel()
+        
+        
+//        viewModel.categoriesPublisher.receive(on: DispatchQueue.main)
+//            .sink { [weak self] _ in
+//            guard let self = self else { return }
+//            
+//            self.switchEmptyState()
+//            category = viewModel.category
+//
+//            tableView.reloadData()
+//            view.layoutIfNeeded()
+//        }.store(in: &subscribes)
+        
+//        viewModel.categoryPublisher.receive(on: DispatchQueue.main)
+//            .sink { [weak self] newCategory in
+//            guard let self = self else { return }
+//            
+//            self.switchEmptyState()
+//            category = newCategory
+//
+//            tableView.reloadData()
+//            view.layoutIfNeeded()
+//        }.store(in: &subscribes)
+
+        
+//        viewModel.onChange = { [weak self] newCategory in
+//            guard let self = self else { return }
+//            
+//            self.switchEmptyState()
+//            category = newCategory
+//            
+//            tableView.reloadData()
+//            view.layoutIfNeeded()
+//        }
     }
     
     private func setupUI() {

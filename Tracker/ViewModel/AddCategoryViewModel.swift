@@ -6,10 +6,14 @@
 //
 
 import Foundation
+import Combine
 
 protocol AddCategoryProtocol: AnyObject {
     var onChange: ((String) -> Void)? { get set }
+    var category: String { get }
     var categories: [TrackerCategoryProtocol] { get }
+    var categoriesPublisher: Published<Array<TrackerCategoryProtocol>>.Publisher { get }
+    var categoryPublisher: Published<String>.Publisher { get }
     func deleteCategory(_ category: String)
     func subscribe()
 }
@@ -19,12 +23,17 @@ protocol AddCategoryDelegate: AnyObject {
 }
 
 final class AddCategoryViewModel: AddCategoryProtocol {
-    private var category: String = ""
-    private(set) var categories: [TrackerCategoryProtocol] = [] {
-        didSet {
-            onChange?(category)
-        }
-    }
+//    private var category: String = ""
+//    private(set) var categories: [TrackerCategoryProtocol] = [] {
+//        didSet {
+//            onChange?(category)
+//        }
+//    }
+    @Published var category: String = ""
+    @Published var categories: [TrackerCategoryProtocol] = []
+    var categoriesPublisher: Published<Array<TrackerCategoryProtocol>>.Publisher { $categories }
+    var categoryPublisher: Published<String>.Publisher { $category }
+    
     private lazy var categoriesManager: CategoriesManagerProtocol? = {
         configureDataManager()
     }()
