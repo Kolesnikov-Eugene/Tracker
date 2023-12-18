@@ -19,11 +19,14 @@ protocol HomeViewCellDelegate: AnyObject {
 final class HomeViewController: UIViewController {
     
     private let analyticsService = AnalyticsService()
-    private var viewModel: HomeViewProtocol!
+    private var viewModel: HomeViewViewModelProtocol!
     private let reuseIdentifier = "TrackerViewCell"
     private var addBarButtonItem: UIBarButtonItem?
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        layout.headerReferenceSize = CGSize(width: 50, height: 50)
+//        layout.layoutAttributesForElements(in: CGRect(x: 0, y: 0, width: 50, height: 50))
+//        layout.layoutAttributesForSupplementaryView(ofKind: "header", at: IndexPath(row: 0, section: 0))
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.alwaysBounceVertical = true
@@ -151,6 +154,7 @@ final class HomeViewController: UIViewController {
         viewModel = HomeViewViewModel()
         viewModel.onState = { [weak self] in
             guard let self = self else { return }
+            
             datePicker.date = viewModel.currentDate
             
             self.collectionView.reloadData()
@@ -211,7 +215,7 @@ final class HomeViewController: UIViewController {
         if let navBar = navigationController?.navigationBar {
             navBar.prefersLargeTitles = true
             navigationItem.title = Constants.trackersLabelMainText
-            navBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 34, weight: .bold)]
+            navBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 28, weight: .bold)]
             
             let datePickerItem = UIBarButtonItem(customView: datePicker)
             navigationItem.rightBarButtonItem = datePickerItem
@@ -357,25 +361,28 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
         return 9
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int) -> CGSize
-    {
-        let indexPath = IndexPath(row: 0, section: section)
-        
-        let headerView = self.collectionView(
-            collectionView,
-            viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
-            at: indexPath
-        )
-        
-        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: collectionView.frame.height),
-                                                  withHorizontalFittingPriority: .required,
-                                                  verticalFittingPriority: .fittingSizeLevel)
-    }
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        layout collectionViewLayout: UICollectionViewLayout,
+//        referenceSizeForHeaderInSection section: Int) -> CGSize
+//    {
+//        let indexPath = IndexPath(row: 0, section: section)
+//        
+//        let headerView = self.collectionView(
+//            collectionView,
+//            viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
+//            at: indexPath
+//        )
+//        
+//        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: collectionView.frame.height),
+//                                                  withHorizontalFittingPriority: .required,
+//                                                  verticalFittingPriority: .defaultLow)
+//    }
     
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+    func collectionView(_ collectionView: UICollectionView, 
+                        contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
+                        point: CGPoint) -> UIContextMenuConfiguration?
+    {
         guard let indexPath = indexPaths.first else { return nil }
         
         let identifier = "previewIdentifier" as NSCopying

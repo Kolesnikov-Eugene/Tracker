@@ -113,24 +113,44 @@ final class AddCategoryView: UIViewController {
     
     private func applyConstraints() {
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(lessThanOrEqualTo: addCategoryButton.topAnchor, constant: -40),
-            tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(1000)),
+            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -40),
+//            tableView.heightAnchor.constraint(equalToConstant: CGFloat(1000)),
             
-            emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyStateView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
+            emptyStateView.centerYAnchor.constraint(equalTo: tableView.centerYAnchor),
             emptyStateView.widthAnchor.constraint(equalToConstant: 80),
             emptyStateView.heightAnchor.constraint(equalToConstant: 80),
             
             emptyStateLabel.topAnchor.constraint(equalTo: emptyStateView.bottomAnchor, constant: 8),
             emptyStateLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor),
             
-            addCategoryButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            addCategoryButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            addCategoryButton.leadingAnchor.constraint(equalTo: tableView.leadingAnchor),
+            addCategoryButton.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.heightAnchor.constraint(equalToConstant: 60)
+            
+            
+//            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+//            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+//            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+//            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -40),
+//            tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(1000)),
+//            
+//            emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+//            emptyStateView.widthAnchor.constraint(equalToConstant: 80),
+//            emptyStateView.heightAnchor.constraint(equalToConstant: 80),
+//            
+//            emptyStateLabel.topAnchor.constraint(equalTo: emptyStateView.bottomAnchor, constant: 8),
+//            emptyStateLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor),
+//            
+//            addCategoryButton.leadingAnchor.constraint(equalTo: tableView.leadingAnchor),
+//            addCategoryButton.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
+//            addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+//            addCategoryButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     

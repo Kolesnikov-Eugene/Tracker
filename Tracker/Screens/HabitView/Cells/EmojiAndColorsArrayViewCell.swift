@@ -54,8 +54,8 @@ final class EmojiAndColorsArrayViewCell: UICollectionViewCell {
             emojiLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             emojiLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             emojiLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            emojiLabel.widthAnchor.constraint(equalToConstant: 38),
-            emojiLabel.heightAnchor.constraint(equalToConstant: 32),
+//            emojiLabel.widthAnchor.constraint(equalToConstant: 38),
+//            emojiLabel.heightAnchor.constraint(equalToConstant: 32),
             
             colorView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),

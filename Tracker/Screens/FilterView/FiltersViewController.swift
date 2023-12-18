@@ -48,8 +48,8 @@ final class FiltersViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -40),
-            tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(1000)),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
+//            tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(1000)),
         ])
         
         tableView.dataSource = self

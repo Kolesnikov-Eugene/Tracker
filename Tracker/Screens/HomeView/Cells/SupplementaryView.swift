@@ -19,7 +19,11 @@ final class SupplementaryView: UICollectionReusableView {
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12)
+//            titleLabel.heightAnchor.constraint(equalToConstant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+//            titleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+//            titleLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+//            titleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
     }
     
@@ -38,4 +42,6 @@ final class SupplementaryView: UICollectionReusableView {
         titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         titleLabel.textColor = Colors.shared.screensTextColor
     }
+    
+    
 }

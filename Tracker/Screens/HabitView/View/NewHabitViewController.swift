@@ -26,12 +26,20 @@ final class NewHabitViewController: UIViewController {
     private var schedule: [Schedule] = []
     private let reuseCellIdentifier = "EmojiAndColorCell"
     private let headerID = "header"
-    private lazy var sctackTopConstraintWhenErrorLabelShown: NSLayoutConstraint = {
-        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 24)
-    }()
-    private lazy var sctackTopConstraintWhenErrorLabelIsHidden: NSLayoutConstraint = {
-        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 62)
-    }()
+//    private lazy var sctackTopConstraintWhenErrorLabelShown: NSLayoutConstraint = {
+//        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 24)
+//    }()
+//    private lazy var sctackTopConstraintWhenErrorLabelIsHidden: NSLayoutConstraint = {
+//        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 62)
+//    }()
+    
+//    private lazy var sctackTopConstraintWhenErrorLabelShown: NSLayoutConstraint = {
+//        categoryStackView.topAnchor.constraint(equalTo: exceedingCharacterLimitErrorField.bottomAnchor)
+//    }()
+//    private lazy var sctackTopConstraintWhenErrorLabelIsHidden: NSLayoutConstraint = {
+//        categoryStackView.topAnchor.constraint(equalTo: exceedingCharacterLimitErrorField.bottomAnchor, constant: 24)
+//    }()
+    
     private lazy var scheduleButtonLabelNewTopConstraint: NSLayoutConstraint = {
         scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 15)
     }()
@@ -69,7 +77,7 @@ final class NewHabitViewController: UIViewController {
         let view = TextFieldWithPadding(paddingTop: 0, paddingBottom: 0, paddingLeft: 16, paddingRight: 41)
         
         view.backgroundColor = Colors.shared.tableViewsBackgroundColor
-        view.frame.size.height = 75
+//        view.frame.size.height = 75
         view.clipsToBounds = true
         view.layer.masksToBounds = false
         view.layer.cornerRadius = 16
@@ -194,6 +202,7 @@ final class NewHabitViewController: UIViewController {
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 5
         layout.itemSize = CGSize(width: 52, height: 52)
+        layout.headerReferenceSize = CGSize(width: 50, height: 50)
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.isScrollEnabled = false
@@ -310,7 +319,7 @@ final class NewHabitViewController: UIViewController {
         addSubviews()
         applyConstraints()
         
-        sctackTopConstraintWhenErrorLabelShown.isActive = true
+//        sctackTopConstraintWhenErrorLabelShown.isActive = true
     }
 
     
@@ -349,7 +358,7 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func applyConstraints() {
-        contentView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).priority = .defaultLow
+//        contentView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).priority = .defaultLow
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -361,7 +370,7 @@ final class NewHabitViewController: UIViewController {
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: 0),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 0),
             contentView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
-            contentView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1),
+//            contentView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1),
             
             counterLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             counterLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -381,6 +390,8 @@ final class NewHabitViewController: UIViewController {
             categoryStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             categoryStackView.heightAnchor.constraint(equalToConstant: typeTracker == .habit ? 150 : 75),
             
+            categoryStackView.topAnchor.constraint(equalTo: exceedingCharacterLimitErrorField.bottomAnchor),
+            
             categoryButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
             categoryButtonLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 26),
             categoryButtonLabel.heightAnchor.constraint(equalToConstant: 22),
@@ -393,6 +404,7 @@ final class NewHabitViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: categoryStackView.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: categoryStackView.trailingAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: 420),
             
             bottomButtonsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             bottomButtonsStackView.trailingAnchor.constraint(equalTo: categoryStackView.trailingAnchor),
@@ -540,20 +552,20 @@ extension NewHabitViewController: UITextFieldDelegate {
         exceedingCharacterLimitErrorField.isHidden = newString.count < 38
         
         if !exceedingCharacterLimitErrorField.isHidden {
-            sctackTopConstraintWhenErrorLabelShown.isActive = false
-            sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
+//            sctackTopConstraintWhenErrorLabelShown.isActive = false
+//            sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
             
             UIView.animate(withDuration: 0.5) {
-                self.contentView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1.05).isActive = true
+//                self.contentView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1.05).isActive = true
                 self.view.layoutIfNeeded()
             }
             
         } else {
-            sctackTopConstraintWhenErrorLabelShown.isActive = true
-            sctackTopConstraintWhenErrorLabelIsHidden.isActive = false
+//            sctackTopConstraintWhenErrorLabelShown.isActive = true
+//            sctackTopConstraintWhenErrorLabelIsHidden.isActive = false
             
             UIView.animate(withDuration: 0.5) {
-                self.contentView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1).isActive = true
+//                self.contentView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1).isActive = true
                 self.view.layoutIfNeeded()
             }
         }
@@ -638,22 +650,22 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: cellWidth, height: cellWidth)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let indexPath = IndexPath(row: 0, section: section)
-        
-        let headerView = self.collectionView(
-            collectionView,
-            viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
-            at: indexPath
-        )
-        
-        return headerView.systemLayoutSizeFitting(
-            CGSize(width: collectionView.frame.width,
-                   height: collectionView.frame.height),
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
-        )
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+//        let indexPath = IndexPath(row: 0, section: section)
+//        
+//        let headerView = self.collectionView(
+//            collectionView,
+//            viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
+//            at: indexPath
+//        )
+//        
+//        return headerView.systemLayoutSizeFitting(
+//            CGSize(width: collectionView.frame.width,
+//                   height: collectionView.frame.height),
+//            withHorizontalFittingPriority: .required,
+//            verticalFittingPriority: .fittingSizeLevel
+//        )
+//    }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.indexPathsForSelectedItems != nil {
