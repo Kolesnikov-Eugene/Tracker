@@ -46,6 +46,14 @@ final class NewHabitViewController: UIViewController {
     private lazy var categoryButtonLabelNewTopConstraint: NSLayoutConstraint = {
         categoryButtonLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 15)
     }()
+    
+    private lazy var scheduleButtonLabelTopConstraint: NSLayoutConstraint = {
+        scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 26)
+    }()
+    private lazy var categoryButtonLabelTopConstraint: NSLayoutConstraint = {
+        categoryButtonLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 26)
+    }()
+    
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         
@@ -181,6 +189,7 @@ final class NewHabitViewController: UIViewController {
         
         stackView.backgroundColor = Colors.shared.tableViewsBackgroundColor
         stackView.axis = .vertical
+        stackView.distribution = .fillEqually
         stackView.spacing = 0
         stackView.layer.masksToBounds = true
         stackView.layer.cornerRadius = 16
@@ -320,6 +329,8 @@ final class NewHabitViewController: UIViewController {
         applyConstraints()
         
 //        sctackTopConstraintWhenErrorLabelShown.isActive = true
+        categoryButtonLabelTopConstraint.isActive = !editingModeIsOn
+        scheduleButtonLabelTopConstraint.isActive = !editingModeIsOn
     }
 
     
@@ -336,7 +347,8 @@ final class NewHabitViewController: UIViewController {
         switch typeTracker {
         case .habit:
             categoryStackView.addArrangedSubview(categoryButton)
-            categoryStackView.addArrangedSubview(stringSeparator)
+//            categoryStackView.addArrangedSubview(stringSeparator)
+            contentView.addSubview(stringSeparator)
             categoryStackView.addArrangedSubview(scheduleButton)
         case .irregularIvent:
             categoryStackView.addArrangedSubview(categoryButton)
@@ -393,7 +405,8 @@ final class NewHabitViewController: UIViewController {
             categoryStackView.topAnchor.constraint(equalTo: exceedingCharacterLimitErrorField.bottomAnchor),
             
             categoryButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
-            categoryButtonLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 26),
+//            categoryButtonLabel.leadingAnchor.constraint(equalTo: categoryStackView.leadingAnchor, constant: 16),
+//            categoryButtonLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 26),
             categoryButtonLabel.heightAnchor.constraint(equalToConstant: 22),
             
             categoryButtonLabelForSelectedCategory.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
@@ -415,17 +428,23 @@ final class NewHabitViewController: UIViewController {
         switch typeTracker {
         case .habit:
             NSLayoutConstraint.activate([
-                scheduleButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
-                scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 26),
+//                scheduleButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+                scheduleButtonLabel.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
+//                scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 26),
                 scheduleButtonLabel.heightAnchor.constraint(equalToConstant: 22),
                 
-                scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+//                scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+                scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: scheduleButtonLabel.leadingAnchor),
                 scheduleButtonLabelForSelectedDays.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 39),
                 scheduleButtonLabelForSelectedDays.heightAnchor.constraint(equalToConstant: 22),
                 
                 stringSeparator.heightAnchor.constraint(equalToConstant: 0.5),
-                stringSeparator.leftAnchor.constraint(equalTo: categoryButton.leftAnchor, constant: 16),
-                stringSeparator.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
+//                stringSeparator.leadingAnchor.constraint(equalTo: categoryButton.leadingAnchor, constant: 16),
+                stringSeparator.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
+                stringSeparator.trailingAnchor.constraint(equalTo: scheduleButton.trailingAnchor, constant: -16),
+                
+//                stringSeparator.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
+                
                 stringSeparator.centerYAnchor.constraint(equalTo: categoryStackView.centerYAnchor),
                 
                 arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
@@ -443,6 +462,7 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func configureEditingMode(with trackerEdit: TrackerEdit) {
+        
         navigationItem.title = "Редактирование привычки"
         trackerNameTextField.text = trackerEdit.tracker.description
         createButton.setTitle("Сохранить", for: .normal)
@@ -720,6 +740,8 @@ extension NewHabitViewController: AddScheduleDelegate {
         } else {
             scheduleButtonLabelForSelectedDays.text = schedule.map({ $0.representShortDayName() }).joined(separator: ", ")
         }
+        scheduleButtonLabelTopConstraint.isActive = selectedDays.isEmpty
+        
         scheduleButtonLabelNewTopConstraint.isActive = !selectedDays.isEmpty
         scheduleButtonLabelForSelectedDays.isHidden = selectedDays.isEmpty
         
@@ -734,9 +756,11 @@ extension NewHabitViewController: CategoryPickerDelegate {
         
         categoryButtonLabelForSelectedCategory.text = selectedCategory
         
+        categoryButtonLabelTopConstraint.isActive = selectedCategory.isEmpty
+        
         categoryButtonLabelNewTopConstraint.isActive = !selectedCategory.isEmpty && !selectedCategory.starts(with: " ")
         categoryButtonLabelForSelectedCategory.isHidden = selectedCategory.isEmpty && selectedCategory.starts(with: " ")
-        
+
         switchCreateButton()
     }
 }
