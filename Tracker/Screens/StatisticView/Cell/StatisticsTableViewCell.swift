@@ -41,6 +41,10 @@ final class StatisticTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        addGradient()
+    }
+    
     func configureCell(with label: String, and description: String) {
         counterLabel.text = label
         descriptionLabel.text = description
@@ -52,15 +56,15 @@ final class StatisticTableViewCell: UITableViewCell {
         addSubviews()
         applyConstraints()
         
-        addGradient()
+//        addGradient()
     }
     
     private func configureContentView() {
-        let screenSize = UIScreen.main.bounds
+//        let screenSize = UIScreen.main.bounds
         
         contentView.backgroundColor = .clear
-        contentView.layer.frame.size.height = 102
-        contentView.layer.frame.size.width = screenSize.width - 32
+//        contentView.layer.frame.size.height = 102
+//        contentView.layer.frame.size.width = screenSize.width - 32
     }
     
     private func addSubviews() {

@@ -57,6 +57,8 @@
 		44BC899B2A9EA52F00C0E23D /* AddTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BC899A2A9EA52F00C0E23D /* AddTrackerViewController.swift */; };
 		44BDB22B2AB8961E000FD8DC /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BDB22A2AB8961E000FD8DC /* Int+Extension.swift */; };
 		44C9B96D2B30CE8B00A17460 /* HomeViewViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C9B96C2B30CE8B00A17460 /* HomeViewViewModelProtocol.swift */; };
+		44C9B9702B3374F300A17460 /* NewHabitViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C9B96F2B3374F300A17460 /* NewHabitViewViewModel.swift */; };
+		44C9B9722B33750300A17460 /* NewHabitViewViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C9B9712B33750300A17460 /* NewHabitViewViewModelProtocol.swift */; };
 		44D3D2D22AB5C0CE006F33FE /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D3D2D12AB5C0CE006F33FE /* GeometricParams.swift */; };
 		44D6F1CB2AAB963200567305 /* AddScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D6F1CA2AAB963200567305 /* AddScheduleViewController.swift */; };
 		44D91E412ABAECDD00BAB467 /* TrackerCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 44D91E3F2ABAECDD00BAB467 /* TrackerCoreDataModel.xcdatamodeld */; };
@@ -137,6 +139,8 @@
 		44BC899A2A9EA52F00C0E23D /* AddTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTrackerViewController.swift; sourceTree = "<group>"; };
 		44BDB22A2AB8961E000FD8DC /* Int+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
 		44C9B96C2B30CE8B00A17460 /* HomeViewViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewViewModelProtocol.swift; sourceTree = "<group>"; };
+		44C9B96F2B3374F300A17460 /* NewHabitViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitViewViewModel.swift; sourceTree = "<group>"; };
+		44C9B9712B33750300A17460 /* NewHabitViewViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitViewViewModelProtocol.swift; sourceTree = "<group>"; };
 		44D3D2D12AB5C0CE006F33FE /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		44D6F1CA2AAB963200567305 /* AddScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddScheduleViewController.swift; sourceTree = "<group>"; };
 		44D91E402ABAECDD00BAB467 /* TrackerCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackerCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
@@ -332,6 +336,7 @@
 		444B90022AA9C75A0013D8FA /* HabitView */ = {
 			isa = PBXGroup;
 			children = (
+				44C9B96E2B3374D600A17460 /* ViewModel */,
 				4400EE932B2A313C00714BA7 /* View */,
 				4400EE942B2A314300714BA7 /* Cells */,
 			);
@@ -479,6 +484,15 @@
 				44BC89922A9E77A400C0E23D /* TabBarController.swift */,
 			);
 			path = TabBar;
+			sourceTree = "<group>";
+		};
+		44C9B96E2B3374D600A17460 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				44C9B96F2B3374F300A17460 /* NewHabitViewViewModel.swift */,
+				44C9B9712B33750300A17460 /* NewHabitViewViewModelProtocol.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		44D6F1C92AAB961700567305 /* AddScheduleView */ = {
@@ -726,6 +740,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				444B90062AA9D3280013D8FA /* TextFieldWithPadding.swift in Sources */,
+				44C9B9722B33750300A17460 /* NewHabitViewViewModelProtocol.swift in Sources */,
 				446BB4B72AE7101B00361C29 /* Filter.swift in Sources */,
 				446BB4B92AE7103400361C29 /* FiltersTableViewCell.swift in Sources */,
 				446BB4A72AE6FBE700361C29 /* TrackerEdit.swift in Sources */,
@@ -740,6 +755,7 @@
 				440FCC792ADEB51F00CD0DD7 /* HomeViewViewModel.swift in Sources */,
 				444B90082AAA13840013D8FA /* SeparatorView.swift in Sources */,
 				446BB4AC2AE6FF6900361C29 /* StatisticsService.swift in Sources */,
+				44C9B9702B3374F300A17460 /* NewHabitViewViewModel.swift in Sources */,
 				4459370F2AD6D09400ED3495 /* CategoryTableViewCell.swift in Sources */,
 				446BB4AE2AE6FFAF00361C29 /* AlertPresenter.swift in Sources */,
 				44A8FBD52AE7BCAA002B577B /* AnalyticsService.swift in Sources */,

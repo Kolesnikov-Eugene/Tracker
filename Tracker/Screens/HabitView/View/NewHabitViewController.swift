@@ -26,12 +26,12 @@ final class NewHabitViewController: UIViewController {
     private var schedule: [Schedule] = []
     private let reuseCellIdentifier = "EmojiAndColorCell"
     private let headerID = "header"
-//    private lazy var sctackTopConstraintWhenErrorLabelShown: NSLayoutConstraint = {
-//        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 24)
-//    }()
-//    private lazy var sctackTopConstraintWhenErrorLabelIsHidden: NSLayoutConstraint = {
-//        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 62)
-//    }()
+    private lazy var sctackTopConstraintWhenErrorLabelShown: NSLayoutConstraint = {
+        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 62)
+    }()
+    private lazy var sctackTopConstraintWhenErrorLabelIsHidden: NSLayoutConstraint = {
+        categoryStackView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 24)
+    }()
     
 //    private lazy var sctackTopConstraintWhenErrorLabelShown: NSLayoutConstraint = {
 //        categoryStackView.topAnchor.constraint(equalTo: exceedingCharacterLimitErrorField.bottomAnchor)
@@ -85,7 +85,6 @@ final class NewHabitViewController: UIViewController {
         let view = TextFieldWithPadding(paddingTop: 0, paddingBottom: 0, paddingLeft: 16, paddingRight: 41)
         
         view.backgroundColor = Colors.shared.tableViewsBackgroundColor
-//        view.frame.size.height = 75
         view.clipsToBounds = true
         view.layer.masksToBounds = false
         view.layer.cornerRadius = 16
@@ -210,7 +209,6 @@ final class NewHabitViewController: UIViewController {
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 5
-        layout.itemSize = CGSize(width: 52, height: 52)
         layout.headerReferenceSize = CGSize(width: 50, height: 50)
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -311,6 +309,7 @@ final class NewHabitViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         scrollView.addGestureRecognizer(tapGesture)
+//        view.addGestureRecognizer(tapGesture)
         
         trackerNameTextField.delegate = self
         collectionView.dataSource = self
@@ -328,7 +327,9 @@ final class NewHabitViewController: UIViewController {
         addSubviews()
         applyConstraints()
         
-//        sctackTopConstraintWhenErrorLabelShown.isActive = true
+        sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
+        sctackTopConstraintWhenErrorLabelShown.isActive = false
+        
         categoryButtonLabelTopConstraint.isActive = !editingModeIsOn
         scheduleButtonLabelTopConstraint.isActive = !editingModeIsOn
     }
@@ -370,7 +371,6 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func applyConstraints() {
-//        contentView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).priority = .defaultLow
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -402,11 +402,9 @@ final class NewHabitViewController: UIViewController {
             categoryStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             categoryStackView.heightAnchor.constraint(equalToConstant: typeTracker == .habit ? 150 : 75),
             
-            categoryStackView.topAnchor.constraint(equalTo: exceedingCharacterLimitErrorField.bottomAnchor),
+//            categoryStackView.topAnchor.constraint(equalTo: exceedingCharacterLimitErrorField.bottomAnchor),
             
             categoryButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
-//            categoryButtonLabel.leadingAnchor.constraint(equalTo: categoryStackView.leadingAnchor, constant: 16),
-//            categoryButtonLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 26),
             categoryButtonLabel.heightAnchor.constraint(equalToConstant: 22),
             
             categoryButtonLabelForSelectedCategory.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
@@ -428,23 +426,16 @@ final class NewHabitViewController: UIViewController {
         switch typeTracker {
         case .habit:
             NSLayoutConstraint.activate([
-//                scheduleButtonLabel.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
                 scheduleButtonLabel.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
-//                scheduleButtonLabel.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 26),
                 scheduleButtonLabel.heightAnchor.constraint(equalToConstant: 22),
                 
-//                scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
                 scheduleButtonLabelForSelectedDays.leadingAnchor.constraint(equalTo: scheduleButtonLabel.leadingAnchor),
                 scheduleButtonLabelForSelectedDays.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 39),
                 scheduleButtonLabelForSelectedDays.heightAnchor.constraint(equalToConstant: 22),
                 
                 stringSeparator.heightAnchor.constraint(equalToConstant: 0.5),
-//                stringSeparator.leadingAnchor.constraint(equalTo: categoryButton.leadingAnchor, constant: 16),
                 stringSeparator.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
                 stringSeparator.trailingAnchor.constraint(equalTo: scheduleButton.trailingAnchor, constant: -16),
-                
-//                stringSeparator.leadingAnchor.constraint(equalTo: trackerNameTextField.leadingAnchor, constant: 16),
-                
                 stringSeparator.centerYAnchor.constraint(equalTo: categoryStackView.centerYAnchor),
                 
                 arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
@@ -572,20 +563,18 @@ extension NewHabitViewController: UITextFieldDelegate {
         exceedingCharacterLimitErrorField.isHidden = newString.count < 38
         
         if !exceedingCharacterLimitErrorField.isHidden {
-//            sctackTopConstraintWhenErrorLabelShown.isActive = false
-//            sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
+            sctackTopConstraintWhenErrorLabelIsHidden.isActive = false
+            sctackTopConstraintWhenErrorLabelShown.isActive = true
             
             UIView.animate(withDuration: 0.5) {
-//                self.contentView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1.05).isActive = true
                 self.view.layoutIfNeeded()
             }
             
         } else {
-//            sctackTopConstraintWhenErrorLabelShown.isActive = true
-//            sctackTopConstraintWhenErrorLabelIsHidden.isActive = false
+            sctackTopConstraintWhenErrorLabelShown.isActive = false
+            sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
             
             UIView.animate(withDuration: 0.5) {
-//                self.contentView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1).isActive = true
                 self.view.layoutIfNeeded()
             }
         }
