@@ -9,7 +9,7 @@ import UIKit
 
 final class AddCategoryView: UIViewController {
     
-    private var viewModel: AddCategoryProtocol!
+    private var viewModel: AddCategoryViewModelProtocol!
     private var category: String
     private let reuseCellIdentifier = "CategoryCell"
     private let tableView: UITableView = {
@@ -213,6 +213,7 @@ extension AddCategoryView: UITableViewDelegate {
         delegate?.didRecieveCategory(category)
         navigationController?.popViewController(animated: true)
     }
+    
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return }
         

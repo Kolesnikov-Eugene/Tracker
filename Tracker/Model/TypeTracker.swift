@@ -9,13 +9,13 @@ import Foundation
 
 enum TypeTracker {
     case habit
-    case irregularIvent
+    case irregularEvent
     
     var typeTrackerName: String {
         switch self {
         case .habit:
             return "Новая привычка"
-        case .irregularIvent:
+        case .irregularEvent:
             return "Новое нерегулярное событие"
         }
     }

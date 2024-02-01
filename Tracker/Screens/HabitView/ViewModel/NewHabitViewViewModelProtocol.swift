@@ -12,4 +12,7 @@ protocol NewHabitViewViewModelProtocol {
     var tracker: TrackerProtocol? { get set }
     var selectedEmoji: String? { get set }
     var schedule: [Schedule] { get set }
+    var editingModeIsOn: Bool { get set }
+    
+    func allFieldsFilledOut(event: TypeTracker, trackerName: String?) -> Bool
 }

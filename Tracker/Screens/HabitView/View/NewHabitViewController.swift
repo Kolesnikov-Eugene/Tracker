@@ -17,13 +17,8 @@ protocol CategoryPickerDelegate: AnyObject {
 
 final class NewHabitViewController: UIViewController {
     
-    private var editingModeIsOn: Bool
-    private var selectedCategory: String = ""
+    private var viewModel: NewHabitViewViewModel!
     private let typeTracker: TypeTracker
-    private var tracker: TrackerProtocol? = nil
-    private var selectedEmoji: String? = nil
-    private var selectedColor: UIColor? = nil
-    private var schedule: [Schedule] = []
     private let reuseCellIdentifier = "EmojiAndColorCell"
     private let headerID = "header"
     private lazy var sctackTopConstraintWhenErrorLabelShown: NSLayoutConstraint = {
@@ -266,32 +261,32 @@ final class NewHabitViewController: UIViewController {
         return button
     }()
     weak var delegate: NewHabitDelegate?
-    var contentRect: CGRect?
+//    var contentRect: CGRect?
     
     init(typeTracker: TypeTracker) {
         self.typeTracker = typeTracker
-        self.editingModeIsOn = false
+        self.viewModel = NewHabitViewViewModel()
         super.init(nibName: nil, bundle: nil)
+        
         counterLabel.isHidden = true
         setupUI()
+        
+        bind()
     }
     
     init(typeTracker: TypeTracker, trackerEdit: TrackerEdit, delegate: NewHabitDelegate) {
         self.typeTracker = typeTracker
-        self.tracker = trackerEdit.tracker
         self.delegate = delegate
-        self.editingModeIsOn = true
+        self.viewModel = NewHabitViewViewModel(trackerEdit: trackerEdit)
         super.init(nibName: nil, bundle: nil)
-        self.selectedCategory = trackerEdit.category
-        self.selectedEmoji = trackerEdit.tracker.emoji
-        self.selectedColor = trackerEdit.tracker.color
-        self.schedule = trackerEdit.tracker.schedule
         
         counterLabel.isHidden = false
         
         setupUI()
         
         configureEditingMode(with: trackerEdit)
+        
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -330,8 +325,8 @@ final class NewHabitViewController: UIViewController {
         sctackTopConstraintWhenErrorLabelIsHidden.isActive = true
         sctackTopConstraintWhenErrorLabelShown.isActive = false
         
-        categoryButtonLabelTopConstraint.isActive = !editingModeIsOn
-        scheduleButtonLabelTopConstraint.isActive = !editingModeIsOn
+        categoryButtonLabelTopConstraint.isActive = !viewModel.editingModeIsOn
+        scheduleButtonLabelTopConstraint.isActive = !viewModel.editingModeIsOn
     }
 
     
@@ -351,7 +346,7 @@ final class NewHabitViewController: UIViewController {
 //            categoryStackView.addArrangedSubview(stringSeparator)
             contentView.addSubview(stringSeparator)
             categoryStackView.addArrangedSubview(scheduleButton)
-        case .irregularIvent:
+        case .irregularEvent:
             categoryStackView.addArrangedSubview(categoryButton)
         }
         
@@ -444,7 +439,7 @@ final class NewHabitViewController: UIViewController {
                 arrayPictureViewForScheduleButton.trailingAnchor.constraint(equalTo: scheduleButton.trailingAnchor, constant: -16),
                 arrayPictureViewForScheduleButton.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor)
             ])
-        case .irregularIvent:
+        case .irregularEvent:
             NSLayoutConstraint.activate([
                 arrayPictureViewForCategoryButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
                 arrayPictureViewForCategoryButton.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor)
@@ -477,47 +472,26 @@ final class NewHabitViewController: UIViewController {
         view.layoutIfNeeded()
     }
     
+    private func bind() {
+        
+    }
+    
     private func switchCreateButton() {
-        createButton.backgroundColor = allFieldsFilledOut() ? Colors.shared.buttonEnabledColor : Colors.shared.buttonDisabledColor
-        let color = allFieldsFilledOut() ? Colors.shared.buttonsTextColor : .white
+        let allFieldsFilledOut = viewModel.allFieldsFilledOut(event: typeTracker, trackerName: trackerNameTextField.text)
+        
+        createButton.backgroundColor = allFieldsFilledOut ? Colors.shared.buttonEnabledColor : Colors.shared.buttonDisabledColor
+        let color = allFieldsFilledOut ? Colors.shared.buttonsTextColor : .white
         createButton.setTitleColor(color, for: .normal)
     }
     
-    private func allFieldsFilledOut() -> Bool {
-        if typeTracker == .irregularIvent {
-            schedule = Schedule.allCases.map { $0 }
-        }
-        guard let selectedEmoji = selectedEmoji,
-              let selectedColor = selectedColor,
-              let text = trackerNameTextField.text,
-              !selectedCategory.isEmpty,
-              selectedCategory.count > 0,
-              !selectedCategory.starts(with: " "),
-              text.count > 0 ,
-              !schedule.isEmpty
-        else {
-            return false
-        }
-        let id = editingModeIsOn ? tracker?.id : UUID()
-        
-        tracker = Tracker(
-            id: id ?? UUID(),
-            emoji: selectedEmoji,
-            color: selectedColor,
-            description: text,
-            schedule: schedule
-        )
-        return true
-    }
-    
     @objc private func categoryButtonTapped() {
-        let addCategoryView = AddCategoryView(delegate: self, category: selectedCategory)
+        let addCategoryView = AddCategoryView(delegate: self, category: viewModel.selectedCategory)
         navigationController?.pushViewController(addCategoryView, animated: true)
     }
     
     @objc private func scheduleButtonTapped() {
         navigationController?.pushViewController(
-            AddScheduleViewController(delegate: self, selectedDays: schedule),
+            AddScheduleViewController(delegate: self, selectedDays: viewModel.schedule),
             animated: true)
     }
     
@@ -526,23 +500,23 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
-        if allFieldsFilledOut() {
+        if viewModel.allFieldsFilledOut(event: typeTracker, trackerName: trackerNameTextField.text) {
             dismiss(animated: true) { [weak self] in
                 guard let self = self else { return }
-                if editingModeIsOn {
-                    guard let tracker = tracker,
+                if viewModel.editingModeIsOn {
+                    guard let tracker = viewModel.tracker,
                           let delegate = delegate
                     else {
                         return
                     }
-                    delegate.didChangeTracker(tracker, for: selectedCategory)
+                    delegate.didChangeTracker(tracker, for: viewModel.selectedCategory)
                 }
-                guard let tracker = tracker,
+                guard let tracker = viewModel.tracker,
                       let parent = navigationController?.viewControllers.first as? AddTrackerViewController
                 else {
                     return
                 }
-                parent.delegate?.didCreateNewTracker(tracker, for: selectedCategory)
+                parent.delegate?.didCreateNewTracker(tracker, for: viewModel.selectedCategory)
             }
         }
     }
@@ -610,7 +584,7 @@ extension NewHabitViewController: UICollectionViewDataSource {
                 type: .emoji)
             cell.configure(with: model)
             
-            guard model.emoji == selectedEmoji else { return cell }
+            guard model.emoji == viewModel.selectedEmoji else { return cell }
             cell.configureBackgroundForSelectedCell(with: model)
             collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
         } else {
@@ -620,7 +594,7 @@ extension NewHabitViewController: UICollectionViewDataSource {
                 type: .color)
             cell.configure(with: model)
             
-            guard model.color?.hexString() == selectedColor?.hexString() else { return cell }
+            guard model.color?.hexString() == viewModel.selectedColor?.hexString() else { return cell }
             cell.configureBackgroundForSelectedCell(with: model)
             collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
         }
@@ -658,24 +632,7 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
         
         return CGSize(width: cellWidth, height: cellWidth)
     }
-    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-//        let indexPath = IndexPath(row: 0, section: section)
-//        
-//        let headerView = self.collectionView(
-//            collectionView,
-//            viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
-//            at: indexPath
-//        )
-//        
-//        return headerView.systemLayoutSizeFitting(
-//            CGSize(width: collectionView.frame.width,
-//                   height: collectionView.frame.height),
-//            withHorizontalFittingPriority: .required,
-//            verticalFittingPriority: .fittingSizeLevel
-//        )
-//    }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.indexPathsForSelectedItems != nil {
             deselectSelectedItemsInSection(indexPath: indexPath, collectionView: collectionView)
@@ -684,11 +641,11 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
         
         let cellModel: EmojiAndColorCellModel
         if indexPath.section == 0 {
-            selectedEmoji = Constants.emojiArray[indexPath.row]
-            cellModel = EmojiAndColorCellModel(emoji: selectedEmoji, color: nil, type: .emoji)
+            viewModel.selectedEmoji = Constants.emojiArray[indexPath.row]
+            cellModel = EmojiAndColorCellModel(emoji: viewModel.selectedEmoji, color: nil, type: .emoji)
         } else {
-            selectedColor = Constants.colorList[indexPath.row]
-            cellModel = EmojiAndColorCellModel(emoji: nil, color: selectedColor, type: .color)
+            viewModel.selectedColor = Constants.colorList[indexPath.row]
+            cellModel = EmojiAndColorCellModel(emoji: nil, color: viewModel.selectedColor, type: .color)
         }
         cell.configureBackgroundForSelectedCell(with: cellModel)
         switchCreateButton()
@@ -709,9 +666,9 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
         guard let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorsArrayViewCell else { return }
         
         if indexPath.section == 0 {
-            selectedEmoji = nil
+            viewModel.selectedEmoji = nil
         } else {
-            selectedColor = nil
+            viewModel.selectedColor = nil
         }
         
         cell.deselectCell()
@@ -722,12 +679,12 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - AddScheduleDelegate
 extension NewHabitViewController: AddScheduleDelegate {
     func didRecieveSchedule(for selectedDays: [Schedule]) {
-        self.schedule = selectedDays.sorted()
+        viewModel.schedule = selectedDays.sorted()
         
-        if schedule.count == 7 {
+        if viewModel.schedule.count == 7 {
             scheduleButtonLabelForSelectedDays.text = "Ежедневно"
         } else {
-            scheduleButtonLabelForSelectedDays.text = schedule.map({ $0.representShortDayName() }).joined(separator: ", ")
+            scheduleButtonLabelForSelectedDays.text = viewModel.schedule.map({ $0.representShortDayName() }).joined(separator: ", ")
         }
         scheduleButtonLabelTopConstraint.isActive = selectedDays.isEmpty
         
@@ -741,14 +698,14 @@ extension NewHabitViewController: AddScheduleDelegate {
 //MARK: - CategoryPickerDelegate
 extension NewHabitViewController: CategoryPickerDelegate {
     func didRecieveCategory(_ category: String) {
-        self.selectedCategory = category
+        viewModel.selectedCategory = category
         
-        categoryButtonLabelForSelectedCategory.text = selectedCategory
+        categoryButtonLabelForSelectedCategory.text = viewModel.selectedCategory
         
-        categoryButtonLabelTopConstraint.isActive = selectedCategory.isEmpty
+        categoryButtonLabelTopConstraint.isActive = viewModel.selectedCategory.isEmpty
         
-        categoryButtonLabelNewTopConstraint.isActive = !selectedCategory.isEmpty && !selectedCategory.starts(with: " ")
-        categoryButtonLabelForSelectedCategory.isHidden = selectedCategory.isEmpty && selectedCategory.starts(with: " ")
+        categoryButtonLabelNewTopConstraint.isActive = !viewModel.selectedCategory.isEmpty && !viewModel.selectedCategory.starts(with: " ")
+        categoryButtonLabelForSelectedCategory.isHidden = viewModel.selectedCategory.isEmpty && viewModel.selectedCategory.starts(with: " ")
 
         switchCreateButton()
     }

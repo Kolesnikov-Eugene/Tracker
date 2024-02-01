@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol AddCategoryProtocol: AnyObject {
+protocol AddCategoryViewModelProtocol: AnyObject {
     var onChange: ((String) -> Void)? { get set }
     var categories: [TrackerCategoryProtocol] { get }
     func deleteCategory(_ category: String)
@@ -18,7 +18,7 @@ protocol AddCategoryDelegate: AnyObject {
     func didRecieveCategory(_ categoryName: String, for oldCategory: String, mode: Editing) throws
 }
 
-final class AddCategoryViewModel: AddCategoryProtocol {
+final class AddCategoryViewModel: AddCategoryViewModelProtocol {
     private var category: String = ""
     private(set) var categories: [TrackerCategoryProtocol] = [] {
         didSet {
