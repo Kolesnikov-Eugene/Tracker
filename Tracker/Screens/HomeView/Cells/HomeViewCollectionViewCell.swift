@@ -11,10 +11,8 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     
     private let trackerInfoView: UIView = {
         let view = UIView()
-        
-//        view.frame.size.width = 167
-//        view.frame.size.height = 90
-        view.clipsToBounds = true
+    
+//        view.clipsToBounds = true
         view.layer.masksToBounds = false
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.clear.cgColor
@@ -27,13 +25,10 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     private let emojiView: UILabel = {
         let view = UILabel()
         
-//        view.frame.size.width = 24
-//        view.frame.size.height = 24
         view.layer.masksToBounds = false
         view.clipsToBounds = true
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.clear.cgColor
-//        view.layer.cornerRadius = view.frame.width / 2
         view.layer.cornerRadius = 12
         view.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3).cgColor
         view.contentMode = .center
@@ -56,8 +51,6 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     private let bottomCellView: UIView = {
         let view = UIView()
         
-//        view.frame.size.width = 143
-//        view.frame.size.height = 34
         view.clipsToBounds = true
         view.layer.masksToBounds = false
         view.layer.borderWidth = 1
@@ -71,7 +64,6 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     private let scheduleLabel: UILabel = {
         let label = UILabel()
         
-//        label.frame.size.height = 34
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = Colors.shared.screensTextColor
         label.backgroundColor = .clear
@@ -81,14 +73,11 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     }()
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .custom)
-        
-//        button.frame.size.width = 34
-//        button.frame.size.height = 34
+
         button.layer.masksToBounds = false
         button.clipsToBounds = true
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.clear.cgColor
-//        button.layer.cornerRadius = button.frame.width / 2
         button.layer.cornerRadius = 17
         button.addTarget(self, action: #selector(addToDoneButtonTapped), for: .touchUpInside)
         button.backgroundColor = .clear
@@ -109,13 +98,10 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     private let buttonView: UIView = {
         let view = UIView()
         
-//        view.frame.size.width = 34
-//        view.frame.size.height = 34
         view.layer.masksToBounds = false
         view.clipsToBounds = true
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.clear.cgColor
-//        view.layer.cornerRadius = view.frame.width / 2
         view.layer.cornerRadius = 17
         view.backgroundColor = .clear
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -143,6 +129,13 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        trackerInfoView.layer.cornerRadius = 16
+        trackerInfoView.layer.shadowRadius = 3
+        trackerInfoView.layer.shadowOpacity = 0.5
+        trackerInfoView.layer.shadowOffset = CGSize.zero
     }
 
     @objc private func addToDoneButtonTapped() {

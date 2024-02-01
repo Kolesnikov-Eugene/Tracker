@@ -150,6 +150,13 @@ final class HomeViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLayoutSubviews() {
+        filterButton.layer.cornerRadius = CGRectGetHeight(filterButton.bounds) / 2.0
+        filterButton.layer.shadowRadius = 4
+        filterButton.layer.shadowOpacity = 0.5
+        filterButton.layer.shadowOffset = CGSize.zero
+    }
+    
     private func bind() {
         viewModel = HomeViewViewModel()
         viewModel.onState = { [weak self] in
@@ -259,6 +266,13 @@ final class HomeViewController: UIViewController {
     }
     
     @objc func didTapFilterButton() {
+        filterButton.layer.shadowRadius = 6
+        
+        UIView.animate(withDuration: 0.2) {
+            self.filterButton.layer.shadowRadius = 4
+        }
+        
+        
         analyticsService.report(event: "click", params: ["screen": "Main", "item": "filter"])
         
         guard let model = viewModel as? FilterPickerDelegate else { return }
