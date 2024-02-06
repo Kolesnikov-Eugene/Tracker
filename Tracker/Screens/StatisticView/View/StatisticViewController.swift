@@ -122,25 +122,34 @@ final class StatisticViewController: UIViewController {
     }
     
     private func switchScreenState() {
-        emptyStateView.isHidden = statisticService.fetchCompletedTrackers() > 0
-        emptyStateLabel.isHidden = statisticService.fetchCompletedTrackers() > 0
-        tableView.isHidden = statisticService.fetchCompletedTrackers() == 0
+        emptyStateView.isHidden = statisticService.statistics.count > 0
+        emptyStateLabel.isHidden = statisticService.statistics.count > 0
+        tableView.isHidden = statisticService.statistics.count == 0
+//        emptyStateView.isHidden = statisticService.fetchCompletedTrackers() > 0
+//        emptyStateLabel.isHidden = statisticService.fetchCompletedTrackers() > 0
+//        tableView.isHidden = statisticService.fetchCompletedTrackers() == 0
     }
 }
 
 //MARK: - UITableViewDataSource
 extension StatisticViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+//        1
+        statisticService.statistics.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: reuseCellIdentifier) as? StatisticTableViewCell else {
             return UITableViewCell()
         }
-        let counter = String(statisticService.fetchCompletedTrackers())
         
-        cell.configureCell(with: counter, and: "Трекеров завершено")
+        let model = statisticService.statistics[indexPath.row]
+        
+        cell.configureCell(with: model)
+        
+//        let counter = String(statisticService.fetchCompletedTrackers())
+        
+//        cell.configureCell(with: counter, and: "Трекеров завершено")
         
         return cell
     }

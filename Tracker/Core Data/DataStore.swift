@@ -25,7 +25,7 @@ protocol DataStoreProtocol {
     func pinTracker(_ tracker: TrackerProtocol) throws
     func fetchPinnedTrackers() throws -> [TrackerProtocol]
     func fetchPinnedTrackersIDs() throws -> [UUID]
-    func fetcAllCompletedTrackersCounter() throws -> Int
+    func fetcAllCompletedTrackersCounter() throws -> [TrackerRecord]?
 }
 
 final class DataStore: DataStoreProtocol {
@@ -305,12 +305,26 @@ extension DataStore: TrackerRecordStore {
         return ids
     }
     
-    func fetcAllCompletedTrackersCounter() throws -> Int {
+    func fetcAllCompletedTrackersCounter() throws -> [TrackerRecord]? {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
         
         let result = try context.fetch(request)
         
-        return result.count
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM yyyy"
+        
+        var trackers: [TrackerRecord]? = result.compactMap { tracker -> TrackerRecord? in
+            
+            guard let id = tracker.trackerID,
+                  let date_ = tracker.date
+            else {
+                return nil
+            }
+            
+            return TrackerRecord(id: id, date: dateFormatter.date(from: date_)!)
+        }
+        
+        return trackers
     }
     
     private func deleteTrackerRecordsForTracker(_ trackerID: UUID) throws {

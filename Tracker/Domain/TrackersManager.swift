@@ -13,7 +13,7 @@ protocol TrackersManagerDelegate: AnyObject {
 }
 
 protocol TrackersRecordManagerProtocol {
-    func fetchCompletedTrackersCounter() throws -> Int
+    func fetchCompletedTrackersCounter() throws -> [TrackerRecord]?
 }
 
 protocol TrackersManagerProtocol {
@@ -127,7 +127,7 @@ extension TrackersManager: TrackersManagerProtocol {
 }
 //MARK: - TrackersRecordManagerProtocol
 extension TrackersManager: TrackersRecordManagerProtocol {
-    func fetchCompletedTrackersCounter() throws -> Int {
+    func fetchCompletedTrackersCounter() throws -> [TrackerRecord]? {
         try dataStore.fetcAllCompletedTrackersCounter()
     }
 }

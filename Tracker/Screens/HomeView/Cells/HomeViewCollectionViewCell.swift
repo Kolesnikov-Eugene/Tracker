@@ -135,8 +135,7 @@ final class HomeViewCollectionViewCell: UICollectionViewCell {
         trackerInfoView.layer.cornerRadius = 16
         trackerInfoView.layer.shadowRadius = 3
         trackerInfoView.layer.shadowOpacity = 0.5
-        trackerInfoView.layer.shadowOffset = CGSize.zero
-    }
+        trackerInfoView.layer.shadowOffset = CGSize.zero    }
 
     @objc private func addToDoneButtonTapped() {
         delegate?.didTapDoneStatus(self)

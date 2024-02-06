@@ -50,21 +50,20 @@ final class StatisticTableViewCell: UITableViewCell {
         descriptionLabel.text = description
     }
     
+    func configureCell(with model: StatisticsModel) {
+        counterLabel.text = String(model.value)
+        descriptionLabel.text = model.statName
+    }
+    
     private func setupUI() {
         configureContentView()
         
         addSubviews()
         applyConstraints()
-        
-//        addGradient()
     }
     
     private func configureContentView() {
-//        let screenSize = UIScreen.main.bounds
-        
         contentView.backgroundColor = .clear
-//        contentView.layer.frame.size.height = 102
-//        contentView.layer.frame.size.width = screenSize.width - 32
     }
     
     private func addSubviews() {
