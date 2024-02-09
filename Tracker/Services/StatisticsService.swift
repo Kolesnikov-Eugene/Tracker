@@ -15,7 +15,7 @@ protocol StatisticServiceProtocol: AnyObject {
 
 final class StatisticService: StatisticServiceProtocol {
     //TODO: - statistics update when tracker ckecked as completed/uncompleted
-    //RXSwift ?
+    //RXSwift and RxCocoa
     
     var statistics: [StatisticsModel] = []
     
