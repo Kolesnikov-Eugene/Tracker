@@ -9,16 +9,6 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol AddCategoryViewModelProtocol: AnyObject {
-    var category: String { get set }
-//    var onChange: ((String) -> Void)? { get set }
-    var categories: [TrackerCategoryProtocol] { get }
-    var categoriesList: BehaviorRelay<[TrackerCategoryProtocol]> { get }
-    var hideEmptyState: Driver<Bool>? { get }
-    func deleteCategory(_ category: String)
-    func subscribe()
-}
-
 protocol AddCategoryDelegate: AnyObject {
     func didRecieveCategory(_ categoryName: String, for oldCategory: String, mode: Editing) throws
 }
@@ -27,16 +17,17 @@ final class AddCategoryViewModel: AddCategoryViewModelProtocol {
     //MARK: - public properties
     var categoriesList = BehaviorRelay<[TrackerCategoryProtocol]>(value: [])
     var hideEmptyState: Driver<Bool>?
-    var category: String = ""
+    var category: String
 
     //MARK: - private properties
     private (set) var categories: [TrackerCategoryProtocol] = []
     private lazy var categoriesManager: CategoriesManagerProtocol? = {
         configureDataManager()
     }()
-//    var onChange: ((String) -> Void)?
     
-    init() {
+    //MARK: - init
+    init(_ category: String) {
+        self.category = category
         categories = fetchAllCategoriesFromStore()
         categoriesList.accept(categories)
         
@@ -47,14 +38,20 @@ final class AddCategoryViewModel: AddCategoryViewModelProtocol {
                     .asDriver(onErrorJustReturn: false)
     }
     
+    //MARK: - public methods
     func subscribe() {
         let _ = categoriesManager?.numberOfSectionsOfCategories
+    }
+    
+    func removeCategory() {
+        category = ""
     }
     
     func deleteCategory(_ category: String) {
         try? categoriesManager?.deleteCategory(category)
     }
     
+    //MARK: - private methods
     private func configureDataManager() -> CategoriesManagerProtocol? {
         let dataStore = DataStore()
         do {
@@ -74,7 +71,7 @@ final class AddCategoryViewModel: AddCategoryViewModelProtocol {
 
 //MARK: - AddCategoryDelegate
 extension AddCategoryViewModel: AddCategoryDelegate {
-    func didRecieveCategory(_ categoryName: String, for oldCategory:String, mode: Editing) throws {
+    func didRecieveCategory(_ categoryName: String, for oldCategory: String, mode: Editing) throws {
         category = categoryName
         switch mode {
         case .add:

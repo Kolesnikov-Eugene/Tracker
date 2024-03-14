@@ -13,6 +13,7 @@
 		441DF7EA2A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441DF7E92A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift */; };
 		441DF7EC2A9FD2FA005AC874 /* SupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441DF7EB2A9FD2FA005AC874 /* SupplementaryView.swift */; };
 		441DF7EE2A9FD629005AC874 /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441DF7ED2A9FD629005AC874 /* StatisticViewController.swift */; };
+		44482C7A2BA38C97002964E8 /* AddCategoryViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44482C792BA38C97002964E8 /* AddCategoryViewModelProtocol.swift */; };
 		444B90042AA9C77F0013D8FA /* NewHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90032AA9C77F0013D8FA /* NewHabitViewController.swift */; };
 		444B90062AA9D3280013D8FA /* TextFieldWithPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90052AA9D3280013D8FA /* TextFieldWithPadding.swift */; };
 		444B90082AAA13840013D8FA /* SeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B90072AAA13840013D8FA /* SeparatorView.swift */; };
@@ -93,6 +94,7 @@
 		441DF7E92A9FD2CD005AC874 /* HomeViewCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewCollectionViewCell.swift; sourceTree = "<group>"; };
 		441DF7EB2A9FD2FA005AC874 /* SupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryView.swift; sourceTree = "<group>"; };
 		441DF7ED2A9FD629005AC874 /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
+		44482C792BA38C97002964E8 /* AddCategoryViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewModelProtocol.swift; sourceTree = "<group>"; };
 		444B90032AA9C77F0013D8FA /* NewHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitViewController.swift; sourceTree = "<group>"; };
 		444B90052AA9D3280013D8FA /* TextFieldWithPadding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithPadding.swift; sourceTree = "<group>"; };
 		444B90072AAA13840013D8FA /* SeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorView.swift; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				4459370A2AD6B44C00ED3495 /* AddCategoryViewModel.swift */,
+				44482C792BA38C97002964E8 /* AddCategoryViewModelProtocol.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -804,6 +807,7 @@
 				44BC89992A9E7F2B00C0E23D /* TrackerRecord.swift in Sources */,
 				44D91E472ABAF4EA00BAB467 /* TrackerCategoryStore.swift in Sources */,
 				446BB4A52AE6FA0800361C29 /* Colors.swift in Sources */,
+				44482C7A2BA38C97002964E8 /* AddCategoryViewModelProtocol.swift in Sources */,
 				445936E02AD54EF600ED3495 /* OnboardingViewController.swift in Sources */,
 				4459370D2AD6B50400ED3495 /* NewCategoryView.swift in Sources */,
 				44D3D2D22AB5C0CE006F33FE /* GeometricParams.swift in Sources */,

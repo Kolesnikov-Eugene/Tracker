@@ -16,7 +16,6 @@ final class AddCategoryView: UIViewController {
     
     //MARK: - private properties
     private var viewModel: AddCategoryViewModelProtocol!
-    private var category: String
     private let reuseCellIdentifier = "CategoryCell"
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -72,7 +71,7 @@ final class AddCategoryView: UIViewController {
     
     init(delegate: CategoryPickerDelegate, category: String) {
         self.delegate = delegate
-        self.category = category
+        viewModel = AddCategoryViewModel(category)
         super.init(nibName: nil, bundle: nil)
         bind()
         setupUI()
@@ -83,15 +82,16 @@ final class AddCategoryView: UIViewController {
     }
     
     private func bind() {
-        viewModel = AddCategoryViewModel()
         
         viewModel.categoriesList
+            .observe(on: MainScheduler.instance)
             .skip(1)
-            .subscribe { [weak self] _ in
+            .subscribe( onNext: { [weak self] items in
                 self?.tableView.reloadData()
                 self?.view.layoutIfNeeded()
-                self?.category = self?.viewModel.category ?? ""
-            }
+                
+                print(type(of: items))
+            })
             .disposed(by: bag)
         
         viewModel.hideEmptyState?
@@ -125,19 +125,23 @@ final class AddCategoryView: UIViewController {
     
     private func applyConstraints() {
         NSLayoutConstraint.activate([
+            //table view constraints
             tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -40),
-            
+        
+            //Empty state view constraints
             emptyStateView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
             emptyStateView.centerYAnchor.constraint(equalTo: tableView.centerYAnchor),
             emptyStateView.widthAnchor.constraint(equalToConstant: 80),
             emptyStateView.heightAnchor.constraint(equalToConstant: 80),
             
+            //empty state label costraints
             emptyStateLabel.topAnchor.constraint(equalTo: emptyStateView.bottomAnchor, constant: 8),
             emptyStateLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor),
             
+            //add category button constraints
             addCategoryButton.leadingAnchor.constraint(equalTo: tableView.leadingAnchor),
             addCategoryButton.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
@@ -160,7 +164,8 @@ extension AddCategoryView: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: reuseCellIdentifier, for: indexPath) as? CategoryTableViewCell
+        guard let cell = tableView
+            .dequeueReusableCell(withIdentifier: reuseCellIdentifier, for: indexPath) as? CategoryTableViewCell
         else {
             return UITableViewCell()
         }
@@ -171,7 +176,7 @@ extension AddCategoryView: UITableViewDataSource {
         
         cell.selectionStyle = .none
         
-        if categoryLabel == category {
+        if categoryLabel == viewModel.category {
             cell.cellIsSelected = true
             cell.switchCellState()
         }
@@ -193,7 +198,7 @@ extension AddCategoryView: UITableViewDelegate {
         
         cell.switchCellState()
         
-        category = cell.fetchCategoryName()
+        let category = cell.fetchCategoryName()
         
         delegate?.didRecieveCategory(category)
         navigationController?.popViewController(animated: true)
@@ -205,11 +210,18 @@ extension AddCategoryView: UITableViewDelegate {
         cell.cellIsSelected = false
         cell.switchCellState()
         
-        category = ""
+        viewModel.removeCategory()
     }
     
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        guard let cell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else { return nil }
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint) -> UIContextMenuConfiguration?
+    {
+        guard let cell = tableView
+            .cellForRow(at: indexPath) as? CategoryTableViewCell else {
+            return nil
+        }
         let category = cell.fetchCategoryName()
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { action -> UIMenu? in
@@ -219,7 +231,8 @@ extension AddCategoryView: UITableViewDelegate {
                     NewCategoryView(
                         delegate: self.viewModel as! AddCategoryDelegate,
                         selectedCategory: category,
-                        mode: .rename), animated: true
+                        mode: .rename),
+                    animated: true
                 )
             }
             let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] action in
