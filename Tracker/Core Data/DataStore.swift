@@ -313,7 +313,7 @@ extension DataStore: TrackerRecordStore {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
         
-        var trackers: [TrackerRecord]? = result.compactMap { tracker -> TrackerRecord? in
+        let trackers: [TrackerRecord]? = result.compactMap { tracker -> TrackerRecord? in
             
             guard let id = tracker.trackerID,
                   let date_ = tracker.date

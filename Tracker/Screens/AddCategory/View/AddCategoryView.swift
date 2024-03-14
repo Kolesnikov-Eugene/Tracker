@@ -6,13 +6,19 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 final class AddCategoryView: UIViewController {
     
+    //MARK: - public properties
+    weak var delegate: CategoryPickerDelegate?
+    
+    //MARK: - private properties
     private var viewModel: AddCategoryViewModelProtocol!
     private var category: String
     private let reuseCellIdentifier = "CategoryCell"
-    private let tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
         
         tableView.backgroundColor = .clear
@@ -22,7 +28,7 @@ final class AddCategoryView: UIViewController {
         
         return tableView
     }()
-    private let emptyStateView: UIImageView = {
+    private lazy var emptyStateView: UIImageView = {
         let view = UIImageView()
         
         view.backgroundColor = .clear
@@ -33,7 +39,7 @@ final class AddCategoryView: UIViewController {
         
         return view
     }()
-    private let emptyStateLabel: UILabel = {
+    private lazy var emptyStateLabel: UILabel = {
         let label = UILabel()
         
         label.backgroundColor = .clear
@@ -62,7 +68,7 @@ final class AddCategoryView: UIViewController {
         
         return button
     }()
-    weak var delegate: CategoryPickerDelegate?
+    private let bag = DisposeBag()
     
     init(delegate: CategoryPickerDelegate, category: String) {
         self.delegate = delegate
@@ -78,15 +84,23 @@ final class AddCategoryView: UIViewController {
     
     private func bind() {
         viewModel = AddCategoryViewModel()
-        viewModel.onChange = { [weak self] newCategory in
-            guard let self = self else { return }
-            
-            self.switchEmptyState()
-            category = newCategory
-            
-            tableView.reloadData()
-            view.layoutIfNeeded()
-        }
+        
+        viewModel.categoriesList
+            .skip(1)
+            .subscribe { [weak self] _ in
+                self?.tableView.reloadData()
+                self?.view.layoutIfNeeded()
+                self?.category = self?.viewModel.category ?? ""
+            }
+            .disposed(by: bag)
+        
+        viewModel.hideEmptyState?
+            .drive(emptyStateView.rx.isHidden)
+            .disposed(by: bag)
+        
+        viewModel.hideEmptyState?
+            .drive(emptyStateLabel.rx.isHidden)
+            .disposed(by: bag)
     }
     
     private func setupUI() {
@@ -102,8 +116,6 @@ final class AddCategoryView: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: reuseCellIdentifier)
-        
-        switchEmptyState()
     }
     
     private func addSubviews() {
@@ -117,7 +129,6 @@ final class AddCategoryView: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -40),
-//            tableView.heightAnchor.constraint(equalToConstant: CGFloat(1000)),
             
             emptyStateView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
             emptyStateView.centerYAnchor.constraint(equalTo: tableView.centerYAnchor),
@@ -131,33 +142,7 @@ final class AddCategoryView: UIViewController {
             addCategoryButton.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.heightAnchor.constraint(equalToConstant: 60)
-            
-            
-//            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-//            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-//            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -40),
-//            tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(1000)),
-//            
-//            emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-//            emptyStateView.widthAnchor.constraint(equalToConstant: 80),
-//            emptyStateView.heightAnchor.constraint(equalToConstant: 80),
-//            
-//            emptyStateLabel.topAnchor.constraint(equalTo: emptyStateView.bottomAnchor, constant: 8),
-//            emptyStateLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor),
-//            
-//            addCategoryButton.leadingAnchor.constraint(equalTo: tableView.leadingAnchor),
-//            addCategoryButton.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
-//            addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
-//            addCategoryButton.heightAnchor.constraint(equalToConstant: 60)
         ])
-    }
-    
-    private func switchEmptyState() {
-        emptyStateView.isHidden = viewModel.categories.count > 0
-        emptyStateLabel.isHidden = viewModel.categories.count > 0
-        tableView.isHidden = viewModel.categories.count < 0
     }
     
     @objc private func addCategoryButtonTapped() {

@@ -1,4 +1,14 @@
 PODS:
+  - RxBlocking (6.6.0):
+    - RxSwift (= 6.6.0)
+  - RxCocoa (6.6.0):
+    - RxRelay (= 6.6.0)
+    - RxSwift (= 6.6.0)
+  - RxRelay (6.6.0):
+    - RxSwift (= 6.6.0)
+  - RxSwift (6.6.0)
+  - RxTest (6.6.0):
+    - RxSwift (= 6.6.0)
   - YandexMobileMetrica/Dynamic (4.5.2):
     - YandexMobileMetrica/Dynamic/Core (= 4.5.2)
     - YandexMobileMetrica/Dynamic/Crashes (= 4.5.2)
@@ -7,15 +17,29 @@ PODS:
     - YandexMobileMetrica/Dynamic/Core
 
 DEPENDENCIES:
+  - RxBlocking (= 6.6.0)
+  - RxCocoa (= 6.6.0)
+  - RxSwift (= 6.6.0)
+  - RxTest (= 6.6.0)
   - YandexMobileMetrica/Dynamic (= 4.5.2)
 
 SPEC REPOS:
   trunk:
+    - RxBlocking
+    - RxCocoa
+    - RxRelay
+    - RxSwift
+    - RxTest
     - YandexMobileMetrica
 
 SPEC CHECKSUMS:
+  RxBlocking: fbd1f8501443024f686e556f36dac79b0d5f4d7c
+  RxCocoa: 44a80de90e25b739b5aeaae3c8c371a32e3343cc
+  RxRelay: 45eaa5db8ee4fb50e5ebd57deec0159e97fa51e6
+  RxSwift: a4b44f7d24599f674deebd1818eab82e58410632
+  RxTest: a23f26bb53a5e146a0a69db4f0fa0b69001ce7f4
   YandexMobileMetrica: f5368ee93f286c793d73b58da00929babfc897c1
 
-PODFILE CHECKSUM: dbcdf7ef3a6d7d641a3f26f5c812bd11b8280e32
+PODFILE CHECKSUM: 363f26af765c353b9b45aadca0408aea5fcff1fd
 
 COCOAPODS: 1.13.0

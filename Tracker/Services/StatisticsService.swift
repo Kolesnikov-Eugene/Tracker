@@ -63,6 +63,9 @@ final class StatisticService: StatisticServiceProtocol {
         statistics.append(bestPeriod)
         
         //function
+        if dates.isEmpty {
+            return
+        }
         let totalTrackers = completedTrackers.value
         let average = Int(totalTrackers) / Int(dates.count)
         let averageTrackerPerDay = StatisticsModel(statName: "Среднее значение", value: average)
@@ -116,7 +119,7 @@ final class StatisticService: StatisticServiceProtocol {
         guard let counter = counter else {
             return
         }
-        var dates = counter.compactMap { tracker -> TimeInterval in
+        let _ = counter.compactMap { tracker -> TimeInterval in
             tracker.date.timeIntervalSince1970
         }
         

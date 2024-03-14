@@ -8,11 +8,15 @@ target 'Tracker' do
   # Pods for Tracker
 
   pod 'YandexMobileMetrica/Dynamic', '4.5.2'
+  pod 'RxSwift', '6.6.0'
+  pod 'RxCocoa', '6.6.0'
 	
 
   target 'TrackerTests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'RxBlocking', '6.6.0'
+    pod 'RxTest', '6.6.0'
   end
 
 end

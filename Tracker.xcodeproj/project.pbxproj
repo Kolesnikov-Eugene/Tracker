@@ -568,6 +568,7 @@
 				441C7DB22AE7B4FF005A2061 /* Sources */,
 				441C7DB32AE7B4FF005A2061 /* Frameworks */,
 				441C7DB42AE7B4FF005A2061 /* Resources */,
+				7C43883D5E54821EFB7CBB05 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -681,6 +682,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tracker/Pods-Tracker-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7C43883D5E54821EFB7CBB05 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TrackerTests/Pods-TrackerTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TrackerTests/Pods-TrackerTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TrackerTests/Pods-TrackerTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		9F27BD0D3D6F4BB21A27153D /* [CP] Check Pods Manifest.lock */ = {

@@ -6,10 +6,15 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 protocol AddCategoryViewModelProtocol: AnyObject {
-    var onChange: ((String) -> Void)? { get set }
+    var category: String { get set }
+//    var onChange: ((String) -> Void)? { get set }
     var categories: [TrackerCategoryProtocol] { get }
+    var categoriesList: BehaviorRelay<[TrackerCategoryProtocol]> { get }
+    var hideEmptyState: Driver<Bool>? { get }
     func deleteCategory(_ category: String)
     func subscribe()
 }
@@ -19,19 +24,27 @@ protocol AddCategoryDelegate: AnyObject {
 }
 
 final class AddCategoryViewModel: AddCategoryViewModelProtocol {
-    private var category: String = ""
-    private(set) var categories: [TrackerCategoryProtocol] = [] {
-        didSet {
-            onChange?(category)
-        }
-    }
+    //MARK: - public properties
+    var categoriesList = BehaviorRelay<[TrackerCategoryProtocol]>(value: [])
+    var hideEmptyState: Driver<Bool>?
+    var category: String = ""
+
+    //MARK: - private properties
+    private (set) var categories: [TrackerCategoryProtocol] = []
     private lazy var categoriesManager: CategoriesManagerProtocol? = {
         configureDataManager()
     }()
-    var onChange: ((String) -> Void)?
+//    var onChange: ((String) -> Void)?
     
     init() {
         categories = fetchAllCategoriesFromStore()
+        categoriesList.accept(categories)
+        
+        hideEmptyState = categoriesList
+                    .map({ items in
+                        return !items.isEmpty
+                    })
+                    .asDriver(onErrorJustReturn: false)
     }
     
     func subscribe() {
@@ -76,5 +89,6 @@ extension AddCategoryViewModel: AddCategoryDelegate {
 extension AddCategoryViewModel: CategoriesManagerDelegate {
     func didUpdate() {
         categories = fetchAllCategoriesFromStore()
+        categoriesList.accept(categories)
     }
 }
